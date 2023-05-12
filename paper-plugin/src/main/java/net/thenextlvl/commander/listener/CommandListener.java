@@ -15,7 +15,7 @@ public class CommandListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onCommand(ServerCommandEvent event) {
         var label = event.getCommand().split(" ")[0];
-        if (Bukkit.getCommandMap().getCommand(label) != null) return;
+        if (commander.commandManager().isCommandRegistered(label)) return;
         event.setCancelled(true);
         var sender = event.getSender();
         sender.sendRichMessage(Messages.UNKNOWN_COMMAND.message(Messages.ENGLISH, sender,
@@ -27,7 +27,7 @@ public class CommandListener implements Listener {
         var player = event.getPlayer();
         var label = event.getMessage().substring(1).split(" ")[0];
         var command = Bukkit.getCommandMap().getCommand(label);
-        if (command == null) {
+        if (command == null || !commander.commandManager().isCommandRegistered(label)) {
             event.setCancelled(true);
             if (label.isBlank()) return;
             player.sendRichMessage(Messages.UNKNOWN_COMMAND.message(player.locale(), player,
