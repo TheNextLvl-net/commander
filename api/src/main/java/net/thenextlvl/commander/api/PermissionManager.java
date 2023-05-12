@@ -26,9 +26,21 @@ public abstract class PermissionManager {
         getPermissionOverride().getRoot().forEach(this::overridePermission);
     }
 
-    public void overridePermission(String command, @Nullable String permission) {
-        overridePermission(command, permission, false);
+    public boolean overridePermission(String command, @Nullable String permission) {
+        return overridePermission(command, permission, false);
     }
 
-    public abstract void overridePermission(String command, @Nullable String permission, boolean alias);
+    public abstract boolean overridePermission(String command, @Nullable String permission, boolean alias);
+
+    public boolean resetPermission(String label) {
+        if (!getPermissionOverride().getRoot().containsKey(label)) return false;
+        if (hasOriginalPermission(label)) overridePermission(label, getOriginalPermission(label));
+        getPermissionOverride().getRoot().remove(label);
+        getPermissionOverride().save();
+        return true;
+    }
+
+    public abstract @Nullable String getOriginalPermission(String label);
+
+    public abstract boolean hasOriginalPermission(String label);
 }
