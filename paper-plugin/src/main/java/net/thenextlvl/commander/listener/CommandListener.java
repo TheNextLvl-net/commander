@@ -2,15 +2,25 @@ package net.thenextlvl.commander.listener;
 
 import core.annotation.ParametersAreNonnullByDefault;
 import core.api.placeholder.Placeholder;
+import lombok.RequiredArgsConstructor;
+import net.thenextlvl.commander.api.Commander;
 import net.thenextlvl.commander.i18n.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
+@RequiredArgsConstructor
 @ParametersAreNonnullByDefault
 public class CommandListener implements Listener {
+    private final Commander commander;
+
+    @EventHandler(ignoreCancelled = true)
+    public void onCommandSend(PlayerCommandSendEvent event) {
+        event.getCommands().removeIf(label -> !commander.commandManager().isCommandRegistered(label));
+    }
 
     @EventHandler(ignoreCancelled = true)
     public void onCommand(ServerCommandEvent event) {
