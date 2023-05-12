@@ -25,18 +25,21 @@ public class CommanderPlugin extends CorePlugin {
         var registration = Bukkit.getServicesManager().getRegistration(Commander.class);
         if (registration == null) return;
         var commander = registration.getProvider();
-        commander.commandManager().unregisterCommands();
-        commander.permissionManager().overridePermissions();
+
+        Bukkit.getScheduler().runTask(this, () -> {
+            commander.commandManager().unregisterCommands();
+            commander.permissionManager().overridePermissions();
+        });
 
         registerCommands(commander);
-        registerListeners();
+        registerListeners(commander);
     }
 
     private void registerCommands(Commander commander) {
         registerCommand("command", new CommanderCommand(commander));
     }
 
-    private void registerListeners() {
-        Bukkit.getPluginManager().registerEvents(new CommandListener(), this);
+    private void registerListeners(Commander commander) {
+        Bukkit.getPluginManager().registerEvents(new CommandListener(commander), this);
     }
 }
