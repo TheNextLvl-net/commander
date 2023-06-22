@@ -2,7 +2,6 @@ package net.thenextlvl.commander.implementation;
 
 import net.thenextlvl.commander.api.CommandManager;
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
@@ -13,14 +12,20 @@ public class CraftCommandManager extends CommandManager {
 
     @Override
     public void unregisterCommand(String label) {
-        var name = resolveCommandName(label);
-        if (name != null) Bukkit.getCommandMap().getKnownCommands().entrySet().stream()
-                .filter(entry -> entry.getValue().getName().equals(name))
-                .toList()
-                .forEach(entry -> {
-                    Bukkit.getCommandMap().getKnownCommands().remove(entry.getKey());
-                    entry.getValue().unregister(Bukkit.getCommandMap());
-                });
+        var literal = Bukkit.getCommandMap().getKnownCommands().get(label);
+        if (literal == null) return;
+
+        Bukkit.getCommandMap().getKnownCommands().remove(label);
+        literal.unregister(Bukkit.getCommandMap());
+
+        var split = label.split(":", 2);
+        if (split.length != 2) return;
+
+        var command = Bukkit.getCommandMap().getKnownCommands().get(split[1]);
+        if (command == null || !command.equals(literal)) return;
+
+        Bukkit.getCommandMap().getKnownCommands().remove(split[1]);
+        command.unregister(Bukkit.getCommandMap());
     }
 
     @Override

@@ -34,55 +34,63 @@ public class CommanderCommand implements TabExecutor {
     }
 
     private void permission(CommandSender sender, String[] args) {
-        if (args.length >= 2 && args[1].equals("set")) {
-            if (args.length == 4) {
-                var command = args[2];
-                var permission = args[3].equals("null") ? null : args[3];
-                commander.permissionManager().getPermissionOverride().getRoot().put(command, permission);
-                var success = commander.permissionManager().overridePermission(command, permission);
-                commander.permissionManager().getPermissionOverride().save();
-                var locale = sender instanceof Player player ? player.locale() : Messages.ENGLISH;
-                sender.sendRichMessage(Messages.PERMISSION_SET.message(locale, sender,
-                        Placeholder.of("permission", permission),
-                        Placeholder.of("command", command)));
-                if (success) Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
-            } else sendCorrectSyntax(sender, "/command permission set [command] [permission]");
-        } else if (args.length >= 2 && args[1].equals("reset")) {
-            if (args.length == 3) {
-                var command = args[2];
-                var success = commander.permissionManager().resetPermission(command);
-                var locale = sender instanceof Player player ? player.locale() : Messages.ENGLISH;
-                var message = success ? Messages.PERMISSION_RESET : Messages.NOTHING_CHANGED;
-                sender.sendRichMessage(message.message(locale, sender, Placeholder.of("command", command)));
-                if (success) Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
-            } else sendCorrectSyntax(sender, "/command permission reset [command]");
-        } else if (args.length >= 2 && args[1].equals("query")) {
-            if (args.length == 3) {
-                var command = Bukkit.getCommandMap().getCommand(args[2]);
-                var permission = command != null ? command.getPermission() : null;
-                var locale = sender instanceof Player player ? player.locale() : Messages.ENGLISH;
-                var message = command == null ? Messages.UNKNOWN_COMMAND : permission != null ?
-                        Messages.PERMISSION_QUERY_DEFINED : Messages.PERMISSION_QUERY_UNDEFINED;
-                sender.sendRichMessage(message.message(locale, sender,
-                        Placeholder.of("permission", permission),
-                        Placeholder.of("command", args[2])));
-            } else sendCorrectSyntax(sender, "/command permission query [command]");
-        } else sendCorrectSyntax(sender, "/command permission set | reset | query");
+        if (args.length >= 2 && args[1].equals("set")) permissionSet(sender, args);
+        else if (args.length >= 2 && args[1].equals("reset")) permissionReset(sender, args);
+        else if (args.length >= 2 && args[1].equals("query")) permissionQuery(sender, args);
+        else sendCorrectSyntax(sender, "/command permission set | reset | query");
+    }
+
+    private void permissionSet(CommandSender sender, String[] args) {
+        if (args.length == 4) {
+            var command = args[2];
+            var permission = args[3].equals("null") ? null : args[3];
+            commander.permissionManager().getPermissionOverride().getRoot().put(command, permission);
+            var success = commander.permissionManager().overridePermission(command, permission);
+            commander.permissionManager().getPermissionOverride().save();
+            var locale = sender instanceof Player player ? player.locale() : Messages.ENGLISH;
+            sender.sendRichMessage(Messages.PERMISSION_SET.message(locale, sender,
+                    Placeholder.of("permission", permission),
+                    Placeholder.of("command", command)));
+            if (success) Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
+        } else sendCorrectSyntax(sender, "/command permission set [command] [permission]");
+    }
+
+    private void permissionReset(CommandSender sender, String[] args) {
+        if (args.length == 3) {
+            var command = args[2];
+            var success = commander.permissionManager().resetPermission(command);
+            var locale = sender instanceof Player player ? player.locale() : Messages.ENGLISH;
+            var message = success ? Messages.PERMISSION_RESET : Messages.NOTHING_CHANGED;
+            sender.sendRichMessage(message.message(locale, sender, Placeholder.of("command", command)));
+            if (success) Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
+        } else sendCorrectSyntax(sender, "/command permission reset [command]");
+    }
+
+    private void permissionQuery(CommandSender sender, String[] args) {
+        if (args.length == 3) {
+            var command = Bukkit.getCommandMap().getCommand(args[2]);
+            var permission = command != null ? command.getPermission() : null;
+            var locale = sender instanceof Player player ? player.locale() : Messages.ENGLISH;
+            var message = command == null ? Messages.UNKNOWN_COMMAND : permission != null ?
+                    Messages.PERMISSION_QUERY_DEFINED : Messages.PERMISSION_QUERY_UNDEFINED;
+            sender.sendRichMessage(message.message(locale, sender,
+                    Placeholder.of("permission", permission),
+                    Placeholder.of("command", args[2])));
+        } else sendCorrectSyntax(sender, "/command permission query [command]");
     }
 
     private void unregister(CommandSender sender, String[] args) {
         if (args.length == 2) {
-            var command = commander.commandManager().resolveCommandName(args[1], args[1]);
             var commands = commander.commandManager().getRemovedCommands();
-            boolean contains = commands.getRoot().contains(command);
+            boolean contains = commands.getRoot().contains(args[1]);
             if (!contains) {
-                commands.getRoot().add(command);
+                commands.getRoot().add(args[1]);
                 commands.save();
             }
             var message = contains ? Messages.NOTHING_CHANGED : Messages.COMMAND_UNREGISTERED;
             var locale = sender instanceof Player player ? player.locale() : Messages.ENGLISH;
-            sender.sendRichMessage(message.message(locale, sender, Placeholder.of("command", command)));
-            sender.sendRichMessage(Messages.RESTART_REQUIRED.message(locale, sender));
+            sender.sendRichMessage(message.message(locale, sender, Placeholder.of("command", args[1])));
+            if (!contains) sender.sendRichMessage(Messages.RESTART_REQUIRED.message(locale, sender));
         } else sendCorrectSyntax(sender, "/command unregister [command]");
     }
 
@@ -93,7 +101,7 @@ public class CommanderCommand implements TabExecutor {
             var message = success ? Messages.COMMAND_REGISTERED : Messages.NOTHING_CHANGED;
             var locale = sender instanceof Player player ? player.locale() : Messages.ENGLISH;
             sender.sendRichMessage(message.message(locale, sender, Placeholder.of("command", command)));
-            sender.sendRichMessage(Messages.RESTART_REQUIRED.message(locale, sender));
+            if (success) sender.sendRichMessage(Messages.RESTART_REQUIRED.message(locale, sender));
         } else sendCorrectSyntax(sender, "/command register [command]");
     }
 
@@ -113,9 +121,9 @@ public class CommanderCommand implements TabExecutor {
             suggestions.add("register");
         } else if (args.length == 2) {
             suggestions.addAll(switch (args[0]) {
-                case "unregister" -> Bukkit.getCommandMap().getKnownCommands().entrySet().stream()
-                        .filter(entry -> !commander.commandManager().isCommandUnregistered(entry.getKey()))
-                        .map(entry -> entry.getValue().getName())
+                case "unregister" -> Bukkit.getCommandMap().getKnownCommands().keySet().stream()
+                        .filter(entry -> !commander.commandManager().isCommandUnregistered(entry))
+                        .filter(entry -> entry.contains(":"))
                         .toList();
                 case "register" -> commander.commandManager().getRemovedCommands().getRoot();
                 case "permission" -> List.of("reset", "set", "query");
@@ -127,9 +135,9 @@ public class CommanderCommand implements TabExecutor {
                     suggestions.addAll(commander.permissionManager().getPermissionOverride().getRoot().keySet());
                 }
                 if (args[1].equals("set") || args[1].equals("query")) {
-                    suggestions.addAll(Bukkit.getCommandMap().getKnownCommands().entrySet().stream()
-                            .filter(entry -> !commander.commandManager().isCommandUnregistered(entry.getKey()))
-                            .map(entry -> entry.getValue().getName())
+                    suggestions.addAll(Bukkit.getCommandMap().getKnownCommands().keySet().stream()
+                            .filter(entry -> !commander.commandManager().isCommandUnregistered(entry))
+                            .filter(entry -> entry.contains(":"))
                             .toList());
                 }
             }
@@ -142,7 +150,7 @@ public class CommanderCommand implements TabExecutor {
                 }
             }
         }
-        suggestions.removeIf(token -> !token.toLowerCase().startsWith(args[args.length - 1].toLowerCase()));
+        suggestions.removeIf(token -> !token.toLowerCase().contains(args[args.length - 1].toLowerCase()));
         return suggestions;
     }
 }
