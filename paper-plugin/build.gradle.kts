@@ -1,11 +1,11 @@
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.1"
+    id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
 }
 
-group = "net.thenextlvl.commander"
-version = "1.0.0"
+group = rootProject.group
+version = rootProject.version
 
 repositories {
     mavenCentral()
@@ -41,6 +41,7 @@ bukkit {
     name = "Commander"
     main = "net.thenextlvl.commander.CommanderPlugin"
     apiVersion = "1.19"
+    // foliaSupported = true
     website = "https://thenextlvl.net"
     authors = listOf("NonSwag")
     commands {
