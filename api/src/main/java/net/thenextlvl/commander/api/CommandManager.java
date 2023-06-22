@@ -5,7 +5,6 @@ import core.api.file.format.GsonFile;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,16 +36,6 @@ public abstract class CommandManager {
     public abstract boolean isCommandRegistered(String label);
 
     public boolean isCommandUnregistered(String label) {
-        if (getRemovedCommands().getRoot().contains(label)) return true;
-        var name = resolveCommandName(label);
-        return getRemovedCommands().getRoot().contains(name);
+        return getRemovedCommands().getRoot().contains(label);
     }
-
-    public String resolveCommandName(String label, String fallback) {
-        String name = resolveCommandName(label);
-        return name != null ? name : fallback;
-    }
-
-
-    public abstract @Nullable String resolveCommandName(String label);
 }

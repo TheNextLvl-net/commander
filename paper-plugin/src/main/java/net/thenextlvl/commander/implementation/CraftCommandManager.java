@@ -27,9 +27,4 @@ public class CraftCommandManager extends CommandManager {
     public boolean isCommandRegistered(String command) {
         return Bukkit.getCommandMap().getKnownCommands().containsKey(command);
     }
-
-    public @Nullable String resolveCommandName(String label) {
-        var command = Bukkit.getCommandMap().getCommand(label);
-        return command != null ? command.getName() : null;
-    }
 }
