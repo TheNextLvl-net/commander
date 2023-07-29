@@ -1,5 +1,3 @@
-rootProject.name = "Commander"
+rootProject.name = "commander"
 include("api")
 include("paper-plugin")
-include("v1_19_4")
-include("velocity-plugin")
