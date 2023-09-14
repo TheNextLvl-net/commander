@@ -1,19 +1,15 @@
 package net.thenextlvl.commander.i18n;
 
-import core.annotation.FieldsAreNonnullByDefault;
 import core.api.file.format.MessageFile;
 import core.api.placeholder.MessageKey;
+import core.api.placeholder.Placeholder;
 import core.api.placeholder.SystemMessageKey;
 import net.kyori.adventure.audience.Audience;
 
 import java.util.Locale;
 
-import static net.thenextlvl.commander.i18n.Placeholders.FORMATTER;
-
-@FieldsAreNonnullByDefault
 public class Messages {
-    public static final Locale ENGLISH = Locale.forLanguageTag("en-US");
-
+    public static final Placeholder.Formatter<Audience> FORMATTER = new Placeholder.Formatter<>();
     public static final SystemMessageKey<Audience> PREFIX = new SystemMessageKey<>("commander.prefix", FORMATTER).register();
 
     public static final MessageKey<Audience> PERMISSION_RESET = new MessageKey<>("permission.reset", FORMATTER).register();
@@ -35,6 +31,10 @@ public class Messages {
         initGerman();
     }
 
+    static {
+        FORMATTER.registry().register(Placeholder.of("prefix", PREFIX.message()));
+    }
+
     private static void initRoot() {
         var file = MessageFile.ROOT;
         file.setDefault(PREFIX, "<white>Commander <dark_gray>»<reset>");
@@ -42,7 +42,7 @@ public class Messages {
     }
 
     private static void initEnglish() {
-        var file = MessageFile.getOrCreate(ENGLISH);
+        var file = MessageFile.getOrCreate(Locale.US);
         file.setDefault(PERMISSION_RESET, "%prefix% <white>Reset the permission of <green>%command%");
         file.setDefault(PERMISSION_SET, "%prefix% <white>Set the permission of <green>%command% <white>to <green>%permission%");
         file.setDefault(PERMISSION_QUERY_DEFINED, "%prefix% <white>The permission of <green>%command% <white>is <green>%permission%");
@@ -59,7 +59,7 @@ public class Messages {
     }
 
     private static void initGerman() {
-        var file = MessageFile.getOrCreate(Locale.forLanguageTag("de-DE"));
+        var file = MessageFile.getOrCreate(Locale.GERMANY);
         file.setDefault(PERMISSION_RESET, "%prefix% <white>Die Berechtigung auf <green>%command% <white>wurde zurückgesetzt");
         file.setDefault(PERMISSION_SET, "%prefix% <white>Die Berechtigung auf <green>%command% <white>wurde zu <green>%permission% <white>geändert");
         file.setDefault(PERMISSION_QUERY_DEFINED, "%prefix% <white>Die Berechtigung auf <green>%command% <white>ist <green>%permission%");
