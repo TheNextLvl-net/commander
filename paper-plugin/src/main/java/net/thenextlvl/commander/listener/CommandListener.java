@@ -1,35 +1,45 @@
 package net.thenextlvl.commander.listener;
 
-import core.annotation.ParametersAreNonnullByDefault;
 import core.api.placeholder.Placeholder;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.thenextlvl.commander.api.Commander;
 import net.thenextlvl.commander.i18n.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.command.UnknownCommandEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
+import java.util.Locale;
+
 @RequiredArgsConstructor
-@ParametersAreNonnullByDefault
 public class CommandListener implements Listener {
     private final Commander commander;
 
     @EventHandler(ignoreCancelled = true)
     public void onCommandSend(PlayerCommandSendEvent event) {
-        event.getCommands().removeIf(label -> !commander.commandManager().isCommandRegistered(label));
+        event.getCommands().removeIf(literal -> commander.commandRegistry().isCommandRemoved(literal));
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onCommand(ServerCommandEvent event) {
-        var label = event.getCommand().split(" ")[0];
-        if (commander.commandManager().isCommandRegistered(label)) return;
+        var literal = event.getCommand().split(" ")[0];
+        if (commander.platformCommandRegistry().isCommandRegistered(literal)
+                || !commander.commandRegistry().isCommandRemoved(literal)) return;
+        event.getSender().sendRichMessage(Messages.UNKNOWN_COMMAND.message(Locale.US,
+                event.getSender(), Placeholder.of("command", literal)));
         event.setCancelled(true);
-        var sender = event.getSender();
-        sender.sendRichMessage(Messages.UNKNOWN_COMMAND.message(Messages.ENGLISH, sender,
-                Placeholder.of("command", label)));
+    }
+
+    @EventHandler
+    public void onUnknownCommand(UnknownCommandEvent event) {
+        var literal = event.getCommandLine().split(" ")[0];
+        if (!commander.commandRegistry().isCommandRemoved(literal)) return;
+        event.message(MiniMessage.miniMessage().deserialize(Messages.UNKNOWN_COMMAND
+                .message(Locale.US, event.getSender(), Placeholder.of("command", literal))));
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -37,7 +47,7 @@ public class CommandListener implements Listener {
         var player = event.getPlayer();
         var label = event.getMessage().substring(1).split(" ")[0];
         var command = Bukkit.getCommandMap().getCommand(label);
-        if (command == null || !commander.commandManager().isCommandRegistered(label)) {
+        if (command == null || !commander.platformCommandRegistry().isCommandRegistered(label)) {
             event.setCancelled(true);
             if (label.isBlank()) return;
             player.sendRichMessage(Messages.UNKNOWN_COMMAND.message(player.locale(), player,
