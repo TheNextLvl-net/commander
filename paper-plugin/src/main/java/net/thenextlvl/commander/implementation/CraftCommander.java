@@ -3,17 +3,25 @@ package net.thenextlvl.commander.implementation;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.thenextlvl.commander.api.Commander;
+import net.thenextlvl.commander.implementation.command.CraftCommandRegistry;
+import net.thenextlvl.commander.implementation.command.CraftPlatformCommandRegistry;
+import net.thenextlvl.commander.implementation.permission.CraftPermissionRegistry;
+import net.thenextlvl.commander.implementation.permission.CraftPlatformPermissionRegistry;
 
 import java.io.File;
 
 @Getter
 @Accessors(fluent = true)
 public class CraftCommander extends Commander {
-    private final CraftCommandManager commandManager;
-    private final CraftPermissionManager permissionManager;
+    private final CraftCommandRegistry commandRegistry;
+    private final CraftPlatformCommandRegistry platformCommandRegistry;
+    private final CraftPermissionRegistry permissionRegistry;
+    private final CraftPlatformPermissionRegistry platformPermissionRegistry;
 
     public CraftCommander(File dataFolder) {
-        commandManager = new CraftCommandManager(dataFolder);
-        permissionManager = new CraftPermissionManager(dataFolder);
+        commandRegistry = new CraftCommandRegistry(this, dataFolder);
+        platformCommandRegistry = new CraftPlatformCommandRegistry(this);
+        permissionRegistry = new CraftPermissionRegistry(this, dataFolder);
+        platformPermissionRegistry = new CraftPlatformPermissionRegistry(this);
     }
 }
