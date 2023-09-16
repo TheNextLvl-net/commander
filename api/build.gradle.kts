@@ -21,7 +21,7 @@ dependencies {
     compileOnly("com.google.code.gson:gson:2.10")
     compileOnly("net.kyori:adventure-api:4.13.1")
 
-    implementation("net.thenextlvl.core:api:3.2.0")
+    implementation("net.thenextlvl.core:api:3.2.1")
 
     annotationProcessor("org.projectlombok:lombok:1.18.28")
 }
