@@ -14,14 +14,24 @@ import java.io.File;
 @Accessors(fluent = true)
 public class CraftCommander implements Commander {
     private final CraftCommandRegistry commandRegistry;
-    private final CraftPlatformCommandRegistry platformCommandRegistry;
     private final CraftPermissionRegistry permissionRegistry;
-    private final CraftPlatformPermissionRegistry platformPermissionRegistry;
+    private final CraftPlatformRegistry platform;
 
     public CraftCommander(File dataFolder) {
         commandRegistry = new CraftCommandRegistry(this, dataFolder);
-        platformCommandRegistry = new CraftPlatformCommandRegistry(this);
         permissionRegistry = new CraftPermissionRegistry(this, dataFolder);
-        platformPermissionRegistry = new CraftPlatformPermissionRegistry(this);
+        platform = new CraftPlatformRegistry();
+    }
+
+    @Getter
+    @Accessors(fluent = true)
+    public class CraftPlatformRegistry implements PlatformRegistry {
+        private final CraftPlatformCommandRegistry commandRegistry;
+        private final CraftPlatformPermissionRegistry permissionRegistry;
+
+        private CraftPlatformRegistry() {
+            commandRegistry = new CraftPlatformCommandRegistry(CraftCommander.this);
+            permissionRegistry = new CraftPlatformPermissionRegistry(CraftCommander.this);
+        }
     }
 }

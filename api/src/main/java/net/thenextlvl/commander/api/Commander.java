@@ -21,8 +21,15 @@ public interface Commander {
      */
     PlatformRegistry platform();
 
-    /**
-     * @return The platform permission manager
-     */
-    public abstract PlatformPermissionRegistry platformPermissionRegistry();
+    interface PlatformRegistry {
+        /**
+         * @return the platform command registry
+         */
+        PlatformCommandRegistry<?> commandRegistry();
+
+        /**
+         * @return the platform permission registry
+         */
+        PlatformPermissionRegistry permissionRegistry();
+    }
 }
