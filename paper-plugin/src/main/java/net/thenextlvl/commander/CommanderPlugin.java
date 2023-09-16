@@ -27,9 +27,7 @@ public class CommanderPlugin extends JavaPlugin {
         if (registration == null) return;
         var commander = (CraftCommander) registration.getProvider();
 
-        Bukkit.getScheduler().runTask(this, () -> {
-            commander.platform().permissionRegistry().overridePermissions();
-        });
+        Bukkit.getScheduler().runTask(this, () -> commander.platform().permissionRegistry().overridePermissions());
 
         registerCommands(commander);
         registerListeners(commander);
