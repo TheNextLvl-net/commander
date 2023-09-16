@@ -12,7 +12,7 @@ import java.io.File;
 
 @Getter
 @Accessors(fluent = true)
-public class CraftCommander extends Commander {
+public class CraftCommander implements Commander {
     private final CraftCommandRegistry commandRegistry;
     private final CraftPlatformCommandRegistry platformCommandRegistry;
     private final CraftPermissionRegistry permissionRegistry;

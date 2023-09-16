@@ -5,21 +5,21 @@ import net.thenextlvl.commander.api.command.PlatformCommandRegistry;
 import net.thenextlvl.commander.api.permission.PermissionRegistry;
 import net.thenextlvl.commander.api.permission.PlatformPermissionRegistry;
 
-public abstract class Commander {
+public interface Commander {
     /**
-     * @return The command registry
+     * @return the command registry
      */
-    public abstract CommandRegistry commandRegistry();
+    CommandRegistry commandRegistry();
 
     /**
-     * @return The platform registry
+     * @return the permission registry
      */
-    public abstract PlatformCommandRegistry<?> platformCommandRegistry();
+    PermissionRegistry permissionRegistry();
 
     /**
-     * @return The permission manager
+     * @return the platform registries
      */
-    public abstract PermissionRegistry permissionRegistry();
+    PlatformRegistry platform();
 
     /**
      * @return The platform permission manager
