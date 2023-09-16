@@ -41,15 +41,6 @@ public interface PlatformCommandRegistry<C> {
     }
 
     /**
-     * Check whether both commands match
-     *
-     * @param first  the first command
-     * @param second the second command
-     * @return whether the commands match
-     */
-    boolean matches(C first, C second);
-
-    /**
      * Update all commands
      */
     void updateCommands();

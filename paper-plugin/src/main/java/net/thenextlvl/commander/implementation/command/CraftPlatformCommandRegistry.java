@@ -31,14 +31,6 @@ public record CraftPlatformCommandRegistry(CraftCommander commander) implements 
     }
 
     @Override
-    public boolean matches(Command first, Command second) {
-        if (first.equals(second)) return true;
-        if (!first.getClass().equals(second.getClass())) return false;
-        if (!first.getName().equals(second.getName())) return false;
-        return first.getLabel().equals(second.getLabel());
-    }
-
-    @Override
     public void updateCommands() {
         Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
     }
