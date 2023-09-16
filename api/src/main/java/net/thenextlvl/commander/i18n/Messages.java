@@ -23,6 +23,7 @@ public class Messages {
     public static final MessageKey<Audience> UNKNOWN_COMMAND = new MessageKey<>("command.unknown", FORMATTER).register();
     public static final MessageKey<Audience> NO_PERMISSION = new MessageKey<>("command.permission", FORMATTER).register();
 
+    public static final MessageKey<Audience> INVALID_QUERY = new MessageKey<>("query.invalid", FORMATTER).register();
     public static final MessageKey<Audience> NOTHING_CHANGED = new MessageKey<>("nothing.changed", FORMATTER).register();
 
     static {
@@ -53,6 +54,7 @@ public class Messages {
         file.setDefault(UNKNOWN_COMMAND, "%prefix% <red>The command <dark_gray>(<dark_red>%command%<dark_gray>) <red>does not exist");
         file.setDefault(NO_PERMISSION, "%prefix% <red>You have no rights <dark_gray>(<dark_red>%permission%<dark_gray>)");
 
+        file.setDefault(INVALID_QUERY, "%prefix% <red>The query pattern <dark_red>%query% <red>is invalid");
         file.setDefault(NOTHING_CHANGED, "%prefix% <red>Nothing could be changed");
         file.save();
     }
@@ -69,6 +71,7 @@ public class Messages {
         file.setDefault(UNKNOWN_COMMAND, "%prefix% <red>Der Befehl <dark_gray>(<dark_red>%command%<dark_gray>) <red>existiert nicht");
         file.setDefault(NO_PERMISSION, "%prefix%<red> Darauf hast du keine rechte <dark_gray>(<dark_red>%permission%<dark_gray>)");
 
+        file.setDefault(INVALID_QUERY, "%prefix% <red>Das Abfragemuster <dark_red>%query% <red>ist ungültig");
         file.setDefault(NOTHING_CHANGED, "%prefix% <red>Es konnte nichts geändert werden");
         file.save();
     }
