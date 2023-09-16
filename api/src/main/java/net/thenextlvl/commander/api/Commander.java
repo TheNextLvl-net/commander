@@ -1,19 +1,35 @@
 package net.thenextlvl.commander.api;
 
-import net.thenextlvl.commander.i18n.Placeholders;
+import net.thenextlvl.commander.api.command.CommandRegistry;
+import net.thenextlvl.commander.api.command.PlatformCommandRegistry;
+import net.thenextlvl.commander.api.permission.PermissionRegistry;
+import net.thenextlvl.commander.api.permission.PlatformPermissionRegistry;
 
-public abstract class Commander {
+public interface Commander {
     /**
-     * @return The command manager
+     * @return the command registry
      */
-    public abstract CommandManager commandManager();
+    CommandRegistry commandRegistry();
 
     /**
-     * @return The permission manager
+     * @return the permission registry
      */
-    public abstract PermissionManager permissionManager();
+    PermissionRegistry permissionRegistry();
 
-    static {
-        Placeholders.init();
+    /**
+     * @return the platform registries
+     */
+    PlatformRegistry platform();
+
+    interface PlatformRegistry {
+        /**
+         * @return the platform command registry
+         */
+        PlatformCommandRegistry<?> commandRegistry();
+
+        /**
+         * @return the platform permission registry
+         */
+        PlatformPermissionRegistry permissionRegistry();
     }
 }
