@@ -18,7 +18,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
 
     implementation(project(":api"))
-    implementation("net.thenextlvl.core:api:3.2.1")
+    implementation("net.thenextlvl.core:api:3.2.2")
 
     annotationProcessor("org.projectlombok:lombok:1.18.26")
 }
