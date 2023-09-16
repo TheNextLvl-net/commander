@@ -6,12 +6,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.thenextlvl.commander.api.Commander;
-import org.intellij.lang.annotations.RegExp;
 
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommandRegistry {
@@ -28,53 +26,38 @@ public class CommandRegistry {
     }
 
     /**
-     * Registered all removed commands
-     */
-    public void registerCommands() {
-        getCommander().commandRegistry().getRemovedCommands().forEach(this::registerCommands);
-    }
-
-    /**
-     * Register removed commands based on a query pattern
+     * Register a removed command query again
      *
-     * @param pattern the pattern to apply
+     * @param query the command query
+     * @return whether the command query was registered
      */
-    public void registerCommands(@RegExp String pattern) {
-        getCommander().commandRegistry().getRemovedCommands(pattern).forEach(this::registerCommand);
-    }
-
-    /**
-     * Register a removed command again
-     *
-     * @param literal the command literal
-     * @return whether the command was removed before
-     */
-    public boolean registerCommand(String literal) {
-        var remove = getRemovedCommands().remove(literal);
+    public boolean registerCommand(String query) {
+        var remove = getRemovedCommands().remove(query);
         if (remove) removedCommandsFile.save();
         return remove;
     }
 
     /**
-     * Unregister commands based on a pattern
+     * Unregister a command query
      *
-     * @param pattern the command pattern
+     * @param query the command query
      * @return whether the pattern was not registered before
      */
-    public boolean unregisterCommands(@RegExp String pattern) {
-        var added = getRemovedCommands().add(pattern);
+    public boolean unregisterCommands(String query) {
+        var added = getRemovedCommands().add(query);
         if (added) removedCommandsFile.save();
         return added;
     }
 
     /**
-     * Get whether a literal command is removed
+     * Get whether a command query is removed
      *
-     * @param literal the command literal
+     * @param query the command query
      * @return whether a command is removed
      */
-    public boolean isCommandRemoved(String literal) {
-        return getRemovedCommands().stream().anyMatch(literal::matches);
+    public boolean isCommandRemoved(String query) {
+        return getRemovedCommands().stream().anyMatch(s -> query.equals(s)
+                || (s.contains("*") && query.matches(s.replaceAll("\\*", ".+"))));
     }
 
     /**
@@ -84,16 +67,5 @@ public class CommandRegistry {
      */
     public Set<String> getRemovedCommands() {
         return removedCommandsFile.getRoot();
-    }
-
-    /**
-     * Get all removed command patterns based on a query pattern
-     *
-     * @param pattern the pattern for filtering the removed commands
-     * @return all removed commands patterns that match the query pattern
-     */
-    public Stream<String> getRemovedCommands(@RegExp String pattern) {
-        return getRemovedCommands().stream()
-                .filter(string -> string.matches(pattern));
     }
 }

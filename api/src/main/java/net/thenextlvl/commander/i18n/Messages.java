@@ -8,6 +8,7 @@ import net.kyori.adventure.audience.Audience;
 
 import java.util.Locale;
 
+@SuppressWarnings({"UnstableApiUsage", "removal", "deprecation"})
 public class Messages {
     public static final Placeholder.Formatter<Audience> FORMATTER = new Placeholder.Formatter<>();
     public static final SystemMessageKey<Audience> PREFIX = new SystemMessageKey<>("commander.prefix", FORMATTER).register();
@@ -22,7 +23,6 @@ public class Messages {
     public static final MessageKey<Audience> UNKNOWN_COMMAND = new MessageKey<>("command.unknown", FORMATTER).register();
     public static final MessageKey<Audience> NO_PERMISSION = new MessageKey<>("command.permission", FORMATTER).register();
 
-    public static final MessageKey<Audience> RESTART_REQUIRED = new MessageKey<>("restart.required", FORMATTER).register();
     public static final MessageKey<Audience> NOTHING_CHANGED = new MessageKey<>("nothing.changed", FORMATTER).register();
 
     static {
@@ -48,12 +48,11 @@ public class Messages {
         file.setDefault(PERMISSION_QUERY_DEFINED, "%prefix% <white>The permission of <green>%command% <white>is <green>%permission%");
         file.setDefault(PERMISSION_QUERY_UNDEFINED, "%prefix% <white>The permission of <green>%command% <white>is undefined");
 
-        file.setDefault(COMMAND_UNREGISTERED, "%prefix% <white>The command <green>%command% <white>will no longer be registered");
-        file.setDefault(COMMAND_REGISTERED, "%prefix% <white>The command <green>%command% <white>can be registered again");
+        file.setDefault(COMMAND_UNREGISTERED, "%prefix% <white>All commands matching <green>%command% <white>are removed now");
+        file.setDefault(COMMAND_REGISTERED, "%prefix% <white>All commands matching <green>%command% <white>can be used again");
         file.setDefault(UNKNOWN_COMMAND, "%prefix% <red>The command <dark_gray>(<dark_red>%command%<dark_gray>) <red>does not exist");
         file.setDefault(NO_PERMISSION, "%prefix% <red>You have no rights <dark_gray>(<dark_red>%permission%<dark_gray>)");
 
-        file.setDefault(RESTART_REQUIRED, "%prefix% <white>This change requires a restart");
         file.setDefault(NOTHING_CHANGED, "%prefix% <red>Nothing could be changed");
         file.save();
     }
@@ -65,12 +64,11 @@ public class Messages {
         file.setDefault(PERMISSION_QUERY_DEFINED, "%prefix% <white>Die Berechtigung auf <green>%command% <white>ist <green>%permission%");
         file.setDefault(PERMISSION_QUERY_UNDEFINED, "%prefix% <white>Die Berechtigung auf <green>%command% <white>ist undefiniert");
 
-        file.setDefault(COMMAND_UNREGISTERED, "%prefix% <white>Der Befehl <green>%command% <white>wird nicht länger registriert");
-        file.setDefault(COMMAND_REGISTERED, "%prefix% <white>Der Befehl <green>%command% <white>kann wieder registriert werden");
+        file.setDefault(COMMAND_UNREGISTERED, "%prefix% <white>Alle Befehle die <green>%command% <white>gleichen, wurden entfernt");
+        file.setDefault(COMMAND_REGISTERED, "%prefix% <white>Alle Befehle die <green>%command% <white>gleichen, können wieder genutzt werden");
         file.setDefault(UNKNOWN_COMMAND, "%prefix% <red>Der Befehl <dark_gray>(<dark_red>%command%<dark_gray>) <red>existiert nicht");
         file.setDefault(NO_PERMISSION, "%prefix%<red> Darauf hast du keine rechte <dark_gray>(<dark_red>%permission%<dark_gray>)");
 
-        file.setDefault(RESTART_REQUIRED, "%prefix% <white>Diese Änderung benötigt einen Neustart");
         file.setDefault(NOTHING_CHANGED, "%prefix% <red>Es konnte nichts geändert werden");
         file.save();
     }

@@ -2,26 +2,29 @@ package net.thenextlvl.commander.command;
 
 import core.api.placeholder.Placeholder;
 import lombok.RequiredArgsConstructor;
-import net.thenextlvl.commander.api.Commander;
 import net.thenextlvl.commander.i18n.Messages;
+import net.thenextlvl.commander.implementation.CraftCommander;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
+@SuppressWarnings("removal")
 public class CommanderCommand implements TabExecutor {
-    private final Commander commander;
+    private final CraftCommander commander;
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length >= 1 && args[0].equals("permission")) permission(sender, args);
         else if (args.length >= 1 && args[0].equals("unregister")) unregister(sender, args);
         else if (args.length >= 1 && args[0].equals("register")) register(sender, args);
@@ -40,13 +43,12 @@ public class CommanderCommand implements TabExecutor {
         if (args.length == 4) {
             var command = args[2];
             var permission = args[3].equals("null") ? null : args[3];
-            commander.permissionRegistry().getPermissionOverride().put(command, permission);
             commander.permissionRegistry().overridePermission(command, permission);
             var locale = sender instanceof Player player ? player.locale() : Locale.US;
             sender.sendRichMessage(Messages.PERMISSION_SET.message(locale, sender,
                     Placeholder.of("permission", permission),
                     Placeholder.of("command", command)));
-            Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
+            commander.platform().commandRegistry().updateCommands();
         } else sendCorrectSyntax(sender, "/command permission set [command] [permission]");
     }
 
@@ -57,7 +59,7 @@ public class CommanderCommand implements TabExecutor {
             var locale = sender instanceof Player player ? player.locale() : Locale.US;
             var message = success ? Messages.PERMISSION_RESET : Messages.NOTHING_CHANGED;
             sender.sendRichMessage(message.message(locale, sender, Placeholder.of("command", command)));
-            if (success) Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
+            if (success) commander.platform().commandRegistry().updateCommands();
         } else sendCorrectSyntax(sender, "/command permission reset [command]");
     }
 
@@ -75,13 +77,20 @@ public class CommanderCommand implements TabExecutor {
     }
 
     private void unregister(CommandSender sender, String[] args) {
-        if (args.length == 2) {
+        if (args.length != 2) {
+            sendCorrectSyntax(sender, "/command unregister [command]");
+            return;
+        }
+        var locale = sender instanceof Player player ? player.locale() : Locale.US;
+        try {
+            if (args[1].contains("*")) Pattern.compile(args[1].replaceAll("\\*", ".+"));
             var success = commander.commandRegistry().unregisterCommands(args[1]);
             var message = success ? Messages.COMMAND_UNREGISTERED : Messages.NOTHING_CHANGED;
-            var locale = sender instanceof Player player ? player.locale() : Locale.US;
             sender.sendRichMessage(message.message(locale, sender, Placeholder.of("command", args[1])));
-            if (success) sender.sendRichMessage(Messages.RESTART_REQUIRED.message(locale, sender));
-        } else sendCorrectSyntax(sender, "/command unregister [command]");
+            if (success) commander.platform().commandRegistry().updateCommands();
+        } catch (Exception e) {
+            sender.sendRichMessage(Messages.INVALID_QUERY.message(locale, sender, Placeholder.of("query", args[1])));
+        }
     }
 
     private void register(CommandSender sender, String[] args) {
@@ -91,7 +100,7 @@ public class CommanderCommand implements TabExecutor {
             var message = success ? Messages.COMMAND_REGISTERED : Messages.NOTHING_CHANGED;
             var locale = sender instanceof Player player ? player.locale() : Locale.US;
             sender.sendRichMessage(message.message(locale, sender, Placeholder.of("command", command)));
-            if (success) sender.sendRichMessage(Messages.RESTART_REQUIRED.message(locale, sender));
+            commander.platform().commandRegistry().updateCommands();
         } else sendCorrectSyntax(sender, "/command register [command]");
     }
 
@@ -103,7 +112,7 @@ public class CommanderCommand implements TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         List<String> suggestions = new ArrayList<>();
         if (args.length <= 1) {
             suggestions.add("permission");
@@ -111,9 +120,8 @@ public class CommanderCommand implements TabExecutor {
             suggestions.add("register");
         } else if (args.length == 2) {
             suggestions.addAll(switch (args[0]) {
-                case "unregister" -> Bukkit.getCommandMap().getKnownCommands().keySet().stream()
-                        .filter(entry -> !commander.commandRegistry().isCommandRemoved(entry))
-                        .filter(entry -> entry.contains(":"))
+                case "unregister" -> commander.platform().commandRegistry().getCommandNamespaces()
+                        .filter(name -> !commander.commandRegistry().isCommandRemoved(name))
                         .toList();
                 case "register" -> commander.commandRegistry().getRemovedCommands();
                 case "permission" -> List.of("reset", "set", "query");
