@@ -25,18 +25,17 @@ public class CommanderPlugin extends JavaPlugin {
     public void onEnable() {
         var registration = Bukkit.getServicesManager().getRegistration(Commander.class);
         if (registration == null) return;
-        var commander = registration.getProvider();
+        var commander = (CraftCommander) registration.getProvider();
 
         Bukkit.getScheduler().runTask(this, () -> {
-            commander.platformCommandRegistry().unregisterCommands();
-            commander.platformPermissionRegistry().overridePermissions();
+            commander.platform().permissionRegistry().overridePermissions();
         });
 
         registerCommands(commander);
         registerListeners(commander);
     }
 
-    private void registerCommands(Commander commander) {
+    private void registerCommands(CraftCommander commander) {
         registerCommand("command", new CommanderCommand(commander));
     }
 
@@ -47,7 +46,7 @@ public class CommanderPlugin extends JavaPlugin {
         command.setTabCompleter(executor);
     }
 
-    private void registerListeners(Commander commander) {
+    private void registerListeners(CraftCommander commander) {
         Bukkit.getPluginManager().registerEvents(new CommandListener(commander), this);
     }
 }
