@@ -15,13 +15,26 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-@RequiredArgsConstructor
-@SuppressWarnings("removal")
-public class CommanderCommand implements TabExecutor {
+public class CommanderCommand extends Command implements PluginIdentifiableCommand {
     private final CraftCommander commander;
+    private final Plugin plugin;
+
+    public CommanderCommand(CraftCommander commander, Plugin plugin) {
+        super("command", "Manage the commands on your server",
+                "/command unregister | register | permission", List.of());
+        setPermission("commander.admin");
+        this.commander = commander;
+        this.plugin = plugin;
+    }
+
+    @NotNull
+    @Override
+    public Plugin getPlugin() {
+        return plugin;
+    }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
         if (args.length >= 1 && args[0].equals("permission")) permission(sender, args);
         else if (args.length >= 1 && args[0].equals("unregister")) unregister(sender, args);
         else if (args.length >= 1 && args[0].equals("register")) register(sender, args);
@@ -105,7 +118,7 @@ public class CommanderCommand implements TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
         List<String> suggestions = new ArrayList<>();
         if (args.length <= 1) {
             suggestions.add("permission");

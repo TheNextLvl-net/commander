@@ -5,7 +5,6 @@ import net.thenextlvl.commander.command.CommanderCommand;
 import net.thenextlvl.commander.implementation.CraftCommander;
 import net.thenextlvl.commander.listener.CommandListener;
 import org.bukkit.Bukkit;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -34,14 +33,7 @@ public class CommanderPlugin extends JavaPlugin {
     }
 
     private void registerCommands(CraftCommander commander) {
-        registerCommand("command", new CommanderCommand(commander));
-    }
-
-    private void registerCommand(String name, TabExecutor executor) {
-        var command = getCommand(name);
-        if (command == null) return;
-        command.setExecutor(executor);
-        command.setTabCompleter(executor);
+        Bukkit.getCommandMap().register(getName(), new CommanderCommand(commander, this));
     }
 
     private void registerListeners(CraftCommander commander) {
