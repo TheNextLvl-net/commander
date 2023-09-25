@@ -15,12 +15,12 @@ import org.bukkit.event.server.ServerCommandEvent;
 public class CommandListener implements Listener {
     private final CraftCommander commander;
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCommandSend(PlayerCommandSendEvent event) {
         event.getCommands().removeIf(literal -> commander.commandRegistry().isCommandRemoved(literal));
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCommand(ServerCommandEvent event) {
         var literal = event.getCommand().split(" ")[0];
         if (commander.platform().commandRegistry().isCommandRegistered(literal)
@@ -30,7 +30,7 @@ public class CommandListener implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onUnknownCommand(UnknownCommandEvent event) {
         var literal = event.getCommandLine().split(" ")[0];
         if (!commander.commandRegistry().isCommandRemoved(literal)) return;
@@ -38,7 +38,7 @@ public class CommandListener implements Listener {
                 Placeholder.parsed("command", literal)));
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCommand(PlayerCommandPreprocessEvent event) {
         var player = event.getPlayer();
         var literal = event.getMessage().substring(1).split(" ")[0];
