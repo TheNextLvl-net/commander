@@ -1,22 +1,17 @@
 package net.thenextlvl.commander.listener;
 
-import core.api.placeholder.Placeholder;
 import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.thenextlvl.commander.i18n.Messages;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.implementation.CraftCommander;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.command.UnknownCommandEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
-import java.util.Locale;
-
 @RequiredArgsConstructor
-@SuppressWarnings("removal")
 public class CommandListener implements Listener {
     private final CraftCommander commander;
 
@@ -30,9 +25,8 @@ public class CommandListener implements Listener {
         var literal = event.getCommand().split(" ")[0];
         if (commander.platform().commandRegistry().isCommandRegistered(literal)
                 && !commander.commandRegistry().isCommandRemoved(literal)) return;
-        var locale = event.getSender() instanceof Player player ? player.locale() : Locale.US;
-        event.getSender().sendRichMessage(Messages.UNKNOWN_COMMAND.message(locale,
-                event.getSender(), Placeholder.of("command", literal)));
+        commander.bundle().sendMessage(event.getSender(), "command.unknown",
+                Placeholder.parsed("command", literal));
         event.setCancelled(true);
     }
 
@@ -40,9 +34,8 @@ public class CommandListener implements Listener {
     public void onUnknownCommand(UnknownCommandEvent event) {
         var literal = event.getCommandLine().split(" ")[0];
         if (!commander.commandRegistry().isCommandRemoved(literal)) return;
-        var locale = event.getSender() instanceof Player player ? player.locale() : Locale.US;
-        event.message(MiniMessage.miniMessage().deserialize(Messages.UNKNOWN_COMMAND
-                .message(locale, event.getSender(), Placeholder.of("command", literal))));
+        event.message(commander.bundle().component(event.getSender(), "command.unknown",
+                Placeholder.parsed("command", literal)));
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -53,11 +46,13 @@ public class CommandListener implements Listener {
         if (command == null || commander.commandRegistry().isCommandRemoved(literal)) {
             event.setCancelled(true);
             if (literal.isBlank()) return;
-            player.sendRichMessage(Messages.UNKNOWN_COMMAND.message(player.locale(), player,
-                    Placeholder.of("command", literal)));
+            commander.bundle().sendMessage(player, "command.unknown",
+                    Placeholder.parsed("command", literal));
         } else if (!command.testPermissionSilent(player)) {
-            player.sendRichMessage(Messages.NO_PERMISSION.message(player.locale(), player,
-                    Placeholder.of("permission", command.getPermission() != null ? command.getPermission() : "unknown")));
+            var permission = command.getPermission() != null ? command.getPermission() : null;
+            if (permission != null) commander.bundle().sendMessage(player, "command.permission",
+                    Placeholder.parsed("permission", permission));
+            else commander.bundle().sendMessage(player, "command.permission.unknown");
             event.setCancelled(true);
         }
     }

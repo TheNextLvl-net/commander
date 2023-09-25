@@ -2,21 +2,16 @@ package net.thenextlvl.commander.command;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
-import com.velocitypowered.api.proxy.Player;
-import core.api.placeholder.Placeholder;
 import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.thenextlvl.commander.i18n.Messages;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.implementation.ProxyCommander;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
-@SuppressWarnings("removal")
 public class CommanderCommand implements SimpleCommand {
     private final ProxyCommander commander;
 
@@ -26,45 +21,39 @@ public class CommanderCommand implements SimpleCommand {
         var args = invocation.arguments();
         if (args.length >= 1 && args[0].equals("unregister")) unregister(source, args);
         else if (args.length >= 1 && args[0].equals("register")) register(source, args);
-        else sendCorrectSyntax(source, "/vcommand register | unregister");
+        else notifySyntax(source, "register | unregister");
     }
 
-    private void unregister(CommandSource source, String[] args) {
-        if (args.length != 2) {
-            sendCorrectSyntax(source, "/command unregister [command]");
-            return;
-        }
-        var locale = source instanceof Player player ? player.getPlayerSettings().getLocale() : Locale.US;
-        try {
+    private void unregister(CommandSource sender, String[] args) {
+        if (args.length == 2) try {
             if (args[1].contains("*")) Pattern.compile(args[1].replaceAll("\\*", ".+"));
             var success = commander.commandRegistry().unregisterCommands(args[1]);
-            var message = success ? Messages.COMMAND_UNREGISTERED : Messages.NOTHING_CHANGED;
-            source.sendMessage(MiniMessage.miniMessage().deserialize(
-                    message.message(locale, source, Placeholder.of("command", args[1]))));
+            var message = success ? "command.unregistered" : "nothing.changed";
+            commander.bundle().sendMessage(sender, message, Placeholder.parsed("command", args[1]));
             if (success) commander.platform().commandRegistry().updateCommands();
         } catch (Exception e) {
-            source.sendMessage(MiniMessage.miniMessage().deserialize(Messages.INVALID_QUERY
-                    .message(locale, source, Placeholder.of("query", args[1]))));
+            commander.bundle().sendMessage(sender, "query.invalid", Placeholder.parsed("query", args[1]));
         }
+        else notifySyntax(sender, "unregister [command]");
     }
 
-    private void register(CommandSource sender, String[] args) {
-        if (args.length == 2) {
-            var command = args[1];
-            var success = commander.commandRegistry().registerCommand(command);
-            var message = success ? Messages.COMMAND_REGISTERED : Messages.NOTHING_CHANGED;
-            var locale = sender instanceof Player player ? player.getPlayerSettings().getLocale() : Locale.US;
-            sender.sendMessage(MiniMessage.miniMessage().deserialize(message.message(locale, sender,
-                    Placeholder.of("command", command))));
-            commander.platform().commandRegistry().updateCommands();
-        } else sendCorrectSyntax(sender, "/command register [command]");
+    private void register(CommandSource source, String[] args) {
+        if (args.length != 2) {
+            notifySyntax(source, "register [command]");
+            return;
+        }
+        var command = args[1];
+        var success = commander.commandRegistry().registerCommand(command);
+        var message = success ? "command.registered" : "nothing.changed";
+        commander.bundle().sendMessage(source, message, Placeholder.parsed("command", command));
+        commander.platform().commandRegistry().updateCommands();
     }
 
-    private void sendCorrectSyntax(CommandSource source, String message) {
-        source.sendMessage(MiniMessage.miniMessage().deserialize(Messages.FORMATTER.format("%prefix% <red>" + message
-                .replace("[", "<dark_gray>[<gold>").replace("]", "<dark_gray>]")
-                .replace("|", "<dark_gray>|<red>")
-        )));
+    private void notifySyntax(CommandSource source, String message) {
+        commander.bundle().sendRawMessage(source, "%prefix% <red>/v-command " + message
+                .replace("[", "<dark_gray>[<gold>")
+                .replace("]", "<dark_gray>]")
+                .replace("|", "<dark_gray>|<red>"));
     }
 
     @Override
