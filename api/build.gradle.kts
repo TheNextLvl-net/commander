@@ -18,6 +18,7 @@ java {
 }
 
 dependencies {
+    compileOnly("net.thenextlvl.core:annotations:2.0.0")
     compileOnly("org.projectlombok:lombok:1.18.28")
     compileOnly("com.google.code.gson:gson:2.10")
     compileOnly("net.kyori:adventure-api:4.13.1")
