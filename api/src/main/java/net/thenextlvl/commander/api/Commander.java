@@ -1,11 +1,11 @@
 package net.thenextlvl.commander.api;
 
+import core.annotation.MethodsReturnNotNullByDefault;
 import core.i18n.file.ComponentBundle;
-import net.thenextlvl.commander.api.command.CommandRegistry;
-import net.thenextlvl.commander.api.command.PlatformCommandRegistry;
-import net.thenextlvl.commander.api.permission.PermissionRegistry;
-import net.thenextlvl.commander.api.permission.PlatformPermissionRegistry;
+import net.thenextlvl.commander.api.platform.CommandManager;
+import net.thenextlvl.commander.api.platform.PermissionManager;
 
+@MethodsReturnNotNullByDefault
 public interface Commander {
 
     /**
@@ -14,29 +14,17 @@ public interface Commander {
     ComponentBundle bundle();
 
     /**
-     * @return the command registry
+     * @return the command information registry
      */
     CommandRegistry commandRegistry();
 
     /**
-     * @return the permission registry
+     * @return the platform command manager
      */
-    PermissionRegistry permissionRegistry();
+    CommandManager<?> commandManager();
 
     /**
-     * @return the platform registries
+     * @return the platform permission manager
      */
-    PlatformRegistry platform();
-
-    interface PlatformRegistry {
-        /**
-         * @return the platform command registry
-         */
-        PlatformCommandRegistry<?> commandRegistry();
-
-        /**
-         * @return the platform permission registry
-         */
-        PlatformPermissionRegistry permissionRegistry();
-    }
+    PermissionManager permissionManager();
 }
