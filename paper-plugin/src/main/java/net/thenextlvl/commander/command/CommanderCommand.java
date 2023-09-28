@@ -27,6 +27,10 @@ public class CommanderCommand extends Command implements PluginIdentifiableComma
         this.plugin = plugin;
     }
 
+    @Override
+    public void setPermission(@Nullable String permission) {
+    }
+
     @NotNull
     @Override
     public Plugin getPlugin() {
