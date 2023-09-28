@@ -42,6 +42,8 @@ public class CommanderCommand extends Command implements PluginIdentifiableComma
         if (args.length >= 1 && args[0].equals("permission")) permission(sender, args);
         else if (args.length >= 1 && args[0].equals("unregister")) unregister(sender, args);
         else if (args.length >= 1 && args[0].equals("register")) register(sender, args);
+        else if (args.length >= 1 && args[0].equals("hide")) hide(sender, args);
+        else if (args.length >= 1 && args[0].equals("reveal")) reveal(sender, args);
         else notifySyntax(sender, getUsage());
         return true;
     }
@@ -110,8 +112,32 @@ public class CommanderCommand extends Command implements PluginIdentifiableComma
         var command = args[1];
         var success = commander.commandRegistry().registerCommand(command);
         var message = success ? "command.registered" : "nothing.changed";
-        commander.bundle().sendMessage(sender, message, Placeholder.parsed("command", command));
-        commander.platform().commandRegistry().updateCommands();
+        commander.bundle().sendMessage(sender, message, Placeholder.parsed("command", args[1]));
+        if (success) commander.commandManager().updateCommands();
+    }
+
+    private void hide(CommandSender sender, String[] args) {
+        if (args.length == 2) try {
+            if (args[1].contains("*")) CommandInfo.compile(args[1]);
+            var success = commander.commandRegistry().registerCommandInfo(CommandInfo.hide(args[1]));
+            var message = success ? "command.hidden" : "nothing.changed";
+            commander.bundle().sendMessage(sender, message, Placeholder.parsed("command", args[1]));
+            if (success) commander.commandManager().updateCommands();
+        } catch (Exception e) {
+            commander.bundle().sendMessage(sender, "query.invalid", Placeholder.parsed("query", args[1]));
+        }
+        else notifySyntax(sender, "/command hide [command]");
+    }
+
+    private void reveal(CommandSender sender, String[] args) {
+        if (args.length != 2) {
+            notifySyntax(sender, "/command reveal [command]");
+            return;
+        }
+        var success = commander.commandRegistry().revealCommand(args[1]);
+        var message = success ? "command.revealed" : "nothing.changed";
+        commander.bundle().sendMessage(sender, message, Placeholder.parsed("command", args[1]));
+        if (success) commander.commandManager().updateCommands();
     }
 
     private void notifySyntax(CommandSender sender, String message) {
@@ -128,26 +154,42 @@ public class CommanderCommand extends Command implements PluginIdentifiableComma
             suggestions.add("permission");
             suggestions.add("unregister");
             suggestions.add("register");
+            suggestions.add("reveal");
+            suggestions.add("reset");
+            suggestions.add("hide");
         } else if (args.length == 2) {
             suggestions.addAll(switch (args[0]) {
-                case "unregister" -> commander.platform().commandRegistry().getCommandNamespaces()
-                        .filter(name -> !commander.commandRegistry().isCommandRemoved(name))
+                case "reset" -> commander.commandRegistry().getCommandInformation().stream()
+                        .map(CommandInfo::query)
                         .toList();
-                case "register" -> commander.commandRegistry().getRemovedCommands();
+                case "unregister" -> commander.commandManager().getCommandNames()
+                        .filter(literal -> !commander.commandRegistry().isRemoved(literal))
+                        .toList();
+                case "register" -> commander.commandRegistry().getCommandInformation().stream()
+                        .filter(CommandInfo::isRemoved)
+                        .map(CommandInfo::query)
+                        .toList();
+                case "hide" -> commander.commandManager().getCommandNames()
+                        .filter(literal -> !commander.commandRegistry().isHidden(literal))
+                        .toList();
+                case "reveal" -> commander.commandRegistry().getCommandInformation().stream()
+                        .filter(CommandInfo::isHidden)
+                        .map(CommandInfo::query)
+                        .toList();
                 case "permission" -> List.of("reset", "set", "query");
                 default -> Collections.emptyList();
             });
         } else if (args.length == 3) {
             if (args[0].equals("permission")) {
-                if (args[1].equals("reset") || args[1].equals("set") || args[1].equals("query")) {
-                    suggestions.addAll(commander.permissionRegistry().getPermissionOverride().keySet());
-                }
-                if (args[1].equals("set") || args[1].equals("query")) {
-                    suggestions.addAll(Bukkit.getCommandMap().getKnownCommands().keySet().stream()
-                            .filter(entry -> !commander.commandRegistry().isCommandRemoved(entry))
-                            .filter(entry -> entry.contains(":"))
-                            .toList());
-                }
+                if (args[1].equals("set") || args[1].equals("query")) suggestions.addAll(commander.commandManager()
+                        .getCommandNames()
+                        .filter(entry -> !commander.commandRegistry().isRemoved(entry))
+                        .toList());
+                else if (args[1].equals("reset")) suggestions.addAll(commander.commandRegistry()
+                        .getCommandInformation().stream()
+                        .filter(info -> info.permission() != null)
+                        .map(CommandInfo::query)
+                        .toList());
             }
         } else if (args.length == 4) {
             if (args[0].equals("permission")) {
