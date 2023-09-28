@@ -21,8 +21,8 @@ public class CommanderCommand extends Command implements PluginIdentifiableComma
 
     public CommanderCommand(CraftCommander commander, Plugin plugin) {
         super("command", "Manage the commands on your server",
-                "/command unregister | register | permission", List.of());
-        setPermission("commander.admin");
+                "/command unregister | register | hide | reveal | permission | reset", List.of());
+        super.setPermission("commander.admin");
         this.commander = commander;
         this.plugin = plugin;
     }
@@ -44,6 +44,7 @@ public class CommanderCommand extends Command implements PluginIdentifiableComma
         else if (args.length >= 1 && args[0].equals("register")) register(sender, args);
         else if (args.length >= 1 && args[0].equals("hide")) hide(sender, args);
         else if (args.length >= 1 && args[0].equals("reveal")) reveal(sender, args);
+        else if (args.length >= 1 && args[0].equals("reset")) reset(sender, args);
         else notifySyntax(sender, getUsage());
         return true;
     }
