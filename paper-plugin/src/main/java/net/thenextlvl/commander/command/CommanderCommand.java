@@ -186,7 +186,7 @@ public class CommanderCommand extends Command implements PluginIdentifiableComma
                         .map(CommandInfo::query)
                         .toList();
                 case "hide" -> commander.commandManager().getCommandNames()
-                        .filter(literal -> !commander.commandRegistry().isHidden(literal))
+                        .filter(literal -> !commander.commandRegistry().hasStatus(literal))
                         .toList();
                 case "reveal" -> commander.commandRegistry().getCommandInformation().stream()
                         .filter(CommandInfo::isHidden)

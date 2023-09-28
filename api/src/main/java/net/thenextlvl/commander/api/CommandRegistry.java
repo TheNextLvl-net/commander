@@ -153,6 +153,10 @@ public class CommandRegistry {
         return getCommandInformation().stream().anyMatch(filter);
     }
 
+    public boolean hasStatus(String literal) {
+        return containsCommandInfo(info -> info.status() != null && info.nameMatches(literal));
+    }
+
     public boolean isRemoved(String literal) {
         return containsCommandInfo(info -> info.isRemoved() && info.nameMatches(literal));
     }
