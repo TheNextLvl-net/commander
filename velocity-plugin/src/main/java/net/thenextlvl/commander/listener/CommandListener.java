@@ -14,13 +14,13 @@ public class CommandListener {
     @SuppressWarnings("UnstableApiUsage")
     public void onCommandSend(PlayerAvailableCommandsEvent event) {
         event.getRootNode().getChildren().removeIf(commandNode ->
-                commander.commandRegistry().isCommandRemoved(commandNode.getName()));
+                commander.commandRegistry().hasStatus(commandNode.getName()));
     }
 
     @Subscribe
     public void onCommand(CommandExecuteEvent event) {
         var literal = event.getCommand().split(" ")[0];
-        if (!commander.commandRegistry().isCommandRemoved(literal)) return;
+        if (!commander.commandRegistry().isRemoved(literal)) return;
         event.setResult(CommandExecuteEvent.CommandResult.forwardToServer());
     }
 }
