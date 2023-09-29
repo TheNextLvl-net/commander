@@ -11,7 +11,7 @@ public interface PermissionManager<C> {
     /**
      * @return the corresponding commander instance
      */
-    Commander commander();
+    Commander<C> commander();
 
     /**
      * Override all registered permissions

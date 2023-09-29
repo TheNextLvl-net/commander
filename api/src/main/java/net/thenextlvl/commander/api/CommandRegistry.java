@@ -25,7 +25,7 @@ import java.util.function.Predicate;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommandRegistry {
     private final GsonFile<HashSet<CommandInfo>> commandsFile;
-    private final @Getter Commander commander;
+    private final @Getter Commander<?> commander;
 
     /**
      * Construct a command information registry
@@ -33,7 +33,7 @@ public class CommandRegistry {
      * @param commander  the corresponding command instance
      * @param dataFolder the data-folder to create the files in
      */
-    public CommandRegistry(Commander commander, File dataFolder) {
+    public CommandRegistry(Commander<?> commander, File dataFolder) {
         this(new GsonFile<>(
                 new File(dataFolder, "commands.json"),
                 new HashSet<CommandInfo>(),

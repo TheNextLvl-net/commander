@@ -58,5 +58,5 @@ public interface CommandManager<C> {
      */
     void updateCommands();
 
-    Commander commander();
+    Commander<C> commander();
 }

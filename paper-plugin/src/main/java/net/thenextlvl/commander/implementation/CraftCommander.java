@@ -8,6 +8,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.thenextlvl.commander.api.CommandRegistry;
 import net.thenextlvl.commander.api.Commander;
+import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -15,7 +16,7 @@ import java.util.Locale;
 
 @Getter
 @Accessors(fluent = true)
-public class CraftCommander implements Commander {
+public class CraftCommander implements Commander<Command> {
     private final ComponentBundle bundle;
     private final CommandRegistry commandRegistry;
     private final CraftCommandManager commandManager;

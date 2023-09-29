@@ -6,7 +6,7 @@ import net.thenextlvl.commander.api.platform.CommandManager;
 import net.thenextlvl.commander.api.platform.PermissionManager;
 
 @MethodsReturnNotNullByDefault
-public interface Commander {
+public interface Commander<C> {
 
     /**
      * @return the component bundle
@@ -21,10 +21,10 @@ public interface Commander {
     /**
      * @return the platform command manager
      */
-    CommandManager<?> commandManager();
+    CommandManager<C> commandManager();
 
     /**
      * @return the platform permission manager
      */
-    PermissionManager permissionManager();
+    PermissionManager<C> permissionManager();
 }
