@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
     compileOnly("org.projectlombok:lombok:1.18.28")
+    compileOnly("net.thenextlvl.core:annotations:2.0.0")
     compileOnly("com.velocitypowered:velocity-api:3.2.0-SNAPSHOT")
 
     implementation(project(":api"))
