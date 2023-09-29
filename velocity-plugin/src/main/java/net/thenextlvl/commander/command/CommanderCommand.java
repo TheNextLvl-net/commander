@@ -125,8 +125,12 @@ public class CommanderCommand implements SimpleCommand {
                 default -> Collections.emptyList();
             });
         }
-        suggestions.removeIf(token -> !token.toLowerCase().contains(args[args.length - 1].toLowerCase()));
-        return suggestions;
+        return args.length > 0 ? suggestions.stream()
+                .filter((name) -> {
+                    var currentArg = args[args.length - 1];
+                    return name.regionMatches(true, 0, currentArg, 0, currentArg.length());
+                })
+                .toList() : suggestions;
     }
 
     @Override
