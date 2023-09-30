@@ -3,7 +3,10 @@ package net.thenextlvl.commander.velocity.listener;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.command.CommandExecuteEvent;
 import com.velocitypowered.api.event.command.PlayerAvailableCommandsEvent;
+import com.velocitypowered.api.permission.Tristate;
+import com.velocitypowered.api.proxy.Player;
 import lombok.RequiredArgsConstructor;
+import net.thenextlvl.commander.api.CommandInfo;
 import net.thenextlvl.commander.velocity.implementation.ProxyCommander;
 
 @RequiredArgsConstructor
@@ -13,8 +16,13 @@ public class CommandListener {
     @Subscribe
     @SuppressWarnings("UnstableApiUsage")
     public void onCommandSend(PlayerAvailableCommandsEvent event) {
-        event.getRootNode().getChildren().removeIf(commandNode ->
-                commander.commandRegistry().hasStatus(commandNode.getName()));
+        event.getRootNode().getChildren().removeIf(commandNode -> commander.commandRegistry()
+                .containsCommandInfo(info -> isHidden(event.getPlayer(), commandNode.getName(), info)));
+    }
+
+    private boolean isHidden(Player player, String literal, CommandInfo info) {
+        return info.status() != null && info.nameMatches(literal) &&
+                (!info.isHidden() || !player.getPermissionValue("commander.bypass").equals(Tristate.TRUE));
     }
 
     @Subscribe

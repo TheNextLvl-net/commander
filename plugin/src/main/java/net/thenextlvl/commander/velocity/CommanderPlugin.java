@@ -21,7 +21,7 @@ import java.nio.file.Path;
         name = "Commander",
         authors = "NonSwag",
         url = "https://thenextlvl.net",
-        version = "3.0.2")
+        version = "3.0.3")
 public class CommanderPlugin {
     private final ProxyServer server;
     private final Logger logger;

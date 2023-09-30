@@ -43,7 +43,7 @@ tasks.shadowJar {
 
 paper {
     name = "Commander"
-    main = "net.thenextlvl.commander.CommanderPlugin"
+    main = "net.thenextlvl.commander.paper.CommanderPlugin"
     apiVersion = "1.19"
     // foliaSupported = true
     website = "https://thenextlvl.net"

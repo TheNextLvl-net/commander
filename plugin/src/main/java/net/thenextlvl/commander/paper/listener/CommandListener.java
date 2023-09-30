@@ -2,8 +2,10 @@ package net.thenextlvl.commander.paper.listener;
 
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.util.TriState;
 import net.thenextlvl.commander.api.CommandInfo;
 import net.thenextlvl.commander.paper.implementation.CraftCommander;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -18,8 +20,13 @@ public class CommandListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCommandSend(PlayerCommandSendEvent event) {
-        event.getCommands().removeIf(literal -> commander.commandRegistry().containsCommandInfo(info ->
-                info.status() != null && info.nameMatches(literal)));
+        event.getCommands().removeIf(literal -> commander.commandRegistry()
+                .containsCommandInfo(info -> isHidden(event.getPlayer(), literal, info)));
+    }
+
+    private boolean isHidden(Player player, String literal, CommandInfo info) {
+        return info.status() != null && info.nameMatches(literal) &&
+                (!info.isHidden() || !player.permissionValue("commander.bypass").equals(TriState.TRUE));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
