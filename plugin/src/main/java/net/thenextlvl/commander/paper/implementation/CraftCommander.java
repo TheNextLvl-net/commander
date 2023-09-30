@@ -1,4 +1,4 @@
-package net.thenextlvl.commander.implementation;
+package net.thenextlvl.commander.paper.implementation;
 
 import core.i18n.file.ComponentBundle;
 import lombok.Getter;

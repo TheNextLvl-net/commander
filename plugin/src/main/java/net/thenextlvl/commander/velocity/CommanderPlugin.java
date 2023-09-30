@@ -1,4 +1,4 @@
-package net.thenextlvl.commander;
+package net.thenextlvl.commander.velocity;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
@@ -6,11 +6,11 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import net.thenextlvl.commander.velocity.listener.CommandListener;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import net.thenextlvl.commander.command.CommanderCommand;
-import net.thenextlvl.commander.implementation.ProxyCommander;
-import net.thenextlvl.commander.listener.CommandListener;
+import net.thenextlvl.commander.velocity.command.CommanderCommand;
+import net.thenextlvl.commander.velocity.implementation.ProxyCommander;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;

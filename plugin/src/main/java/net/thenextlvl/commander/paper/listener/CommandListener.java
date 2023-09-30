@@ -1,9 +1,9 @@
-package net.thenextlvl.commander.listener;
+package net.thenextlvl.commander.paper.listener;
 
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.api.CommandInfo;
-import net.thenextlvl.commander.implementation.CraftCommander;
+import net.thenextlvl.commander.paper.implementation.CraftCommander;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

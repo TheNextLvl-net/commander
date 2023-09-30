@@ -1,8 +1,8 @@
-package net.thenextlvl.commander.command;
+package net.thenextlvl.commander.paper.command;
 
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.api.CommandInfo;
-import net.thenextlvl.commander.implementation.CraftCommander;
+import net.thenextlvl.commander.paper.implementation.CraftCommander;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

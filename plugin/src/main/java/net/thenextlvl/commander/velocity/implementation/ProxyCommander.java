@@ -1,7 +1,8 @@
-package net.thenextlvl.commander.implementation;
+package net.thenextlvl.commander.velocity.implementation;
 
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.proxy.Player;
+import net.thenextlvl.commander.velocity.CommanderPlugin;
 import core.annotation.MethodsReturnNotNullByDefault;
 import core.i18n.file.ComponentBundle;
 import lombok.Getter;
@@ -9,7 +10,6 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import net.thenextlvl.commander.CommanderPlugin;
 import net.thenextlvl.commander.api.CommandRegistry;
 import net.thenextlvl.commander.api.Commander;
 import net.thenextlvl.commander.api.platform.PermissionManager;

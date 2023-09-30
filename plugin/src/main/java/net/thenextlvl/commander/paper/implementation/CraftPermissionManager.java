@@ -1,4 +1,4 @@
-package net.thenextlvl.commander.implementation;
+package net.thenextlvl.commander.paper.implementation;
 
 import core.annotation.MethodsReturnNotNullByDefault;
 import core.annotation.ParametersAreNotNullByDefault;

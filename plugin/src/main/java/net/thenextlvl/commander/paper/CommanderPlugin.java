@@ -1,9 +1,9 @@
-package net.thenextlvl.commander;
+package net.thenextlvl.commander.paper;
 
 import net.thenextlvl.commander.api.Commander;
-import net.thenextlvl.commander.command.CommanderCommand;
-import net.thenextlvl.commander.implementation.CraftCommander;
-import net.thenextlvl.commander.listener.CommandListener;
+import net.thenextlvl.commander.paper.command.CommanderCommand;
+import net.thenextlvl.commander.paper.implementation.CraftCommander;
+import net.thenextlvl.commander.paper.listener.CommandListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;

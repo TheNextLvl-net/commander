@@ -1,10 +1,10 @@
-package net.thenextlvl.commander.implementation;
+package net.thenextlvl.commander.velocity.implementation;
 
 import com.velocitypowered.api.command.CommandMeta;
 import core.annotation.MethodsReturnNotNullByDefault;
 import core.annotation.ParametersAreNotNullByDefault;
 import core.annotation.TypesAreNotNullByDefault;
-import net.thenextlvl.commander.CommanderPlugin;
+import net.thenextlvl.commander.velocity.CommanderPlugin;
 import net.thenextlvl.commander.api.CommandInfo;
 import net.thenextlvl.commander.api.platform.CommandManager;
 
