@@ -1,21 +1,25 @@
 # Commander
 A must-have command management system for your minecraft server.<br/>
-With **Commander** you can _remove_ commands you don't want,<br/>
+With **Commander** you can _remove_ or _hide_ commands you don't want,<br/>
 _change_; _remove_ or _add_ permissions to existing commands.<br/>
 Also, Commander improves the **no permission** and **unknown command** messages.
 
 ## Usage
 
-_In order to use `/command` the permission `commander.admin` is required_
+_In order to use `/command` the permission `commander.admin` is required_<br/>
+_To bypass the command hiding feature the explicite permission `commander.bypass` is required_
 
 ### Permissions
 
-- To _change_ the _permission_ of a command, use: `/command permission set [command] [permission]`<br/>
-- To completely _remove_ a _permission_ from a command, use: `/command permission set [command] null`<br/>
-- To _reset_ the _permission_ of a command to its default value, use: `/command permission reset [command]`<br/>
-- To _see_ what the _permission_ of a certain command is, use: `/command permission query [command]`
+- To change the permission of a command, use: `/command permission set [command] [permission]`<br/>
+- To completely remove a permission from a command, use: `/command permission set [command] null`<br/>
+- To reset the permission of a command to its default value, use: `/command permission reset [command]`<br/>
+- To see what the permission of a certain command is, use: `/command permission query [command]`
 
 ### Commands
 
-To _delete_ a _command_ for everyone, use: `/command unregister [command]`<br/>
-To _get_ a deleted command _back_, use: `/command register [command]`<br/>
+To remove a command for everyone, use: `/command unregister [command]`<br/>
+To add a removed command back, use: `/command register [command]`<br/>
+To hide a command, use: `/command hide [command]`<br/>
+To reveal a command again, use: `/command reveal [command]`<br/>
+To completely reset a command, use: `/command reset [command]`
