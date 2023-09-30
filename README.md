@@ -7,7 +7,7 @@ Also, Commander improves the **no permission** and **unknown command** messages.
 ## Usage
 
 _In order to use `/command` the permission `commander.admin` is required_<br/>
-_To bypass the command hiding feature the explicite permission `commander.bypass` is required_
+_To bypass the command hiding feature the explicit permission `commander.bypass` is required_
 
 ### Permissions
 
