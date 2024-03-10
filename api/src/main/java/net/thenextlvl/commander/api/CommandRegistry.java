@@ -6,7 +6,9 @@ import core.annotation.FieldsAreNotNullByDefault;
 import core.annotation.MethodsReturnNotNullByDefault;
 import core.annotation.ParametersAreNotNullByDefault;
 import core.annotation.TypesAreNotNullByDefault;
-import core.api.file.format.GsonFile;
+import core.file.FileIO;
+import core.file.format.GsonFile;
+import core.io.IO;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,7 @@ import java.util.function.Predicate;
 @MethodsReturnNotNullByDefault
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommandRegistry {
-    private final GsonFile<HashSet<CommandInfo>> commandsFile;
+    private final FileIO<HashSet<CommandInfo>> commandsFile;
     private final @Getter Commander<?> commander;
 
     /**
@@ -35,7 +37,7 @@ public class CommandRegistry {
      */
     public CommandRegistry(Commander<?> commander, File dataFolder) {
         this(new GsonFile<>(
-                new File(dataFolder, "commands.json"),
+                IO.of(dataFolder, "commands.json"),
                 new HashSet<CommandInfo>(),
                 new TypeToken<>() {
                 },
