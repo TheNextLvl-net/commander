@@ -37,6 +37,7 @@ dependencies {
 
 
 tasks.shadowJar {
+    archiveBaseName.set("commander")
     minimize()
 }
 

@@ -3,4 +3,4 @@ plugins {
 }
 
 group = "net.thenextlvl.commander"
-version = "3.0.3"
+version = "3.0.4"
