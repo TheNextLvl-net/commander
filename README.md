@@ -2,7 +2,8 @@
 A must-have command management system for your minecraft server.<br/>
 With **Commander** you can _remove_ or _hide_ commands you don't want,<br/>
 _change_; _remove_ or _add_ permissions to existing commands.<br/>
-Also, Commander improves the **no permission** and **unknown command** messages.
+Also, Commander improves the **no permission** and **unknown command** messages.<br/>
+Every message is localized and can be customized.
 
 ![image](https://github.com/TheNextLvl-net/commander/assets/54660361/3cdb5f22-e6f7-4835-b051-e647d3afa18b)
 
