@@ -1,4 +1,5 @@
 import io.papermc.hangarpublishplugin.model.Platforms
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
     id("java")
@@ -43,6 +44,7 @@ tasks.shadowJar {
 
 paper {
     name = "Commander"
+    load = BukkitPluginDescription.PluginLoadOrder.STARTUP
     main = "net.thenextlvl.commander.paper.CommanderPlugin"
     apiVersion = "1.19"
     foliaSupported = true
