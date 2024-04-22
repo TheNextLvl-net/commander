@@ -3,8 +3,8 @@ plugins {
     id("maven-publish")
 }
 
-group = rootProject.group
-version = rootProject.version
+group = "net.thenextlvl.commander"
+version = "3.0.5"
 
 repositories {
     mavenCentral()

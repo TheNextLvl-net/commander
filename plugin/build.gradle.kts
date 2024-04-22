@@ -8,8 +8,8 @@ plugins {
     id("net.minecrell.plugin-yml.paper") version "0.6.0"
 }
 
-group = rootProject.group
-version = rootProject.version
+group = project(":api").group
+version = project(":api").version
 
 java {
     sourceCompatibility = JavaVersion.VERSION_19
