@@ -1,41 +1,29 @@
 package net.thenextlvl.commander.paper.command;
 
+import lombok.Getter;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.api.CommandInfo;
-import net.thenextlvl.commander.paper.implementation.CraftCommander;
+import net.thenextlvl.commander.paper.CommanderPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
 public class CommanderCommand extends Command implements PluginIdentifiableCommand {
-    private final CraftCommander commander;
-    private final Plugin plugin;
+    private final CommanderPlugin plugin;
 
-    public CommanderCommand(CraftCommander commander, Plugin plugin) {
+    public CommanderCommand(CommanderPlugin plugin) {
         super("command", "Manage the commands on your server",
                 "/command unregister | register | hide | reveal | permission | reset", List.of());
-        super.setPermission("commander.admin");
-        this.commander = commander;
+        setPermission("commander.admin");
         this.plugin = plugin;
-    }
-
-    @Override
-    public void setPermission(@Nullable String permission) {
-    }
-
-    @NotNull
-    @Override
-    public Plugin getPlugin() {
-        return plugin;
     }
 
     @Override
@@ -55,11 +43,11 @@ public class CommanderCommand extends Command implements PluginIdentifiableComma
             notifySyntax(sender, "/command reset [command]");
             return;
         }
-        var s1 = commander.commandRegistry().resetPermissions(args[1]);
-        var s2 = commander.commandRegistry().registerCommand(args[1]);
-        var s3 = commander.commandRegistry().revealCommand(args[1]);
+        var s1 = plugin.commander().commandRegistry().resetPermissions(args[1]);
+        var s2 = plugin.commander().commandRegistry().registerCommand(args[1]);
+        var s3 = plugin.commander().commandRegistry().revealCommand(args[1]);
         var message = s1 || s2 || s3 ? "command.reset" : "nothing.changed";
-        commander.bundle().sendMessage(sender, message, Placeholder.parsed("command", args[1]));
+        plugin.commander().bundle().sendMessage(sender, message, Placeholder.parsed("command", args[1]));
     }
 
     private void permission(CommandSender sender, String[] args) {
@@ -75,12 +63,12 @@ public class CommanderCommand extends Command implements PluginIdentifiableComma
             return;
         }
         var permission = args[3].equals("null") ? null : args[3];
-        var success = commander.commandRegistry().overridePermissions(args[2], permission);
+        var success = plugin.commander().commandRegistry().overridePermissions(args[2], permission);
         var message = success ? "permission.set" : "nothing.changed";
-        commander.bundle().sendMessage(sender, message,
+        plugin.commander().bundle().sendMessage(sender, message,
                 Placeholder.parsed("permission", String.valueOf(permission)),
                 Placeholder.parsed("command", args[2]));
-        if (success) commander.commandManager().updateCommands();
+        if (success) plugin.commander().commandManager().updateCommands();
     }
 
     private void permissionReset(CommandSender sender, String[] args) {
@@ -88,10 +76,10 @@ public class CommanderCommand extends Command implements PluginIdentifiableComma
             notifySyntax(sender, "/command permission reset [command]");
             return;
         }
-        var success = commander.commandRegistry().resetPermissions(args[2]);
+        var success = plugin.commander().commandRegistry().resetPermissions(args[2]);
         var message = success ? "permission.reset" : "nothing.changed";
-        commander.bundle().sendMessage(sender, message, Placeholder.parsed("command", args[2]));
-        if (success) commander.commandManager().updateCommands();
+        plugin.commander().bundle().sendMessage(sender, message, Placeholder.parsed("command", args[2]));
+        if (success) plugin.commander().commandManager().updateCommands();
     }
 
     private void permissionQuery(CommandSender sender, String[] args) {
@@ -103,7 +91,7 @@ public class CommanderCommand extends Command implements PluginIdentifiableComma
         var permission = command != null ? command.getPermission() : null;
         var message = command == null ? "command.unknown" : permission != null ?
                 "permission.query.defined" : "permission.query.undefined";
-        commander.bundle().sendMessage(sender, message,
+        plugin.commander().bundle().sendMessage(sender, message,
                 Placeholder.parsed("permission", String.valueOf(permission)),
                 Placeholder.parsed("command", args[2]));
     }
@@ -111,12 +99,12 @@ public class CommanderCommand extends Command implements PluginIdentifiableComma
     private void unregister(CommandSender sender, String[] args) {
         if (args.length == 2) try {
             if (args[1].contains("*")) CommandInfo.compile(args[1]);
-            var success = commander.commandRegistry().registerCommandInfo(CommandInfo.remove(args[1]));
+            var success = plugin.commander().commandRegistry().registerCommandInfo(CommandInfo.remove(args[1]));
             var message = success ? "command.unregistered" : "nothing.changed";
-            commander.bundle().sendMessage(sender, message, Placeholder.parsed("command", args[1]));
-            if (success) commander.commandManager().updateCommands();
+            plugin.commander().bundle().sendMessage(sender, message, Placeholder.parsed("command", args[1]));
+            if (success) plugin.commander().commandManager().updateCommands();
         } catch (Exception e) {
-            commander.bundle().sendMessage(sender, "query.invalid", Placeholder.parsed("query", args[1]));
+            plugin.commander().bundle().sendMessage(sender, "query.invalid", Placeholder.parsed("query", args[1]));
         }
         else notifySyntax(sender, "/command unregister [command]");
     }
@@ -126,21 +114,21 @@ public class CommanderCommand extends Command implements PluginIdentifiableComma
             notifySyntax(sender, "/command register [command]");
             return;
         }
-        var success = commander.commandRegistry().registerCommand(args[1]);
+        var success = plugin.commander().commandRegistry().registerCommand(args[1]);
         var message = success ? "command.registered" : "nothing.changed";
-        commander.bundle().sendMessage(sender, message, Placeholder.parsed("command", args[1]));
-        if (success) commander.commandManager().updateCommands();
+        plugin.commander().bundle().sendMessage(sender, message, Placeholder.parsed("command", args[1]));
+        if (success) plugin.commander().commandManager().updateCommands();
     }
 
     private void hide(CommandSender sender, String[] args) {
         if (args.length == 2) try {
             if (args[1].contains("*")) CommandInfo.compile(args[1]);
-            var success = commander.commandRegistry().registerCommandInfo(CommandInfo.hide(args[1]));
+            var success = plugin.commander().commandRegistry().registerCommandInfo(CommandInfo.hide(args[1]));
             var message = success ? "command.hidden" : "nothing.changed";
-            commander.bundle().sendMessage(sender, message, Placeholder.parsed("command", args[1]));
-            if (success) commander.commandManager().updateCommands();
+            plugin.commander().bundle().sendMessage(sender, message, Placeholder.parsed("command", args[1]));
+            if (success) plugin.commander().commandManager().updateCommands();
         } catch (Exception e) {
-            commander.bundle().sendMessage(sender, "query.invalid", Placeholder.parsed("query", args[1]));
+            plugin.commander().bundle().sendMessage(sender, "query.invalid", Placeholder.parsed("query", args[1]));
         }
         else notifySyntax(sender, "/command hide [command]");
     }
@@ -150,14 +138,14 @@ public class CommanderCommand extends Command implements PluginIdentifiableComma
             notifySyntax(sender, "/command reveal [command]");
             return;
         }
-        var success = commander.commandRegistry().revealCommand(args[1]);
+        var success = plugin.commander().commandRegistry().revealCommand(args[1]);
         var message = success ? "command.revealed" : "nothing.changed";
-        commander.bundle().sendMessage(sender, message, Placeholder.parsed("command", args[1]));
-        if (success) commander.commandManager().updateCommands();
+        plugin.commander().bundle().sendMessage(sender, message, Placeholder.parsed("command", args[1]));
+        if (success) plugin.commander().commandManager().updateCommands();
     }
 
     private void notifySyntax(CommandSender sender, String message) {
-        commander.bundle().sendRawMessage(sender, "<prefix> <red>" + message
+        plugin.commander().bundle().sendRawMessage(sender, "<prefix> <red>" + message
                 .replace("[", "<dark_gray>[<gold>")
                 .replace("]", "<dark_gray>]")
                 .replace("|", "<dark_gray>|<red>"));
@@ -175,20 +163,20 @@ public class CommanderCommand extends Command implements PluginIdentifiableComma
             suggestions.add("hide");
         } else if (args.length == 2) {
             suggestions.addAll(switch (args[0]) {
-                case "reset" -> commander.commandRegistry().getCommandInformation().stream()
+                case "reset" -> plugin.commander().commandRegistry().getCommandInformation().stream()
                         .map(CommandInfo::query)
                         .toList();
-                case "unregister" -> commander.commandManager().getCommandNames()
-                        .filter(literal -> !commander.commandRegistry().isRemoved(literal))
+                case "unregister" -> plugin.commander().commandManager().getCommandNames()
+                        .filter(literal -> !plugin.commander().commandRegistry().isRemoved(literal))
                         .toList();
-                case "register" -> commander.commandRegistry().getCommandInformation().stream()
+                case "register" -> plugin.commander().commandRegistry().getCommandInformation().stream()
                         .filter(CommandInfo::isRemoved)
                         .map(CommandInfo::query)
                         .toList();
-                case "hide" -> commander.commandManager().getCommandNames()
-                        .filter(literal -> !commander.commandRegistry().hasStatus(literal))
+                case "hide" -> plugin.commander().commandManager().getCommandNames()
+                        .filter(literal -> !plugin.commander().commandRegistry().hasStatus(literal))
                         .toList();
-                case "reveal" -> commander.commandRegistry().getCommandInformation().stream()
+                case "reveal" -> plugin.commander().commandRegistry().getCommandInformation().stream()
                         .filter(CommandInfo::isHidden)
                         .map(CommandInfo::query)
                         .toList();
@@ -197,11 +185,11 @@ public class CommanderCommand extends Command implements PluginIdentifiableComma
             });
         } else if (args.length == 3) {
             if (args[0].equals("permission")) {
-                if (args[1].equals("set") || args[1].equals("query")) suggestions.addAll(commander.commandManager()
-                        .getCommandNames()
-                        .filter(entry -> !commander.commandRegistry().isRemoved(entry))
+                if (args[1].equals("set") || args[1].equals("query")) suggestions.addAll(plugin.commander()
+                        .commandManager().getCommandNames()
+                        .filter(entry -> !plugin.commander().commandRegistry().isRemoved(entry))
                         .toList());
-                else if (args[1].equals("reset")) suggestions.addAll(commander.commandRegistry()
+                else if (args[1].equals("reset")) suggestions.addAll(plugin.commander().commandRegistry()
                         .getCommandInformation().stream()
                         .filter(info -> info.permission() != null)
                         .map(CommandInfo::query)
