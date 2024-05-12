@@ -58,5 +58,10 @@ public interface CommandManager<C> {
      */
     void updateCommands();
 
+    /**
+     * Retrieve the Commander instance associated with this CommandManager.
+     *
+     * @return The Commander instance
+     */
     Commander<C> commander();
 }
