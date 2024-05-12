@@ -3,9 +3,9 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
     id("java")
-    id("io.papermc.hangar-publish-plugin") version "0.1.0"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.github.goooler.shadow") version "8.1.7"
     id("net.minecrell.plugin-yml.paper") version "0.6.0"
+    id("io.papermc.hangar-publish-plugin") version "0.1.2"
 }
 
 group = project(":api").group
@@ -23,16 +23,16 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.projectlombok:lombok:1.18.30")
+    compileOnly("org.projectlombok:lombok:1.18.32")
     compileOnly("net.thenextlvl.core:annotations:2.0.1")
-    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
     compileOnly("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
 
     implementation(project(":api"))
-    implementation("net.thenextlvl.core:files:1.0.3")
-    implementation("net.thenextlvl.core:i18n:1.0.13")
+    implementation("net.thenextlvl.core:files:1.0.4")
+    implementation("net.thenextlvl.core:i18n:1.0.15")
 
-    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    annotationProcessor("org.projectlombok:lombok:1.18.32")
     annotationProcessor("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
 }
 
@@ -46,7 +46,7 @@ paper {
     name = "Commander"
     load = BukkitPluginDescription.PluginLoadOrder.STARTUP
     main = "net.thenextlvl.commander.paper.CommanderPlugin"
-    apiVersion = "1.19"
+    apiVersion = "1.20"
     foliaSupported = true
     website = "https://thenextlvl.net"
     authors = listOf("NonSwag")
@@ -58,11 +58,9 @@ val isRelease: Boolean = !versionString.contains("-pre")
 hangarPublish { // docs - https://docs.papermc.io/misc/hangar-publishing
     publications.register("plugin") {
         id.set("CommandControl")
-        version.set(project.version as String)
+        version.set(versionString)
         channel.set(if (isRelease) "Release" else "Snapshot")
-        if (extra.has("HANGAR_API_TOKEN"))
-            apiKey.set(extra["HANGAR_API_TOKEN"] as String)
-        else apiKey.set(System.getenv("HANGAR_API_TOKEN"))
+        apiKey.set(System.getenv("HANGAR_API_TOKEN"))
         platforms {
             register(Platforms.PAPER) {
                 jar.set(tasks.shadowJar.flatMap { it.archiveFile })

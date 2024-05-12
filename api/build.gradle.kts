@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "net.thenextlvl.commander"
-version = "3.0.5"
+version = "3.1.0"
 
 repositories {
     mavenCentral()
@@ -20,15 +20,17 @@ java {
 }
 
 dependencies {
+    compileOnly("org.projectlombok:lombok:1.18.32")
+    compileOnly("org.jetbrains:annotations:24.1.0")
     compileOnly("net.thenextlvl.core:annotations:2.0.1")
-    compileOnly("org.projectlombok:lombok:1.18.30")
+
     compileOnly("com.google.code.gson:gson:2.10")
-    compileOnly("net.kyori:adventure-api:4.16.0")
+    compileOnly("net.kyori:adventure-api:4.17.0")
 
-    implementation("net.thenextlvl.core:files:1.0.3")
-    implementation("net.thenextlvl.core:i18n:1.0.13")
+    implementation("net.thenextlvl.core:files:1.0.4")
+    implementation("net.thenextlvl.core:i18n:1.0.15")
 
-    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    annotationProcessor("org.projectlombok:lombok:1.18.32")
 }
 
 publishing {
@@ -39,10 +41,8 @@ publishing {
         val branch = if (version.toString().contains("-pre")) "snapshots" else "releases"
         url = uri("https://repo.thenextlvl.net/$branch")
         credentials {
-            if (extra.has("RELEASES_USER"))
-                username = extra["RELEASES_USER"].toString()
-            if (extra.has("RELEASES_PASSWORD"))
-                password = extra["RELEASES_PASSWORD"].toString()
+            username = System.getenv("REPOSITORY_USER")
+            password = System.getenv("REPOSITORY_PASSWORD")
         }
     }
 }
