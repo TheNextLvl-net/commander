@@ -46,7 +46,7 @@ paper {
     name = "Commander"
     load = BukkitPluginDescription.PluginLoadOrder.STARTUP
     main = "net.thenextlvl.commander.paper.CommanderPlugin"
-    apiVersion = "1.20"
+    apiVersion = "1.21"
     foliaSupported = true
     website = "https://thenextlvl.net"
     authors = listOf("NonSwag")
