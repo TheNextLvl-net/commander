@@ -89,7 +89,4 @@ modrinth {
     loaders.add("paper")
     loaders.add("folia")
     loaders.add("velocity")
-    dependencies {
-        optional.project("luckperms")
-    }
 }
