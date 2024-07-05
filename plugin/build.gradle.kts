@@ -6,6 +6,7 @@ plugins {
     id("io.github.goooler.shadow") version "8.1.7"
     id("net.minecrell.plugin-yml.paper") version "0.6.0"
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
+    id("com.modrinth.minotaur") version "2.+"
 }
 
 group = project(":api").group
@@ -55,6 +56,10 @@ paper {
 val versionString: String = project.version as String
 val isRelease: Boolean = !versionString.contains("-pre")
 
+val versions: List<String> = (property("gameVersions") as String)
+    .split(",")
+    .map { it.trim() }
+
 hangarPublish { // docs - https://docs.papermc.io/misc/hangar-publishing
     publications.register("plugin") {
         id.set("CommandControl")
@@ -63,9 +68,6 @@ hangarPublish { // docs - https://docs.papermc.io/misc/hangar-publishing
         apiKey.set(System.getenv("HANGAR_API_TOKEN"))
         platforms.register(Platforms.PAPER) {
             jar.set(tasks.shadowJar.flatMap { it.archiveFile })
-            val versions: List<String> = (property("paperVersion") as String)
-                .split(",")
-                .map { it.trim() }
             platformVersions.set(versions)
         }
         platforms.register(Platforms.VELOCITY) {
@@ -75,5 +77,19 @@ hangarPublish { // docs - https://docs.papermc.io/misc/hangar-publishing
                 .map { it.trim() }
             platformVersions.set(versions)
         }
+    }
+}
+
+modrinth {
+    token.set(System.getenv("MODRINTH_TOKEN"))
+    projectId.set("USLuwMUi")
+    versionType = if (isRelease) "release" else "beta"
+    uploadFile.set(tasks.shadowJar)
+    gameVersions.set(versions)
+    loaders.add("paper")
+    loaders.add("folia")
+    loaders.add("velocity")
+    dependencies {
+        optional.project("luckperms")
     }
 }
