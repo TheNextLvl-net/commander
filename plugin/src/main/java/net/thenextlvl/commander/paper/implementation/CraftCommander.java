@@ -27,11 +27,10 @@ public class CraftCommander implements Commander<Command> {
                 audience instanceof Player player ? player.locale() : Locale.US)
                 .register("commander", Locale.US)
                 .register("commander_german", Locale.GERMANY)
-                .fallback(Locale.US);
-        bundle().miniMessage(MiniMessage.builder().tags(TagResolver.resolver(
-                TagResolver.standard(),
-                Placeholder.component("prefix", bundle().component(Locale.US, "prefix"))
-        )).build());
+                .miniMessage(bundle -> MiniMessage.builder().tags(TagResolver.resolver(
+                        TagResolver.standard(),
+                        Placeholder.component("prefix", bundle.component(Locale.US, "prefix"))
+                )).build());
         commandRegistry = new CommandRegistry(this, dataFolder);
         commandManager = new CraftCommandManager(this);
         permissionManager = new CraftPermissionManager(this);

@@ -30,11 +30,10 @@ public class ProxyCommander implements Commander<CommandMeta> {
                 audience instanceof Player player ? player.getPlayerSettings().getLocale() : Locale.US)
                 .register("commander", Locale.US)
                 .register("commander_german", Locale.GERMANY)
-                .fallback(Locale.US);
-        bundle().miniMessage(MiniMessage.builder().tags(TagResolver.resolver(
-                TagResolver.standard(),
-                Placeholder.parsed("prefix", bundle().format(Locale.US, "prefix"))
-        )).build());
+                .miniMessage(bundle -> MiniMessage.builder().tags(TagResolver.resolver(
+                        TagResolver.standard(),
+                        Placeholder.component("prefix", bundle.component(Locale.US, "prefix"))
+                )).build());
         commandRegistry = new CommandRegistry(this, plugin.dataFolder().toFile());
         commandManager = new ProxyCommandManager(this, plugin);
     }

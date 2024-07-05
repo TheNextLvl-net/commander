@@ -25,12 +25,12 @@ repositories {
 dependencies {
     compileOnly("org.projectlombok:lombok:1.18.32")
     compileOnly("net.thenextlvl.core:annotations:2.0.1")
-    compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
     compileOnly("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
 
     implementation(project(":api"))
-    implementation("net.thenextlvl.core:files:1.0.4")
-    implementation("net.thenextlvl.core:i18n:1.0.15")
+    implementation("net.thenextlvl.core:files:1.0.5")
+    implementation("net.thenextlvl.core:i18n:1.0.18")
 
     annotationProcessor("org.projectlombok:lombok:1.18.32")
     annotationProcessor("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
