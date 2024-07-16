@@ -24,7 +24,7 @@ dependencies {
     compileOnly("org.jetbrains:annotations:24.1.0")
     compileOnly("net.thenextlvl.core:annotations:2.0.1")
 
-    compileOnly("com.google.code.gson:gson:2.10")
+    compileOnly("com.google.code.gson:gson:2.11.0")
     compileOnly("net.kyori:adventure-api:4.17.0")
 
     implementation("net.thenextlvl.core:files:1.0.5")
