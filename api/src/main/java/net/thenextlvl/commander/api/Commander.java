@@ -2,29 +2,29 @@ package net.thenextlvl.commander.api;
 
 import core.annotation.MethodsReturnNotNullByDefault;
 import core.i18n.file.ComponentBundle;
-import net.thenextlvl.commander.api.platform.CommandManager;
-import net.thenextlvl.commander.api.platform.PermissionManager;
 
 @MethodsReturnNotNullByDefault
-public interface Commander<C> {
+public interface Commander {
 
     /**
-     * @return the component bundle
+     * Retrieves the ComponentBundle associated with the Commander.
+     *
+     * @return the ComponentBundle instance
      */
     ComponentBundle bundle();
 
     /**
-     * @return the command information registry
+     * Retrieves the CommandRegistry instance associated with the Commander.
+     *
+     * @return the CommandRegistry instance
      */
     CommandRegistry commandRegistry();
 
     /**
-     * @return the platform command manager
+     * Get the permission override instance.
+     * This method returns a PermissionOverride instance, which is used to manipulate permissions for commands.
+     *
+     * @return the PermissionOverride instance
      */
-    CommandManager<C> commandManager();
-
-    /**
-     * @return the platform permission manager
-     */
-    PermissionManager<C> permissionManager();
+    PermissionOverride permissionOverride();
 }
