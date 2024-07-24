@@ -2,10 +2,9 @@ package net.thenextlvl.commander.velocity.command;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
-import net.thenextlvl.commander.velocity.implementation.ProxyCommander;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.thenextlvl.commander.api.CommandInfo;
+import net.thenextlvl.commander.velocity.CommanderPlugin;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +12,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class CommanderCommand implements SimpleCommand {
-    private final ProxyCommander commander;
+    private final CommanderPlugin plugin;
 
     @Override
     public void execute(Invocation invocation) {
@@ -32,21 +31,19 @@ public class CommanderCommand implements SimpleCommand {
             notifySyntax(source, "/v-command reset [command]");
             return;
         }
-        var s1 = commander.commandRegistry().registerCommand(args[1]);
-        var s2 = commander.commandRegistry().revealCommand(args[1]);
+        var s1 = plugin.commandRegistry().register(args[1]);
+        var s2 = plugin.commandRegistry().reveal(args[1]);
         var message = s1 || s2 ? "command.reset" : "nothing.changed";
-        commander.bundle().sendMessage(source, message, Placeholder.parsed("command", args[1]));
+        plugin.bundle().sendMessage(source, message, Placeholder.parsed("command", args[1]));
     }
 
     private void unregister(CommandSource source, String[] args) {
         if (args.length == 2) try {
-            if (args[1].contains("*")) CommandInfo.compile(args[1]);
-            var success = commander.commandRegistry().registerCommandInfo(CommandInfo.remove(args[1]));
+            var success = plugin.commandRegistry().unregister(args[1]);
             var message = success ? "command.unregistered" : "nothing.changed";
-            commander.bundle().sendMessage(source, message, Placeholder.parsed("command", args[1]));
-            if (success) commander.commandManager().updateCommands();
+            plugin.bundle().sendMessage(source, message, Placeholder.parsed("command", args[1]));
         } catch (Exception e) {
-            commander.bundle().sendMessage(source, "query.invalid", Placeholder.parsed("query", args[1]));
+            plugin.bundle().sendMessage(source, "query.invalid", Placeholder.parsed("query", args[1]));
         }
         else notifySyntax(source, "/v-command unregister [command]");
     }
@@ -56,21 +53,18 @@ public class CommanderCommand implements SimpleCommand {
             notifySyntax(source, "/v-command register [command]");
             return;
         }
-        var success = commander.commandRegistry().registerCommand(args[1]);
+        var success = plugin.commandRegistry().register(args[1]);
         var message = success ? "command.registered" : "nothing.changed";
-        commander.bundle().sendMessage(source, message, Placeholder.parsed("command", args[1]));
-        if (success) commander.commandManager().updateCommands();
+        plugin.bundle().sendMessage(source, message, Placeholder.parsed("command", args[1]));
     }
 
     private void hide(CommandSource source, String[] args) {
         if (args.length == 2) try {
-            if (args[1].contains("*")) CommandInfo.compile(args[1]);
-            var success = commander.commandRegistry().registerCommandInfo(CommandInfo.hide(args[1]));
+            var success = plugin.commandRegistry().hide(args[1]);
             var message = success ? "command.hidden" : "nothing.changed";
-            commander.bundle().sendMessage(source, message, Placeholder.parsed("command", args[1]));
-            if (success) commander.commandManager().updateCommands();
+            plugin.bundle().sendMessage(source, message, Placeholder.parsed("command", args[1]));
         } catch (Exception e) {
-            commander.bundle().sendMessage(source, "query.invalid", Placeholder.parsed("query", args[1]));
+            plugin.bundle().sendMessage(source, "query.invalid", Placeholder.parsed("query", args[1]));
         }
         else notifySyntax(source, "/v-command hide [command]");
     }
@@ -80,14 +74,13 @@ public class CommanderCommand implements SimpleCommand {
             notifySyntax(source, "/v-command reveal [command]");
             return;
         }
-        var success = commander.commandRegistry().revealCommand(args[1]);
+        var success = plugin.commandRegistry().reveal(args[1]);
         var message = success ? "command.revealed" : "nothing.changed";
-        commander.bundle().sendMessage(source, message, Placeholder.parsed("command", args[1]));
-        if (success) commander.commandManager().updateCommands();
+        plugin.bundle().sendMessage(source, message, Placeholder.parsed("command", args[1]));
     }
 
     private void notifySyntax(CommandSource source, String message) {
-        commander.bundle().sendRawMessage(source, "<prefix> <red>" + message
+        plugin.bundle().sendRawMessage(source, "<prefix> <red>" + message
                 .replace("[", "<dark_gray>[<gold>")
                 .replace("]", "<dark_gray>]")
                 .replace("|", "<dark_gray>|<red>"));
@@ -105,23 +98,20 @@ public class CommanderCommand implements SimpleCommand {
             suggestions.add("hide");
         } else if (args.length == 2) {
             suggestions.addAll(switch (args[0]) {
-                case "reset" -> commander.commandRegistry().getCommandInformation().stream()
-                        .map(CommandInfo::query)
-                        .toList();
-                case "unregister" -> commander.commandManager().getCommandNames()
-                        .filter(literal -> !commander.commandRegistry().isRemoved(literal))
-                        .toList();
-                case "register" -> commander.commandRegistry().getCommandInformation().stream()
-                        .filter(CommandInfo::isRemoved)
-                        .map(CommandInfo::query)
-                        .toList();
-                case "hide" -> commander.commandManager().getCommandNames()
-                        .filter(literal -> !commander.commandRegistry().hasStatus(literal))
-                        .toList();
-                case "reveal" -> commander.commandRegistry().getCommandInformation().stream()
-                        .filter(CommandInfo::isHidden)
-                        .map(CommandInfo::query)
-                        .toList();
+                case "reset" -> {
+                    var all = new ArrayList<String>();
+                    all.addAll(plugin.commandRegistry().hiddenCommands());
+                    all.addAll(plugin.commandRegistry().unregisteredCommands());
+                    yield all;
+                }
+                case "unregister" -> plugin.server().getCommandManager().getAliases();
+                case "register" -> plugin.commandRegistry().unregisteredCommands();
+                case "hide" -> {
+                    var all = new ArrayList<>(plugin.server().getCommandManager().getAliases());
+                    all.removeAll(plugin.commandRegistry().hiddenCommands());
+                    yield all;
+                }
+                case "reveal" -> plugin.commandRegistry().hiddenCommands();
                 default -> Collections.emptyList();
             });
         }
