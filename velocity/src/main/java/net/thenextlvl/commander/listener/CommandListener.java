@@ -1,10 +1,10 @@
-package net.thenextlvl.commander.velocity.listener;
+package net.thenextlvl.commander.listener;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.command.PlayerAvailableCommandsEvent;
 import com.velocitypowered.api.permission.Tristate;
 import lombok.RequiredArgsConstructor;
-import net.thenextlvl.commander.velocity.CommanderPlugin;
+import net.thenextlvl.commander.CommanderPlugin;
 
 @RequiredArgsConstructor
 public class CommandListener {
