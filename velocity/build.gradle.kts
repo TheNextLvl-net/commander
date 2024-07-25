@@ -37,7 +37,8 @@ dependencies {
 
 
 tasks.shadowJar {
-    archiveBaseName.set("commander")
+    archiveBaseName.set("commander-velocity")
+    relocate("org.bstats", "net.thenextlvl.commander.bstats")
     minimize()
 }
 
