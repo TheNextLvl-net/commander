@@ -1,3 +1,4 @@
 rootProject.name = "commander"
 include("api")
-include("plugin")
+include("paper")
+include("velocity")
