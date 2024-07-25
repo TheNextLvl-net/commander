@@ -29,6 +29,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
 
     implementation(project(":api"))
+    implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("net.thenextlvl.core:files:1.0.5")
     implementation("net.thenextlvl.core:i18n:1.0.18")
 
