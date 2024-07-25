@@ -1,8 +1,8 @@
-package net.thenextlvl.commander.paper.command;
+package net.thenextlvl.commander.command;
 
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import net.thenextlvl.commander.paper.CommanderPlugin;
+import net.thenextlvl.commander.CommanderPlugin;
 
 @SuppressWarnings("UnstableApiUsage")
 public class CommanderCommand {

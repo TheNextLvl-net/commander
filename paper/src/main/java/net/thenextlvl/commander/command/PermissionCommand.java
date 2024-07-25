@@ -1,10 +1,10 @@
-package net.thenextlvl.commander.paper.command;
+package net.thenextlvl.commander.command;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import lombok.RequiredArgsConstructor;
-import net.thenextlvl.commander.paper.CommanderPlugin;
+import net.thenextlvl.commander.CommanderPlugin;
 
 @RequiredArgsConstructor
 @SuppressWarnings("UnstableApiUsage")

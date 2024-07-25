@@ -1,4 +1,4 @@
-package net.thenextlvl.commander.paper.implementation;
+package net.thenextlvl.commander.implementation;
 
 import lombok.RequiredArgsConstructor;
 import net.thenextlvl.commander.api.PermissionOverride;

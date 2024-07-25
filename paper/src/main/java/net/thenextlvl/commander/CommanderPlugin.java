@@ -1,4 +1,4 @@
-package net.thenextlvl.commander.paper;
+package net.thenextlvl.commander;
 
 import core.i18n.file.ComponentBundle;
 import lombok.Getter;
@@ -8,10 +8,10 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.thenextlvl.commander.api.CommandRegistry;
 import net.thenextlvl.commander.api.Commander;
-import net.thenextlvl.commander.paper.command.CommanderCommand;
-import net.thenextlvl.commander.paper.implementation.PaperCommandRegistry;
-import net.thenextlvl.commander.paper.implementation.PaperPermissionOverride;
-import net.thenextlvl.commander.paper.listener.CommandListener;
+import net.thenextlvl.commander.command.CommanderCommand;
+import net.thenextlvl.commander.implementation.PaperCommandRegistry;
+import net.thenextlvl.commander.implementation.PaperPermissionOverride;
+import net.thenextlvl.commander.listener.CommandListener;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;

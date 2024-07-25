@@ -1,9 +1,8 @@
-
 @TypesAreNotNullByDefault
 @FieldsAreNotNullByDefault
 @MethodsReturnNotNullByDefault
 @ParametersAreNotNullByDefault
-package net.thenextlvl.commander.paper;
+package net.thenextlvl.commander;
 
 import core.annotation.FieldsAreNotNullByDefault;
 import core.annotation.MethodsReturnNotNullByDefault;

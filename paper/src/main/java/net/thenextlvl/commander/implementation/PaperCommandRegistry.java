@@ -1,4 +1,4 @@
-package net.thenextlvl.commander.paper.implementation;
+package net.thenextlvl.commander.implementation;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;

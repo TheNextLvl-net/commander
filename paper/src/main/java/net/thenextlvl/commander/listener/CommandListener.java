@@ -1,4 +1,4 @@
-package net.thenextlvl.commander.paper.listener;
+package net.thenextlvl.commander.listener;
 
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.util.TriState;
