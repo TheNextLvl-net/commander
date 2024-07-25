@@ -8,6 +8,7 @@ updates:
   - package-ecosystem: "gradle" # See documentation for possible values
     directories: # Locations of package manifests
       - "api"
-      - "plugin"
+      - "paper"
+      - "velocity"
     schedule:
       interval: "weekly"
