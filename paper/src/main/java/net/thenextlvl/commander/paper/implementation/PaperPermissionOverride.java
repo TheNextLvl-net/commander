@@ -1,22 +1,34 @@
-package net.thenextlvl.commander.implementation;
+package net.thenextlvl.commander.paper.implementation;
 
+import com.google.gson.reflect.TypeToken;
+import core.file.FileIO;
+import core.file.format.GsonFile;
+import core.io.IO;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.thenextlvl.commander.api.PermissionOverride;
+import net.thenextlvl.commander.PermissionOverride;
+import net.thenextlvl.commander.paper.CommanderPlugin;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
+@Getter
 @RequiredArgsConstructor
 public class PaperPermissionOverride implements PermissionOverride {
-    private final Map<String, @Nullable String> overrides = new HashMap<>();
     private final Map<String, @Nullable String> originalPermissions = new HashMap<>();
+    private final FileIO<Map<String, @Nullable String>> overridesFile;
+
+    public PaperPermissionOverride(CommanderPlugin plugin) {
+        this.overridesFile = new GsonFile<Map<String, @Nullable String>>(
+                IO.of(plugin.getDataFolder(), "permission-overrides.json"),
+                new HashMap<>(), new TypeToken<>() {
+        }).saveIfAbsent();
+    }
 
     @Override
     public Map<String, @Nullable String> overrides() {
-        return Map.copyOf(overrides);
+        return Map.copyOf(overridesFile.getRoot());
     }
 
     @Override
@@ -36,20 +48,20 @@ public class PaperPermissionOverride implements PermissionOverride {
 
     @Override
     public boolean override(String command, @Nullable String permission) {
-        overrides.put(command, permission);
+        overridesFile.getRoot().put(command, permission);
         return internalOverride(command, permission);
     }
 
     @Override
     public boolean reset(String command) {
-        if (!overrides.containsKey(command)) return false;
-        overrides.remove(command);
+        if (!overridesFile.getRoot().containsKey(command)) return false;
+        overridesFile.getRoot().remove(command);
         return internalReset(command);
     }
 
     @Override
     public void overridePermissions() {
-        overrides.forEach(this::internalOverride);
+        overridesFile.getRoot().forEach(this::internalOverride);
     }
 
     private boolean internalOverride(String command, @Nullable String permission) {
