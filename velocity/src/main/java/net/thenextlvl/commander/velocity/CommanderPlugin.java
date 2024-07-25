@@ -1,4 +1,4 @@
-package net.thenextlvl.commander;
+package net.thenextlvl.commander.velocity;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
@@ -13,12 +13,12 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import net.thenextlvl.commander.api.CommandRegistry;
-import net.thenextlvl.commander.api.Commander;
-import net.thenextlvl.commander.api.PermissionOverride;
-import net.thenextlvl.commander.command.CommanderCommand;
-import net.thenextlvl.commander.implementation.ProxyCommandRegistry;
-import net.thenextlvl.commander.listener.CommandListener;
+import net.thenextlvl.commander.CommandRegistry;
+import net.thenextlvl.commander.Commander;
+import net.thenextlvl.commander.PermissionOverride;
+import net.thenextlvl.commander.velocity.command.CommanderCommand;
+import net.thenextlvl.commander.velocity.implementation.ProxyCommandRegistry;
+import net.thenextlvl.commander.velocity.listener.CommandListener;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 

@@ -2,7 +2,7 @@
 @FieldsAreNotNullByDefault
 @MethodsReturnNotNullByDefault
 @ParametersAreNotNullByDefault
-package net.thenextlvl.commander.command;
+package net.thenextlvl.commander.velocity.command;
 
 import core.annotation.FieldsAreNotNullByDefault;
 import core.annotation.MethodsReturnNotNullByDefault;

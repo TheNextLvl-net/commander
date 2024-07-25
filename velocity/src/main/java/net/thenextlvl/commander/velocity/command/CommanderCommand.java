@@ -1,10 +1,10 @@
-package net.thenextlvl.commander.command;
+package net.thenextlvl.commander.velocity.command;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.thenextlvl.commander.CommanderPlugin;
+import net.thenextlvl.commander.velocity.CommanderPlugin;
 
 import java.util.ArrayList;
 import java.util.Collections;

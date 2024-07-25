@@ -1,10 +1,10 @@
-package net.thenextlvl.commander.implementation;
+package net.thenextlvl.commander.velocity.implementation;
 
 import core.annotation.MethodsReturnNotNullByDefault;
 import core.annotation.ParametersAreNotNullByDefault;
 import core.annotation.TypesAreNotNullByDefault;
-import net.thenextlvl.commander.CommanderPlugin;
-import net.thenextlvl.commander.api.CommandRegistry;
+import net.thenextlvl.commander.velocity.CommanderPlugin;
+import net.thenextlvl.commander.CommandRegistry;
 
 import java.util.Set;
 
@@ -12,10 +12,6 @@ import java.util.Set;
 @MethodsReturnNotNullByDefault
 @ParametersAreNotNullByDefault
 public record ProxyCommandRegistry(CommanderPlugin plugin) implements CommandRegistry {
-
-    private com.velocitypowered.api.command.CommandManager getCommandManager() {
-        return plugin.server().getCommandManager();
-    }
 
     @Override
     public Set<String> hiddenCommands() {
@@ -55,5 +51,10 @@ public record ProxyCommandRegistry(CommanderPlugin plugin) implements CommandReg
     @Override
     public boolean unregister(String command) {
         return false;
+    }
+
+    @Override
+    public void unregisterCommands() {
+
     }
 }
