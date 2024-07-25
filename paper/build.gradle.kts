@@ -3,7 +3,7 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
     id("java")
-    id("io.github.goooler.shadow") version "8.1.7"
+    id("io.github.goooler.shadow") version "8.1.8"
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
     id("net.minecrell.plugin-yml.paper") version "0.6.0"
     id("com.modrinth.minotaur") version "2.+"
@@ -24,16 +24,16 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.projectlombok:lombok:1.18.32")
+    compileOnly("org.projectlombok:lombok:1.18.34")
     compileOnly("net.thenextlvl.core:annotations:2.0.1")
     compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
 
     implementation(project(":api"))
     implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("net.thenextlvl.core:files:1.0.5")
-    implementation("net.thenextlvl.core:i18n:1.0.18")
+    implementation("net.thenextlvl.core:i18n:1.0.19")
 
-    annotationProcessor("org.projectlombok:lombok:1.18.32")
+    annotationProcessor("org.projectlombok:lombok:1.18.34")
     annotationProcessor("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
 }
 
