@@ -8,6 +8,8 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import core.i18n.file.ComponentBundle;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -17,8 +19,7 @@ import net.thenextlvl.commander.api.PermissionOverride;
 import net.thenextlvl.commander.command.CommanderCommand;
 import net.thenextlvl.commander.implementation.ProxyCommandRegistry;
 import net.thenextlvl.commander.listener.CommandListener;
-import lombok.Getter;
-import lombok.experimental.Accessors;
+import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -35,15 +36,17 @@ import java.util.Locale;
 public class CommanderPlugin implements Commander {
     private final ComponentBundle bundle;
     private final CommandRegistry commandRegistry;
+    private final Metrics.Factory metricsFactory;
     private final ProxyServer server;
     private final Logger logger;
     private final Path dataFolder;
 
     @Inject
-    public CommanderPlugin(ProxyServer server, Logger logger, @DataDirectory Path dataFolder) {
+    public CommanderPlugin(ProxyServer server, Logger logger, @DataDirectory Path dataFolder, Metrics.Factory metricsFactory) {
         this.server = server;
         this.logger = logger;
         this.dataFolder = dataFolder;
+        this.metricsFactory = metricsFactory;
         this.bundle = new ComponentBundle(new File(dataFolder.toFile(), "translations"), audience ->
                 audience instanceof Player player ? player.getPlayerSettings().getLocale() : Locale.US)
                 .register("commander", Locale.US)
@@ -53,6 +56,11 @@ public class CommanderPlugin implements Commander {
                         Placeholder.component("prefix", bundle.component(Locale.US, "prefix"))
                 )).build());
         this.commandRegistry = new ProxyCommandRegistry(this);
+    }
+
+    @Subscribe
+    public void onProxyInitialization(ProxyInitializeEvent event) {
+        metricsFactory.make(this, 22782);
     }
 
     @Override

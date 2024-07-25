@@ -12,6 +12,7 @@ import net.thenextlvl.commander.command.CommanderCommand;
 import net.thenextlvl.commander.implementation.PaperCommandRegistry;
 import net.thenextlvl.commander.implementation.PaperPermissionOverride;
 import net.thenextlvl.commander.listener.CommandListener;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
@@ -23,6 +24,8 @@ import java.util.Locale;
 @Getter
 @Accessors(fluent = true)
 public class CommanderPlugin extends JavaPlugin implements Commander {
+    private final Metrics metrics = new Metrics(this, 22782);
+
     private final File translations = new File(getDataFolder(), "translations");
     private final ComponentBundle bundle = new ComponentBundle(translations, audience ->
             audience instanceof Player player ? player.locale() : Locale.US)
@@ -47,6 +50,11 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
         Bukkit.getGlobalRegionScheduler().execute(this, () -> permissionOverride().overridePermissions());
         registerListeners();
         registerCommands();
+    }
+
+    @Override
+    public void onDisable() {
+        metrics.shutdown();
     }
 
     private void registerCommands() {
