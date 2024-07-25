@@ -39,7 +39,8 @@ dependencies {
 
 
 tasks.shadowJar {
-    archiveBaseName.set("commander")
+    archiveBaseName.set("commander-paper")
+    relocate("org.bstats", "net.thenextlvl.commander.bstats")
     minimize()
 }
 
