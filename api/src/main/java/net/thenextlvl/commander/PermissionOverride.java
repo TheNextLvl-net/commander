@@ -1,4 +1,4 @@
-package net.thenextlvl.commander.api;
+package net.thenextlvl.commander;
 
 import org.jetbrains.annotations.Nullable;
 

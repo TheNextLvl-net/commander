@@ -1,4 +1,4 @@
-package net.thenextlvl.commander.api;
+package net.thenextlvl.commander;
 
 import core.annotation.MethodsReturnNotNullByDefault;
 import core.i18n.file.ComponentBundle;
