@@ -1,8 +1,8 @@
-package net.thenextlvl.commander.listener;
+package net.thenextlvl.commander.paper.listener;
 
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.util.TriState;
-import net.thenextlvl.commander.api.Commander;
+import net.thenextlvl.commander.Commander;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

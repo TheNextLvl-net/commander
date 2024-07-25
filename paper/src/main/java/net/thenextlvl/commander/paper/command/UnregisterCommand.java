@@ -1,6 +1,5 @@
-package net.thenextlvl.commander.command;
+package net.thenextlvl.commander.paper.command;
 
-import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -8,35 +7,38 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.thenextlvl.commander.CommanderPlugin;
+import net.thenextlvl.commander.paper.CommanderPlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
 @SuppressWarnings("UnstableApiUsage")
-class RevealCommand {
+class UnregisterCommand {
     private final CommanderPlugin plugin;
 
     public ArgumentBuilder<CommandSourceStack, ?> create() {
-        return Commands.literal("reveal")
+        return Commands.literal("unregister")
                 .then(Commands.argument("command", StringArgumentType.string())
                         .suggests((context, suggestions) -> {
-                            plugin.commandRegistry().hiddenCommands().stream()
+                            Bukkit.getCommandMap().getKnownCommands().values().stream()
+                                    .map(Command::getLabel)
+                                    .filter(s -> !plugin.commandRegistry().isUnregistered(s))
                                     .map(StringArgumentType::escapeIfRequired)
                                     .filter(s -> s.contains(suggestions.getRemaining()))
                                     .forEach(suggestions::suggest);
                             return suggestions.buildFuture();
                         })
-                        .executes(this::reveal));
+                        .executes(this::unregister));
     }
 
-    private int reveal(CommandContext<CommandSourceStack> context) {
+    private int unregister(CommandContext<CommandSourceStack> context) {
         var sender = context.getSource().getSender();
         var command = context.getArgument("command", String.class);
-        var success = plugin.commandRegistry().reveal(command);
-        var message = success ? "command.revealed" : "nothing.changed";
+        var success = plugin.commandRegistry().unregister(command);
+        var message = success ? "command.unregistered" : "nothing.changed";
         plugin.bundle().sendMessage(sender, message, Placeholder.parsed("command", command));
         if (success) Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
-        return Command.SINGLE_SUCCESS;
+        return com.mojang.brigadier.Command.SINGLE_SUCCESS;
     }
 }
