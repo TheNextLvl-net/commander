@@ -50,7 +50,7 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
     }
 
     private void registerCommands() {
-        Bukkit.getCommandMap().register(getName(), new CommanderCommand(this));
+        new CommanderCommand(this).register();
     }
 
     private void registerListeners() {
