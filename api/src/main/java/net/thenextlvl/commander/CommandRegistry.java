@@ -1,4 +1,4 @@
-package net.thenextlvl.commander.api;
+package net.thenextlvl.commander;
 
 import java.util.Set;
 
@@ -18,4 +18,6 @@ public interface CommandRegistry {
     boolean reveal(String command);
 
     boolean unregister(String command);
+
+    void unregisterCommands();
 }
