@@ -15,13 +15,11 @@ public class CommanderVersionChecker extends PaperHangarVersionChecker<SemanticV
 
     public CommanderVersionChecker(CommanderPlugin plugin) {
         super("CommandControl");
-        this.versionRunning = Objects.requireNonNull(
-                SemanticVersion.parse(plugin.getPluginMeta().getVersion())
-        );
+        this.versionRunning = Objects.requireNonNull(parseVersion(plugin.getPluginMeta().getVersion()));
     }
 
     @Override
-    public @Nullable SemanticVersion parseVersion(String s) {
-        return null;
+    public @Nullable SemanticVersion parseVersion(String version) {
+        return SemanticVersion.parse(version);
     }
 }
