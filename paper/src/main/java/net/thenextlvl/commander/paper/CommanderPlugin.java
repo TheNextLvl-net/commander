@@ -11,7 +11,7 @@ import net.thenextlvl.commander.paper.command.CommanderCommand;
 import net.thenextlvl.commander.paper.implementation.PaperCommandRegistry;
 import net.thenextlvl.commander.paper.implementation.PaperPermissionOverride;
 import net.thenextlvl.commander.paper.listener.CommandListener;
-import net.thenextlvl.commander.paper.version.VersionChecker;
+import net.thenextlvl.commander.paper.version.CommanderVersionChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -26,7 +26,7 @@ import java.util.Objects;
 @Accessors(fluent = true)
 public class CommanderPlugin extends JavaPlugin implements Commander {
     private final Metrics metrics = new Metrics(this, 22782);
-    private final VersionChecker versionChecker = new VersionChecker();
+    private final CommanderVersionChecker versionChecker = new CommanderVersionChecker(this);
 
     private final File translations = new File(getDataFolder(), "translations");
     private final ComponentBundle bundle = new ComponentBundle(translations, audience ->
@@ -42,16 +42,14 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
     private final PaperPermissionOverride permissionOverride = new PaperPermissionOverride(this);
 
     @Override
-    @SuppressWarnings("UnstableApiUsage")
     public void onLoad() {
         Bukkit.getServicesManager().register(Commander.class, this, this, ServicePriority.Highest);
         versionChecker.retrieveLatestSupportedVersion(latest -> latest.ifPresent(version -> {
-            var running = VersionChecker.Version.parse(getPluginMeta().getVersion());
-            if (version.equals(running)) {
+            if (version.equals(versionChecker.getVersionRunning())) {
                 getComponentLogger().info("You are running the latest version of Commander");
-            } else if (version.compareTo(Objects.requireNonNull(running)) > 0) {
+            } else if (version.compareTo(Objects.requireNonNull(versionChecker.getVersionRunning())) > 0) {
                 getComponentLogger().warn("An update for Commander is available");
-                getComponentLogger().warn("You are running version {}, the latest supported version is {}", running, version);
+                getComponentLogger().warn("You are running version {}, the latest supported version is {}", versionChecker.getVersionRunning(), version);
                 getComponentLogger().warn("Update at https://modrinth.com/plugin/commander-1 or https://hangar.papermc.io/TheNextLvl/CommandControl");
             } else {
                 getComponentLogger().warn("You are running a snapshot version of Commander");
