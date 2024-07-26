@@ -44,7 +44,8 @@ public class PaperCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean hide(String command) {
-        return hiddenFile.getRoot().add(command);
+        return Bukkit.getCommandMap().getKnownCommands().containsKey(command)
+               && hiddenFile.getRoot().add(command);
     }
 
     @Override
