@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.paper.CommanderPlugin;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
@@ -20,16 +19,7 @@ class PermissionSetCommand {
 
     public ArgumentBuilder<CommandSourceStack, ?> create() {
         return Commands.literal("set")
-                .then(Commands.argument("command", StringArgumentType.string())
-                        .suggests((context, suggestions) -> {
-                            Bukkit.getCommandMap().getKnownCommands().values().stream()
-                                    .map(Command::getLabel)
-                                    .filter(s -> !plugin.commandRegistry().isUnregistered(s))
-                                    .map(StringArgumentType::escapeIfRequired)
-                                    .filter(s -> s.contains(suggestions.getRemaining()))
-                                    .forEach(suggestions::suggest);
-                            return suggestions.buildFuture();
-                        })
+                .then(Commands.argument("command", new CommandArgumentType(plugin))
                         .then(Commands.argument("permission", StringArgumentType.string())
                                 .suggests((context, suggestions) -> {
                                     Bukkit.getPluginManager().getPermissions().stream()
