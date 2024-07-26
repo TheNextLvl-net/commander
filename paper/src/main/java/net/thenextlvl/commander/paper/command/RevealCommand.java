@@ -22,6 +22,7 @@ class RevealCommand {
                 .then(Commands.argument("command", StringArgumentType.string())
                         .suggests((context, suggestions) -> {
                             plugin.commandRegistry().hiddenCommands().stream()
+                                    .filter(s -> !plugin.commandRegistry().isUnregistered(s))
                                     .map(StringArgumentType::escapeIfRequired)
                                     .filter(s -> s.contains(suggestions.getRemaining()))
                                     .forEach(suggestions::suggest);

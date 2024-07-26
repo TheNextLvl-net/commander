@@ -23,6 +23,7 @@ class PermissionUnsetCommand {
                         .suggests((context, suggestions) -> {
                             Bukkit.getCommandMap().getKnownCommands().values().stream()
                                     .map(Command::getLabel)
+                                    .filter(s -> !plugin.commandRegistry().isUnregistered(s))
                                     .map(StringArgumentType::escapeIfRequired)
                                     .filter(s -> s.contains(suggestions.getRemaining()))
                                     .forEach(suggestions::suggest);

@@ -24,6 +24,7 @@ class PermissionResetCommand {
                 .then(Commands.argument("command", StringArgumentType.string())
                         .suggests((context, suggestions) -> {
                             plugin.permissionOverride().originalPermissions().keySet().stream()
+                                    .filter(s -> !plugin.commandRegistry().isUnregistered(s))
                                     .map(StringArgumentType::escapeIfRequired)
                                     .filter(s -> s.contains(suggestions.getRemaining()))
                                     .forEach(suggestions::suggest);

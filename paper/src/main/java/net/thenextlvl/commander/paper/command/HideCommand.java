@@ -23,6 +23,7 @@ class HideCommand {
                         .suggests((context, suggestions) -> {
                             Bukkit.getCommandMap().getKnownCommands().values().stream()
                                     .map(org.bukkit.command.Command::getLabel)
+                                    .filter(s -> !plugin.commandRegistry().isUnregistered(s))
                                     .filter(s -> !plugin.commandRegistry().isHidden(s))
                                     .map(StringArgumentType::escapeIfRequired)
                                     .filter(s -> s.contains(suggestions.getRemaining()))
