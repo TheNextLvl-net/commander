@@ -9,6 +9,8 @@ import io.papermc.paper.command.brigadier.Commands;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.paper.CommanderPlugin;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
 @SuppressWarnings("UnstableApiUsage")
@@ -27,6 +29,10 @@ class ResetCommand {
                                     .map(StringArgumentType::escapeIfRequired)
                                     .filter(s -> s.contains(suggestions.getRemaining()))
                                     .forEach(suggestions::suggest);
+                            plugin.permissionOverride().originalPermissions().keySet().stream()
+                                    .map(StringArgumentType::escapeIfRequired)
+                                    .filter(s -> s.contains(suggestions.getRemaining()))
+                                    .forEach(suggestions::suggest);
                             return suggestions.buildFuture();
                         })
                         .executes(this::reset));
@@ -36,10 +42,11 @@ class ResetCommand {
         var sender = context.getSource().getSender();
         var command = context.getArgument("command", String.class);
         var s1 = plugin.permissionOverride().reset(command);
-        var s3 = plugin.commandRegistry().register(command);
-        var s2 = plugin.commandRegistry().reveal(command);
+        var s2 = plugin.commandRegistry().register(command);
+        var s3 = plugin.commandRegistry().reveal(command);
         var message = s1 || s2 || s3 ? "command.reset" : "nothing.changed";
         plugin.bundle().sendMessage(sender, message, Placeholder.parsed("command", command));
+        if (s1 || s2 || s3) Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
         return Command.SINGLE_SUCCESS;
     }
 }
