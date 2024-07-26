@@ -62,8 +62,8 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
     @Override
     public void onEnable() {
         Bukkit.getGlobalRegionScheduler().execute(this, () -> {
-            commandRegistry().unregisterCommands();
             permissionOverride().overridePermissions();
+            commandRegistry().unregisterCommands();
         });
         registerListeners();
         registerCommands();
