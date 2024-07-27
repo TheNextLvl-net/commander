@@ -1,8 +1,10 @@
 package net.thenextlvl.commander.velocity;
 
 import com.google.inject.Inject;
+import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
@@ -13,18 +15,19 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import net.thenextlvl.commander.CommandRegistry;
 import net.thenextlvl.commander.Commander;
 import net.thenextlvl.commander.PermissionOverride;
 import net.thenextlvl.commander.velocity.command.CommanderCommand;
 import net.thenextlvl.commander.velocity.implementation.ProxyCommandRegistry;
 import net.thenextlvl.commander.velocity.listener.CommandListener;
+import net.thenextlvl.commander.velocity.version.CommanderVersionChecker;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Locale;
+import java.util.Objects;
 
 @Getter
 @Accessors(fluent = true)
@@ -34,8 +37,9 @@ import java.util.Locale;
         url = "https://thenextlvl.net",
         version = "4.0.0")
 public class CommanderPlugin implements Commander {
+    private final CommanderVersionChecker versionChecker = new CommanderVersionChecker(this);
     private final ComponentBundle bundle;
-    private final CommandRegistry commandRegistry;
+    private final ProxyCommandRegistry commandRegistry;
     private final Metrics.Factory metricsFactory;
     private final ProxyServer server;
     private final Logger logger;
@@ -56,11 +60,15 @@ public class CommanderPlugin implements Commander {
                         Placeholder.component("prefix", bundle.component(Locale.US, "prefix"))
                 )).build());
         this.commandRegistry = new ProxyCommandRegistry(this);
+        checkVersionUpdate();
     }
 
-    @Subscribe
-    public void onProxyInitialization(ProxyInitializeEvent event) {
+    @Subscribe(order = PostOrder.LAST)
+    public void onProxyInitialize(ProxyInitializeEvent event) {
         metricsFactory.make(this, 22782);
+        server().getEventManager().register(this, new CommandListener(this));
+        server().getCommandManager().register("v-command", new CommanderCommand(this));
+        commandRegistry().unregisterCommands();
     }
 
     @Override
@@ -68,9 +76,17 @@ public class CommanderPlugin implements Commander {
         throw new UnsupportedOperationException("Not supported on the proxy");
     }
 
-    @Subscribe
-    public void onProxyInitialize(ProxyInitializeEvent event) {
-        server().getEventManager().register(this, new CommandListener(this));
-        server().getCommandManager().register("v-command", new CommanderCommand(this));
+    private void checkVersionUpdate() {
+        versionChecker.retrieveLatestSupportedVersion(latest -> latest.ifPresentOrElse(version -> {
+            if (version.equals(versionChecker.getVersionRunning())) {
+                logger().info("You are running the latest version of Commander");
+            } else if (version.compareTo(Objects.requireNonNull(versionChecker.getVersionRunning())) > 0) {
+                logger().warn("An update for Commander is available");
+                logger().warn("You are running version {}, the latest supported version is {}", versionChecker.getVersionRunning(), version);
+                logger().warn("Update at https://modrinth.com/plugin/commander-1 or https://hangar.papermc.io/TheNextLvl/CommandControl");
+            } else {
+                logger().warn("You are running a snapshot version of Commander");
+            }
+        }, () -> logger().error("Version check failed")));
     }
 }
