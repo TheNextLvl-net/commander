@@ -66,6 +66,7 @@ public class ProxyCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean unregister(String command) {
+        if (!plugin.server().getCommandManager().hasCommand(command)) return false;
         return unregisteredFile.getRoot().add(command) && internalUnregister(command);
     }
 
@@ -75,7 +76,6 @@ public class ProxyCommandRegistry implements CommandRegistry {
     }
 
     private boolean internalUnregister(String command) {
-        if (!plugin.server().getCommandManager().hasCommand(command)) return false;
         plugin.server().getCommandManager().unregister(command);
         return true;
     }
