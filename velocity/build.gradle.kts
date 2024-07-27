@@ -17,6 +17,7 @@ java {
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io")
     maven("https://repo.thenextlvl.net/releases")
     maven("https://repo.papermc.io/repository/maven-public/")
 }
@@ -30,6 +31,7 @@ dependencies {
     implementation("org.bstats:bstats-velocity:3.0.2")
     implementation("net.thenextlvl.core:files:1.0.5")
     implementation("net.thenextlvl.core:i18n:1.0.18")
+    implementation("net.thenextlvl.core:version-checker:1.0.1")
 
     annotationProcessor("org.projectlombok:lombok:1.18.32")
     annotationProcessor("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
