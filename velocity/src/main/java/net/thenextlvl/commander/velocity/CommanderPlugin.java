@@ -67,7 +67,7 @@ public class CommanderPlugin implements Commander {
     public void onProxyInitialize(ProxyInitializeEvent event) {
         metricsFactory.make(this, 22782);
         server().getEventManager().register(this, new CommandListener(this));
-        server().getCommandManager().register("v-command", new CommanderCommand(this));
+        server().getCommandManager().register(new CommanderCommand().create(this));
         commandRegistry().unregisterCommands();
     }
 
