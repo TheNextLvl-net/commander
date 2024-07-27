@@ -30,7 +30,7 @@ public class CommanderVersionChecker extends HangarVersionChecker<SemanticVersio
 
     @Override
     public boolean isSupported(HangarVersion version) {
-        return version.platformDependencies().get(Platform.VELOCITY)
-                .contains(plugin.server().getVersion().getVersion());
+        return version.platformDependencies().get(Platform.VELOCITY).stream()
+                .anyMatch(plugin.server().getVersion().getVersion()::startsWith);
     }
 }
