@@ -71,6 +71,12 @@ public class CommanderPlugin implements Commander {
         commandRegistry().unregisterCommands();
     }
 
+    @Subscribe(order = PostOrder.FIRST)
+    public void onProxyShutdown(ProxyShutdownEvent event) {
+        commandRegistry.getHiddenFile().save();
+        commandRegistry.getUnregisteredFile().save();
+    }
+
     @Override
     public PermissionOverride permissionOverride() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Not supported on the proxy");
