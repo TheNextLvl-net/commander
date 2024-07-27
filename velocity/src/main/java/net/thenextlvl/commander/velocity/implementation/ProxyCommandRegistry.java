@@ -1,60 +1,82 @@
 package net.thenextlvl.commander.velocity.implementation;
 
-import core.annotation.MethodsReturnNotNullByDefault;
-import core.annotation.ParametersAreNotNullByDefault;
-import core.annotation.TypesAreNotNullByDefault;
-import net.thenextlvl.commander.velocity.CommanderPlugin;
+import com.google.gson.reflect.TypeToken;
+import core.file.FileIO;
+import core.file.format.GsonFile;
+import core.io.IO;
+import lombok.Getter;
 import net.thenextlvl.commander.CommandRegistry;
+import net.thenextlvl.commander.velocity.CommanderPlugin;
 
+import java.util.HashSet;
 import java.util.Set;
 
-@TypesAreNotNullByDefault
-@MethodsReturnNotNullByDefault
-@ParametersAreNotNullByDefault
-public record ProxyCommandRegistry(CommanderPlugin plugin) implements CommandRegistry {
+@Getter
+public class ProxyCommandRegistry implements CommandRegistry {
+    private final FileIO<Set<String>> hiddenFile;
+    private final FileIO<Set<String>> unregisteredFile;
+    private final CommanderPlugin plugin;
+
+    public ProxyCommandRegistry(CommanderPlugin plugin) {
+        this.hiddenFile = new GsonFile<Set<String>>(
+                IO.of(plugin.dataFolder().toFile(), "hidden-commands.json"),
+                new HashSet<>(), new TypeToken<>() {
+        }).saveIfAbsent();
+        this.unregisteredFile = new GsonFile<Set<String>>(
+                IO.of(plugin.dataFolder().toFile(), "removed-commands.json"),
+                new HashSet<>(), new TypeToken<>() {
+        }).saveIfAbsent();
+        this.plugin = plugin;
+    }
 
     @Override
     public Set<String> hiddenCommands() {
-        return Set.of();
+        return Set.copyOf(hiddenFile.getRoot());
     }
 
     @Override
     public Set<String> unregisteredCommands() {
-        return Set.of();
+        return Set.copyOf(unregisteredFile.getRoot());
     }
 
     @Override
     public boolean hide(String command) {
-        return false;
+        return hiddenFile.getRoot().add(command);
     }
 
     @Override
     public boolean isHidden(String command) {
-        return false;
+        return hiddenFile.getRoot().contains(command);
     }
 
     @Override
     public boolean isUnregistered(String command) {
-        return false;
+        return unregisteredFile.getRoot().contains(command);
     }
 
     @Override
     public boolean register(String command) {
-        return false;
+        return unregisteredFile.getRoot().remove(command);
     }
 
     @Override
     public boolean reveal(String command) {
-        return false;
+        return hiddenFile.getRoot().remove(command);
     }
 
     @Override
     public boolean unregister(String command) {
-        return false;
+        return unregisteredFile.getRoot().add(command) && internalUnregister(command);
     }
 
     @Override
     public void unregisterCommands() {
+        unregisteredCommands().forEach(this::internalUnregister);
+    }
 
+    private boolean internalUnregister(String command) {
+        if (!plugin.server().getCommandManager().hasCommand(command)) return false;
+        plugin.server().getCommandManager().unregister(command);
+        return true;
     }
 }
