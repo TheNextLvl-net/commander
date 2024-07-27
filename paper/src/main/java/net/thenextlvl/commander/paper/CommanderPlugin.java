@@ -44,7 +44,7 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
     @Override
     public void onLoad() {
         Bukkit.getServicesManager().register(Commander.class, this, this, ServicePriority.Highest);
-        versionChecker.retrieveLatestSupportedVersion(latest -> latest.ifPresent(version -> {
+        versionChecker.retrieveLatestSupportedVersion(latest -> latest.ifPresentOrElse(version -> {
             if (version.equals(versionChecker.getVersionRunning())) {
                 getComponentLogger().info("You are running the latest version of Commander");
             } else if (version.compareTo(Objects.requireNonNull(versionChecker.getVersionRunning())) > 0) {
@@ -54,7 +54,7 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
             } else {
                 getComponentLogger().warn("You are running a snapshot version of Commander");
             }
-        }));
+        }, () -> getComponentLogger().error("Version check failed")));
     }
 
     @Override
