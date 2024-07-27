@@ -1,5 +1,6 @@
 package net.thenextlvl.commander.paper.command;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -17,7 +18,8 @@ class UnregisterCommand {
 
     public ArgumentBuilder<CommandSourceStack, ?> create() {
         return Commands.literal("unregister")
-                .then(Commands.argument("command", new CommandArgumentType(plugin))
+                .then(Commands.argument("command", StringArgumentType.string())
+                        .suggests(new CommandSuggestionProvider(plugin))
                         .executes(this::unregister));
     }
 

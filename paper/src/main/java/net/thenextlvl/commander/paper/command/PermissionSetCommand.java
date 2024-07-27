@@ -19,7 +19,8 @@ class PermissionSetCommand {
 
     public ArgumentBuilder<CommandSourceStack, ?> create() {
         return Commands.literal("set")
-                .then(Commands.argument("command", new CommandArgumentType(plugin))
+                .then(Commands.argument("command", StringArgumentType.string())
+                        .suggests(new CommandSuggestionProvider(plugin))
                         .then(Commands.argument("permission", StringArgumentType.string())
                                 .suggests((context, suggestions) -> {
                                     Bukkit.getPluginManager().getPermissions().stream()
