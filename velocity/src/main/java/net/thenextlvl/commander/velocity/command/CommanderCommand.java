@@ -9,6 +9,7 @@ public class CommanderCommand {
         var command = BrigadierCommand.literalArgumentBuilder("commandv")
                 .requires(source -> source.hasPermission("commander.admin"))
                 .then(new HideCommand(plugin).create())
+                .then(new PermissionCommand(plugin).create())
                 .then(new RegisterCommand(plugin).create())
                 .then(new ResetCommand(plugin).create())
                 .then(new RevealCommand(plugin).create())
