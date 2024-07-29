@@ -31,11 +31,13 @@ public class ProxyPermissionOverride implements PermissionOverride {
     }
 
     @Override
+    @Deprecated
     public Map<String, @Nullable String> originalPermissions() throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @Deprecated
     public @Nullable String originalPermission(String command) throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
@@ -59,6 +61,7 @@ public class ProxyPermissionOverride implements PermissionOverride {
     }
 
     @Override
+    @Deprecated
     public void overridePermissions() throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
