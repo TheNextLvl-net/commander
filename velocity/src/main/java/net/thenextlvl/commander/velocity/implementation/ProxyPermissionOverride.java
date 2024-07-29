@@ -43,6 +43,11 @@ public class ProxyPermissionOverride implements PermissionOverride {
     }
 
     @Override
+    public @Nullable String permission(String command) {
+        return overridesFile.getRoot().get(command);
+    }
+
+    @Override
     public boolean isOverridden(String command) {
         return overridesFile.getRoot().containsKey(command);
     }

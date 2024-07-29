@@ -42,6 +42,11 @@ public class PaperPermissionOverride implements PermissionOverride {
     }
 
     @Override
+    public String permission(String command) {
+        return overridesFile.getRoot().get(command);
+    }
+
+    @Override
     public boolean isOverridden(String command) {
         return overridesFile.getRoot().containsKey(command);
     }

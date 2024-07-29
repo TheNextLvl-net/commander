@@ -12,6 +12,9 @@ public interface PermissionOverride {
     @Nullable
     String originalPermission(String command);
 
+    @Nullable
+    String permission(String command);
+
     boolean isOverridden(String command);
 
     boolean override(String command, @Nullable String permission);
