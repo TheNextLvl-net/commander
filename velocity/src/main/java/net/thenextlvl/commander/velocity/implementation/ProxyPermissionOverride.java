@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Getter
 @RequiredArgsConstructor
@@ -54,8 +55,7 @@ public class ProxyPermissionOverride implements PermissionOverride {
 
     @Override
     public boolean override(String command, @Nullable String permission) {
-        overridesFile.getRoot().put(command, permission);
-        return true;
+        return !Objects.equals(overridesFile.getRoot().put(command, permission), permission);
     }
 
     @Override
