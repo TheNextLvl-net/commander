@@ -77,6 +77,7 @@ public class CommanderPlugin implements Commander {
     public void onProxyShutdown(ProxyShutdownEvent event) {
         commandRegistry.getHiddenFile().save();
         commandRegistry.getUnregisteredFile().save();
+        permissionOverride.getOverridesFile().save();
     }
 
     private void checkVersionUpdate() {
