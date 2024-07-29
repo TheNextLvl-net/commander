@@ -47,7 +47,7 @@ tasks.shadowJar {
 val versionString: String = project.version as String
 val isRelease: Boolean = !versionString.contains("-pre")
 
-val versions: List<String> = (property("gameVersions") as String)
+val versions: List<String> = (property("velocityVersions") as String)
     .split(",")
     .map { it.trim() }
 
