@@ -15,7 +15,10 @@ public class CommandListener {
     @SuppressWarnings("UnstableApiUsage")
     public void onCommandSend(PlayerAvailableCommandsEvent event) {
         if (event.getPlayer().getPermissionValue("commander.bypass").equals(Tristate.TRUE)) return;
-        event.getRootNode().getChildren().removeIf(commandNode ->
-                commander.commandRegistry().isHidden(commandNode.getName()));
+        event.getRootNode().getChildren().removeIf(commandNode -> {
+            if (commander.commandRegistry().isHidden(commandNode.getName())) return true;
+            var permission = commander.permissionOverride().permission(commandNode.getName());
+            return !event.getPlayer().hasPermission(permission);
+        });
     }
 }
