@@ -26,7 +26,7 @@ class ResetCommand {
                                     .map(StringArgumentType::escapeIfRequired)
                                     .filter(s -> s.contains(suggestions.getRemaining()))
                                     .forEach(suggestions::suggest);
-                            plugin.permissionOverride().originalPermissions().keySet().stream()
+                            plugin.permissionOverride().overrides().keySet().stream()
                                     .map(StringArgumentType::escapeIfRequired)
                                     .filter(s -> s.contains(suggestions.getRemaining()))
                                     .forEach(suggestions::suggest);
