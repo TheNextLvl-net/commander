@@ -19,7 +19,7 @@ public class CommandListener {
         event.getRootNode().getChildren().removeIf(commandNode -> {
             if (commander.commandRegistry().isHidden(commandNode.getName())) return true;
             var permission = commander.permissionOverride().permission(commandNode.getName());
-            return !event.getPlayer().hasPermission(permission);
+            return permission != null && !event.getPlayer().hasPermission(permission);
         });
     }
 
@@ -28,7 +28,7 @@ public class CommandListener {
         if (!event.getResult().isAllowed()) return;
         var command = event.getCommand().replaceFirst("/", "").stripLeading();
         var permission = commander.permissionOverride().permission(command);
-        if (permission != null && event.getCommandSource().hasPermission(permission)) return;
+        if (permission == null || event.getCommandSource().hasPermission(permission)) return;
         event.setResult(CommandExecuteEvent.CommandResult.forwardToServer());
     }
 }
