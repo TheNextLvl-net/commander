@@ -16,9 +16,9 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.thenextlvl.commander.Commander;
-import net.thenextlvl.commander.PermissionOverride;
 import net.thenextlvl.commander.velocity.command.CommanderCommand;
 import net.thenextlvl.commander.velocity.implementation.ProxyCommandRegistry;
+import net.thenextlvl.commander.velocity.implementation.ProxyPermissionOverride;
 import net.thenextlvl.commander.velocity.listener.CommandListener;
 import net.thenextlvl.commander.velocity.version.CommanderVersionChecker;
 import org.bstats.velocity.Metrics;
@@ -40,6 +40,7 @@ public class CommanderPlugin implements Commander {
     private final CommanderVersionChecker versionChecker = new CommanderVersionChecker(this);
     private final ComponentBundle bundle;
     private final ProxyCommandRegistry commandRegistry;
+    private final ProxyPermissionOverride permissionOverride;
     private final Metrics.Factory metricsFactory;
     private final ProxyServer server;
     private final Logger logger;
@@ -60,6 +61,7 @@ public class CommanderPlugin implements Commander {
                         Placeholder.component("prefix", bundle.component(Locale.US, "prefix"))
                 )).build());
         this.commandRegistry = new ProxyCommandRegistry(this);
+        this.permissionOverride = new ProxyPermissionOverride(this);
         checkVersionUpdate();
     }
 
@@ -75,11 +77,6 @@ public class CommanderPlugin implements Commander {
     public void onProxyShutdown(ProxyShutdownEvent event) {
         commandRegistry.getHiddenFile().save();
         commandRegistry.getUnregisteredFile().save();
-    }
-
-    @Override
-    public PermissionOverride permissionOverride() throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Not supported on the proxy");
     }
 
     private void checkVersionUpdate() {
