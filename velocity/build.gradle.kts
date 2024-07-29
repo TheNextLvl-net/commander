@@ -47,10 +47,6 @@ tasks.shadowJar {
 val versionString: String = project.version as String
 val isRelease: Boolean = !versionString.contains("-pre")
 
-val versions: List<String> = (property("velocityVersions") as String)
-    .split(",")
-    .map { it.trim() }
-
 hangarPublish { // docs - https://docs.papermc.io/misc/hangar-publishing
     publications.register("plugin") {
         id.set("CommandControl")
@@ -59,7 +55,9 @@ hangarPublish { // docs - https://docs.papermc.io/misc/hangar-publishing
         apiKey.set(System.getenv("HANGAR_API_TOKEN"))
         platforms.register(Platforms.VELOCITY) {
             jar.set(tasks.shadowJar.flatMap { it.archiveFile })
-            platformVersions.set(versions)
+            platformVersions.set((property("velocityVersions") as String)
+                .split(",")
+                .map { it.trim() })
         }
     }
 }
@@ -69,6 +67,8 @@ modrinth {
     projectId.set("USLuwMUi")
     versionType = if (isRelease) "release" else "beta"
     uploadFile.set(tasks.shadowJar)
-    gameVersions.set(versions)
+    gameVersions.set((property("gameVersions") as String)
+        .split(",")
+        .map { it.trim() })
     loaders.add("velocity")
 }
