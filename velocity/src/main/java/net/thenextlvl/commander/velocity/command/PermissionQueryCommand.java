@@ -24,7 +24,7 @@ class PermissionQueryCommand {
     private int query(CommandContext<CommandSource> context) {
         var sender = context.getSource();
         var command = context.getArgument("command", String.class);
-        var permission = plugin.permissionOverride().overrides().get(command);
+        var permission = plugin.permissionOverride().permission(command);
         var message = permission != null ? "permission.query.defined" : "permission.query.undefined";
         plugin.bundle().sendMessage(sender, message,
                 Placeholder.parsed("permission", String.valueOf(permission)),
