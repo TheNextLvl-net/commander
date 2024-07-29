@@ -2,6 +2,7 @@ package net.thenextlvl.commander.velocity.listener;
 
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.command.CommandExecuteEvent;
 import com.velocitypowered.api.event.command.PlayerAvailableCommandsEvent;
 import com.velocitypowered.api.permission.Tristate;
 import lombok.RequiredArgsConstructor;
@@ -20,5 +21,14 @@ public class CommandListener {
             var permission = commander.permissionOverride().permission(commandNode.getName());
             return !event.getPlayer().hasPermission(permission);
         });
+    }
+
+    @Subscribe(order = PostOrder.LAST)
+    public void onPlayerChat(CommandExecuteEvent event) {
+        if (!event.getResult().isAllowed()) return;
+        var command = event.getCommand().replaceFirst("/", "").stripLeading();
+        var permission = commander.permissionOverride().permission(command);
+        if (permission != null && event.getCommandSource().hasPermission(permission)) return;
+        event.setResult(CommandExecuteEvent.CommandResult.forwardToServer());
     }
 }
