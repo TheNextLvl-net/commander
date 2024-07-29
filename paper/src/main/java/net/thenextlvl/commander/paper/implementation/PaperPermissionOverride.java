@@ -43,7 +43,7 @@ public class PaperPermissionOverride implements PermissionOverride {
 
     @Override
     public boolean isOverridden(String command) {
-        return !originalPermissions.containsKey(command);
+        return overridesFile.getRoot().containsKey(command);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class PaperPermissionOverride implements PermissionOverride {
 
     @Override
     public boolean reset(String command) {
-        if (!overridesFile.getRoot().containsKey(command)) return false;
+        if (!isOverridden(command)) return false;
         overridesFile.getRoot().remove(command);
         return internalReset(command);
     }
