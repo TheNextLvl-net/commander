@@ -83,5 +83,4 @@ modrinth {
     gameVersions.set(versions)
     loaders.add("paper")
     loaders.add("folia")
-    loaders.add("velocity")
 }
