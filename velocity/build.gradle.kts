@@ -48,7 +48,7 @@ val versionString: String = project.version as String
 val isRelease: Boolean = !versionString.contains("-pre")
 
 hangarPublish { // docs - https://docs.papermc.io/misc/hangar-publishing
-    publications.register("plugin") {
+    publications.register("velocity") {
         id.set("CommandControl")
         version.set(versionString)
         channel.set(if (isRelease) "Release" else "Snapshot")

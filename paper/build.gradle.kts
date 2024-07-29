@@ -63,7 +63,7 @@ val versions: List<String> = (property("gameVersions") as String)
     .map { it.trim() }
 
 hangarPublish { // docs - https://docs.papermc.io/misc/hangar-publishing
-    publications.register("plugin") {
+    publications.register("paper") {
         id.set("CommandControl")
         version.set(versionString)
         channel.set(if (isRelease) "Release" else "Snapshot")
