@@ -1,5 +1,6 @@
 package net.thenextlvl.commander.velocity.command;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -26,6 +27,6 @@ class UnregisterCommand {
         var success = plugin.commandRegistry().unregister(command);
         var message = success ? "command.unregistered" : "nothing.changed";
         plugin.bundle().sendMessage(sender, message, Placeholder.parsed("command", command));
-        return com.mojang.brigadier.Command.SINGLE_SUCCESS;
+        return Command.SINGLE_SUCCESS;
     }
 }
