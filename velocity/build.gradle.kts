@@ -2,7 +2,7 @@ import io.papermc.hangarpublishplugin.model.Platforms
 
 plugins {
     id("java")
-    id("io.github.goooler.shadow") version "8.1.7"
+    id("io.github.goooler.shadow") version "8.1.8"
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
     id("com.modrinth.minotaur") version "2.+"
 }
