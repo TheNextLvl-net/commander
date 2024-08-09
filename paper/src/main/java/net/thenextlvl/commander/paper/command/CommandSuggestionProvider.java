@@ -20,12 +20,12 @@ class CommandSuggestionProvider implements SuggestionProvider<CommandSourceStack
 
     @Override
     public CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
-                Bukkit.getCommandMap().getKnownCommands().values().stream()
-                        .map(Command::getLabel)
-                        .filter(s -> !plugin.commandRegistry().isUnregistered(s))
-                        .map(StringArgumentType::escapeIfRequired)
-                        .filter(s -> s.contains(builder.getRemaining()))
-                        .forEach(builder::suggest);
+        Bukkit.getCommandMap().getKnownCommands().values().stream()
+                .map(Command::getLabel)
+                .filter(s -> !plugin.commandRegistry().isUnregistered(s))
+                .map(StringArgumentType::escapeIfRequired)
+                .filter(s -> s.contains(builder.getRemaining()))
+                .forEach(builder::suggest);
         return builder.buildFuture();
     }
 }
