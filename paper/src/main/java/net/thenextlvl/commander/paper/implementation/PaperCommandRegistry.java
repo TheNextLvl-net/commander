@@ -107,7 +107,7 @@ public class PaperCommandRegistry implements CommandRegistry {
         return true;
     }
 
-    private Set<String> findCommands(String input) {
+    static Set<String> findCommands(String input) {
         return findCommands(Bukkit.getCommandMap().getKnownCommands().entrySet()
                 .stream().mapMulti((entry, consumer) -> {
                     consumer.accept(entry.getKey());
@@ -115,7 +115,7 @@ public class PaperCommandRegistry implements CommandRegistry {
                 }), input);
     }
 
-    private Set<String> findCommands(Stream<String> commands, String input) {
+    static Set<String> findCommands(Stream<String> commands, String input) {
         var pattern = Pattern.compile(input.replace("*", ".*"));
         return commands.filter(command ->
                 pattern.matcher(command).matches()
