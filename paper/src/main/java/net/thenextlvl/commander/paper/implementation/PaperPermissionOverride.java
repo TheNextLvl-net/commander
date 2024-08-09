@@ -13,6 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static net.thenextlvl.commander.paper.implementation.PaperCommandRegistry.findCommands;
+
 @Getter
 @RequiredArgsConstructor
 public class PaperPermissionOverride implements PermissionOverride {
@@ -53,15 +55,20 @@ public class PaperPermissionOverride implements PermissionOverride {
 
     @Override
     public boolean override(String command, @Nullable String permission) {
-        overridesFile.getRoot().put(command, permission);
-        return internalOverride(command, permission);
+        var commands = findCommands(command).stream()
+                .filter(s -> internalOverride(s, permission))
+                .toList();
+        commands.forEach(s -> overridesFile.getRoot().put(s, permission));
+        return !commands.isEmpty();
     }
 
     @Override
     public boolean reset(String command) {
-        if (!isOverridden(command)) return false;
-        overridesFile.getRoot().remove(command);
-        return internalReset(command);
+        var commands = findCommands(Set.copyOf(overridesFile.getRoot().keySet()).stream(), command);
+        commands.forEach(overridesFile.getRoot()::remove);
+        return !commands.stream()
+                .filter(this::internalReset)
+                .toList().isEmpty();
     }
 
     @Override
