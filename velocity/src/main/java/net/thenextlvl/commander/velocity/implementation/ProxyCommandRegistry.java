@@ -31,12 +31,12 @@ public class ProxyCommandRegistry implements CommandRegistry {
 
     @Override
     public Set<String> hiddenCommands() {
-        return Set.copyOf(hiddenFile.getRoot());
+        return new HashSet<>(hiddenFile.getRoot());
     }
 
     @Override
     public Set<String> unregisteredCommands() {
-        return Set.copyOf(unregisteredFile.getRoot());
+        return new HashSet<>(unregisteredFile.getRoot());
     }
 
     @Override

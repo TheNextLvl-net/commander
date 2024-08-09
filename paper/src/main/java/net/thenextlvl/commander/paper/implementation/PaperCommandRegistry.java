@@ -37,12 +37,12 @@ public class PaperCommandRegistry implements CommandRegistry {
 
     @Override
     public Set<String> hiddenCommands() {
-        return Set.copyOf(hiddenFile.getRoot());
+        return new HashSet<>(hiddenFile.getRoot());
     }
 
     @Override
     public Set<String> unregisteredCommands() {
-        return Set.copyOf(unregisteredFile.getRoot());
+        return new HashSet<>(unregisteredFile.getRoot());
     }
 
     @Override
@@ -64,7 +64,7 @@ public class PaperCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean register(String command) {
-        return !findCommands(Set.copyOf(commands.keySet()).stream(), command).stream()
+        return !findCommands(new HashSet<>(commands.keySet()).stream(), command).stream()
                 .filter(unregisteredFile.getRoot()::remove)
                 .filter(this::internalRegister)
                 .toList().isEmpty();

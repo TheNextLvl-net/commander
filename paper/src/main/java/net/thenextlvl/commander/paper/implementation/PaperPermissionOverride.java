@@ -11,7 +11,10 @@ import net.thenextlvl.commander.paper.CommanderPlugin;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
 
 import static net.thenextlvl.commander.paper.implementation.PaperCommandRegistry.findCommands;
 
@@ -30,12 +33,12 @@ public class PaperPermissionOverride implements PermissionOverride {
 
     @Override
     public Map<String, @Nullable String> overrides() {
-        return Map.copyOf(overridesFile.getRoot());
+        return new HashMap<>(overridesFile.getRoot());
     }
 
     @Override
     public Map<String, @Nullable String> originalPermissions() {
-        return Map.copyOf(originalPermissions);
+        return new HashMap<>(originalPermissions);
     }
 
     @Override
@@ -64,7 +67,7 @@ public class PaperPermissionOverride implements PermissionOverride {
 
     @Override
     public boolean reset(String command) {
-        var commands = findCommands(Set.copyOf(overridesFile.getRoot().keySet()).stream(), command);
+        var commands = findCommands(new HashSet<>(overridesFile.getRoot().keySet()).stream(), command);
         commands.forEach(overridesFile.getRoot()::remove);
         return !commands.stream()
                 .filter(this::internalReset)
