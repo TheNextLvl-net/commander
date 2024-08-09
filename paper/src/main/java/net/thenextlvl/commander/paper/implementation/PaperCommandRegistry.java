@@ -5,8 +5,8 @@ import core.file.FileIO;
 import core.file.format.GsonFile;
 import core.io.IO;
 import lombok.Getter;
-import net.thenextlvl.commander.paper.CommanderPlugin;
 import net.thenextlvl.commander.CommandRegistry;
+import net.thenextlvl.commander.paper.CommanderPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 
@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Getter
 public class PaperCommandRegistry implements CommandRegistry {
@@ -44,8 +47,9 @@ public class PaperCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean hide(String command) {
-        return Bukkit.getCommandMap().getKnownCommands().containsKey(command)
-               && hiddenFile.getRoot().add(command);
+        return !findCommands(command).stream()
+                .filter(hiddenFile.getRoot()::add)
+                .toList().isEmpty();
     }
 
     @Override
@@ -60,22 +64,33 @@ public class PaperCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean register(String command) {
-        return unregisteredFile.getRoot().remove(command) && internalRegister(command);
+        return !findCommands(Set.copyOf(commands.keySet()).stream(), command).stream()
+                .filter(unregisteredFile.getRoot()::remove)
+                .filter(this::internalRegister)
+                .toList().isEmpty();
     }
 
     @Override
     public boolean reveal(String command) {
-        return hiddenFile.getRoot().remove(command);
+        return !findCommands(command).stream()
+                .filter(hiddenFile.getRoot()::remove)
+                .toList().isEmpty();
     }
 
     @Override
     public boolean unregister(String command) {
-        return unregisteredFile.getRoot().add(command) && internalUnregister(command);
+        return !findCommands(command).stream()
+                .filter(s -> !s.equals("commander:command"))
+                .filter(unregisteredFile.getRoot()::add)
+                .filter(this::internalUnregister)
+                .toList().isEmpty();
     }
 
     @Override
     public void unregisterCommands() {
-        unregisteredCommands().forEach(this::internalUnregister);
+        unregisteredCommands().stream()
+                .filter(command -> !command.equals("commander:command"))
+                .forEach(this::internalUnregister);
     }
 
     private boolean internalRegister(String command) {
@@ -90,5 +105,20 @@ public class PaperCommandRegistry implements CommandRegistry {
         if (registered == null) return false;
         commands.put(command, registered);
         return true;
+    }
+
+    private Set<String> findCommands(String input) {
+        return findCommands(Bukkit.getCommandMap().getKnownCommands().entrySet()
+                .stream().mapMulti((entry, consumer) -> {
+                    consumer.accept(entry.getKey());
+                    entry.getValue().getAliases().forEach(consumer);
+                }), input);
+    }
+
+    private Set<String> findCommands(Stream<String> commands, String input) {
+        var pattern = Pattern.compile(input.replace("*", ".*"));
+        return commands.filter(command ->
+                pattern.matcher(command).matches()
+        ).collect(Collectors.toSet());
     }
 }
