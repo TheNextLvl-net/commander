@@ -6,6 +6,8 @@ import core.file.format.GsonFile;
 import core.io.IO;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.PermissionOverride;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
 import org.jetbrains.annotations.Nullable;
@@ -77,5 +79,38 @@ public class ProxyPermissionOverride implements PermissionOverride {
     @Deprecated
     public void overridePermissions() throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean reload(Audience audience) {
+        var previous = getOverridesFile().getRoot();
+        var current = getOverridesFile().reload();
+        if (previous.equals(current.getRoot())) return false;
+        var difference = difference(previous, current.getRoot());
+        var additions = difference.entrySet().stream()
+                .filter(Map.Entry::getValue).count();
+        plugin.bundle().sendMessage(audience, "command.reload.changes",
+                Placeholder.parsed("additions", String.valueOf(additions)),
+                Placeholder.parsed("deletions", String.valueOf(difference.size() - additions)),
+                Placeholder.parsed("file", "permission-overrides.json"));
+        difference.forEach((command, added) -> {
+            if (added) override(command.command(), command.permission());
+            else reset(command.command());
+        });
+        return true;
+    }
+
+    private Map<PermissionOverride, Boolean> difference(Map<String, @Nullable String> previous, Map<String, @Nullable String> current) {
+        var differences = new HashMap<PermissionOverride, Boolean>();
+        current.entrySet().stream()
+                .filter(entry -> !Objects.equals(previous.get(entry.getKey()), entry.getValue()))
+                .forEach(entry -> differences.put(new PermissionOverride(entry.getKey(), entry.getValue()), true));
+        previous.entrySet().stream()
+                .filter(entry -> !current.containsKey(entry.getKey()))
+                .forEach(entry -> differences.put(new PermissionOverride(entry.getKey(), entry.getValue()), false));
+        return differences;
+    }
+
+    private record PermissionOverride(String command, @Nullable String permission) {
     }
 }
