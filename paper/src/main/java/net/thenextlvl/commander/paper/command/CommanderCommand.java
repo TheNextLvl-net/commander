@@ -13,8 +13,10 @@ public class CommanderCommand {
                 .then(new HideCommand(plugin).create())
                 .then(new PermissionCommand(plugin).create())
                 .then(new RegisterCommand(plugin).create())
+                .then(new ReloadCommand(plugin).create())
                 .then(new ResetCommand(plugin).create())
                 .then(new RevealCommand(plugin).create())
+                .then(new SaveCommand(plugin).create())
                 .then(new UnregisterCommand(plugin).create())
                 .build();
         plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS.newHandler(event ->
