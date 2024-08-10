@@ -16,19 +16,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 
-import static net.thenextlvl.commander.paper.implementation.PaperCommandRegistry.findCommands;
-
 @Getter
 @RequiredArgsConstructor
 public class PaperPermissionOverride implements PermissionOverride {
     private final Map<String, @Nullable String> originalPermissions = new HashMap<>();
     private final FileIO<Map<String, @Nullable String>> overridesFile;
+    private final CommanderPlugin plugin;
 
     public PaperPermissionOverride(CommanderPlugin plugin) {
         this.overridesFile = new GsonFile<Map<String, @Nullable String>>(
                 IO.of(plugin.getDataFolder(), "permission-overrides.json"),
                 new HashMap<>(), new TypeToken<>() {
-        }).saveIfAbsent();
+        }).reload().saveIfAbsent();
+        this.plugin = plugin;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class PaperPermissionOverride implements PermissionOverride {
 
     @Override
     public boolean override(String command, @Nullable String permission) {
-        var commands = findCommands(command).stream()
+        var commands = plugin.commandFinder().findCommands(command).stream()
                 .filter(s -> internalOverride(s, permission))
                 .toList();
         commands.forEach(s -> overridesFile.getRoot().put(s, permission));
@@ -67,7 +67,7 @@ public class PaperPermissionOverride implements PermissionOverride {
 
     @Override
     public boolean reset(String command) {
-        var commands = findCommands(new HashSet<>(overridesFile.getRoot().keySet()).stream(), command);
+        var commands = plugin.commandFinder().findCommands(new HashSet<>(overridesFile.getRoot().keySet()).stream(), command);
         commands.forEach(overridesFile.getRoot()::remove);
         return !commands.stream()
                 .filter(this::internalReset)

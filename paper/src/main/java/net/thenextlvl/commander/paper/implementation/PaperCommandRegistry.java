@@ -14,25 +14,24 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Getter
 public class PaperCommandRegistry implements CommandRegistry {
     private final Map<String, Command> commands = new HashMap<>();
     private final FileIO<Set<String>> hiddenFile;
     private final FileIO<Set<String>> unregisteredFile;
+    private final CommanderPlugin plugin;
 
     public PaperCommandRegistry(CommanderPlugin plugin) {
         this.hiddenFile = new GsonFile<Set<String>>(
                 IO.of(plugin.getDataFolder(), "hidden-commands.json"),
                 new HashSet<>(), new TypeToken<>() {
-        }).saveIfAbsent();
+        }).reload().saveIfAbsent();
         this.unregisteredFile = new GsonFile<Set<String>>(
                 IO.of(plugin.getDataFolder(), "removed-commands.json"),
                 new HashSet<>(), new TypeToken<>() {
-        }).saveIfAbsent();
+        }).reload().saveIfAbsent();
+        this.plugin = plugin;
     }
 
     @Override
@@ -47,7 +46,7 @@ public class PaperCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean hide(String command) {
-        return !findCommands(command).stream()
+        return !plugin.commandFinder().findCommands(command).stream()
                 .filter(hiddenFile.getRoot()::add)
                 .toList().isEmpty();
     }
@@ -64,7 +63,7 @@ public class PaperCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean register(String command) {
-        return !findCommands(new HashSet<>(commands.keySet()).stream(), command).stream()
+        return !plugin.commandFinder().findCommands(new HashSet<>(commands.keySet()).stream(), command).stream()
                 .filter(unregisteredFile.getRoot()::remove)
                 .filter(this::internalRegister)
                 .toList().isEmpty();
@@ -72,14 +71,14 @@ public class PaperCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean reveal(String command) {
-        return !findCommands(command).stream()
+        return !plugin.commandFinder().findCommands(new HashSet<>(hiddenFile.getRoot()).stream(), command).stream()
                 .filter(hiddenFile.getRoot()::remove)
                 .toList().isEmpty();
     }
 
     @Override
     public boolean unregister(String command) {
-        return !findCommands(command).stream()
+        return !plugin.commandFinder().findCommands(command).stream()
                 .filter(s -> !s.equals("commander:command"))
                 .filter(unregisteredFile.getRoot()::add)
                 .filter(this::internalUnregister)
@@ -105,20 +104,5 @@ public class PaperCommandRegistry implements CommandRegistry {
         if (registered == null) return false;
         commands.put(command, registered);
         return true;
-    }
-
-    static Set<String> findCommands(String input) {
-        return findCommands(Bukkit.getCommandMap().getKnownCommands().entrySet()
-                .stream().mapMulti((entry, consumer) -> {
-                    consumer.accept(entry.getKey());
-                    entry.getValue().getAliases().forEach(consumer);
-                }), input);
-    }
-
-    static Set<String> findCommands(Stream<String> commands, String input) {
-        var pattern = Pattern.compile(input.replace("*", ".*"));
-        return commands.filter(command ->
-                pattern.matcher(command).matches()
-        ).collect(Collectors.toSet());
     }
 }
