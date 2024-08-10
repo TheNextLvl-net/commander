@@ -11,29 +11,34 @@ import net.thenextlvl.commander.paper.CommanderPlugin;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
 
 @Getter
 @RequiredArgsConstructor
 public class PaperPermissionOverride implements PermissionOverride {
     private final Map<String, @Nullable String> originalPermissions = new HashMap<>();
     private final FileIO<Map<String, @Nullable String>> overridesFile;
+    private final CommanderPlugin plugin;
 
     public PaperPermissionOverride(CommanderPlugin plugin) {
         this.overridesFile = new GsonFile<Map<String, @Nullable String>>(
                 IO.of(plugin.getDataFolder(), "permission-overrides.json"),
                 new HashMap<>(), new TypeToken<>() {
-        }).saveIfAbsent();
+        }).reload().saveIfAbsent();
+        this.plugin = plugin;
     }
 
     @Override
     public Map<String, @Nullable String> overrides() {
-        return Map.copyOf(overridesFile.getRoot());
+        return new HashMap<>(overridesFile.getRoot());
     }
 
     @Override
     public Map<String, @Nullable String> originalPermissions() {
-        return Map.copyOf(originalPermissions);
+        return new HashMap<>(originalPermissions);
     }
 
     @Override
@@ -53,15 +58,20 @@ public class PaperPermissionOverride implements PermissionOverride {
 
     @Override
     public boolean override(String command, @Nullable String permission) {
-        overridesFile.getRoot().put(command, permission);
-        return internalOverride(command, permission);
+        var commands = plugin.commandFinder().findCommands(command).stream()
+                .filter(s -> internalOverride(s, permission))
+                .toList();
+        commands.forEach(s -> overridesFile.getRoot().put(s, permission));
+        return !commands.isEmpty();
     }
 
     @Override
     public boolean reset(String command) {
-        if (!isOverridden(command)) return false;
-        overridesFile.getRoot().remove(command);
-        return internalReset(command);
+        var commands = plugin.commandFinder().findCommands(new HashSet<>(overridesFile.getRoot().keySet()).stream(), command);
+        commands.forEach(overridesFile.getRoot()::remove);
+        return !commands.stream()
+                .filter(this::internalReset)
+                .toList().isEmpty();
     }
 
     @Override

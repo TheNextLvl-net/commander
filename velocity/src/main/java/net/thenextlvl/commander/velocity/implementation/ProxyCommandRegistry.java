@@ -21,27 +21,29 @@ public class ProxyCommandRegistry implements CommandRegistry {
         this.hiddenFile = new GsonFile<Set<String>>(
                 IO.of(plugin.dataFolder().toFile(), "hidden-commands.json"),
                 new HashSet<>(), new TypeToken<>() {
-        }).saveIfAbsent();
+        }).reload().saveIfAbsent();
         this.unregisteredFile = new GsonFile<Set<String>>(
                 IO.of(plugin.dataFolder().toFile(), "removed-commands.json"),
                 new HashSet<>(), new TypeToken<>() {
-        }).saveIfAbsent();
+        }).reload().saveIfAbsent();
         this.plugin = plugin;
     }
 
     @Override
     public Set<String> hiddenCommands() {
-        return Set.copyOf(hiddenFile.getRoot());
+        return new HashSet<>(hiddenFile.getRoot());
     }
 
     @Override
     public Set<String> unregisteredCommands() {
-        return Set.copyOf(unregisteredFile.getRoot());
+        return new HashSet<>(unregisteredFile.getRoot());
     }
 
     @Override
     public boolean hide(String command) {
-        return hiddenFile.getRoot().add(command);
+        return !plugin.commandFinder().findCommands(command).stream()
+                .filter(hiddenFile.getRoot()::add)
+                .toList().isEmpty();
     }
 
     @Override
@@ -56,18 +58,26 @@ public class ProxyCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean register(String command) {
-        return unregisteredFile.getRoot().remove(command);
+        return !plugin.commandFinder().findCommands(new HashSet<>(unregisteredFile.getRoot()).stream(), command).stream()
+                .filter(unregisteredFile.getRoot()::remove)
+                .toList().isEmpty();
     }
 
     @Override
     public boolean reveal(String command) {
-        return hiddenFile.getRoot().remove(command);
+        return !plugin.commandFinder().findCommands(new HashSet<>(hiddenFile.getRoot()).stream(), command).stream()
+                .filter(hiddenFile.getRoot()::remove)
+                .toList().isEmpty();
     }
 
     @Override
     public boolean unregister(String command) {
-        if (!plugin.server().getCommandManager().hasCommand(command)) return false;
-        return unregisteredFile.getRoot().add(command) && internalUnregister(command);
+        return !plugin.commandFinder().findCommands(command).stream()
+                .filter(s -> !s.equals("commandv"))
+                .filter(plugin.server().getCommandManager()::hasCommand)
+                .filter(unregisteredFile.getRoot()::add)
+                .filter(this::internalUnregister)
+                .toList().isEmpty();
     }
 
     @Override

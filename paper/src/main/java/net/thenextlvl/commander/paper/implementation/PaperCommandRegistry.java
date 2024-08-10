@@ -5,8 +5,8 @@ import core.file.FileIO;
 import core.file.format.GsonFile;
 import core.io.IO;
 import lombok.Getter;
-import net.thenextlvl.commander.paper.CommanderPlugin;
 import net.thenextlvl.commander.CommandRegistry;
+import net.thenextlvl.commander.paper.CommanderPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 
@@ -20,32 +20,35 @@ public class PaperCommandRegistry implements CommandRegistry {
     private final Map<String, Command> commands = new HashMap<>();
     private final FileIO<Set<String>> hiddenFile;
     private final FileIO<Set<String>> unregisteredFile;
+    private final CommanderPlugin plugin;
 
     public PaperCommandRegistry(CommanderPlugin plugin) {
         this.hiddenFile = new GsonFile<Set<String>>(
                 IO.of(plugin.getDataFolder(), "hidden-commands.json"),
                 new HashSet<>(), new TypeToken<>() {
-        }).saveIfAbsent();
+        }).reload().saveIfAbsent();
         this.unregisteredFile = new GsonFile<Set<String>>(
                 IO.of(plugin.getDataFolder(), "removed-commands.json"),
                 new HashSet<>(), new TypeToken<>() {
-        }).saveIfAbsent();
+        }).reload().saveIfAbsent();
+        this.plugin = plugin;
     }
 
     @Override
     public Set<String> hiddenCommands() {
-        return Set.copyOf(hiddenFile.getRoot());
+        return new HashSet<>(hiddenFile.getRoot());
     }
 
     @Override
     public Set<String> unregisteredCommands() {
-        return Set.copyOf(unregisteredFile.getRoot());
+        return new HashSet<>(unregisteredFile.getRoot());
     }
 
     @Override
     public boolean hide(String command) {
-        return Bukkit.getCommandMap().getKnownCommands().containsKey(command)
-               && hiddenFile.getRoot().add(command);
+        return !plugin.commandFinder().findCommands(command).stream()
+                .filter(hiddenFile.getRoot()::add)
+                .toList().isEmpty();
     }
 
     @Override
@@ -60,22 +63,33 @@ public class PaperCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean register(String command) {
-        return unregisteredFile.getRoot().remove(command) && internalRegister(command);
+        return !plugin.commandFinder().findCommands(new HashSet<>(commands.keySet()).stream(), command).stream()
+                .filter(unregisteredFile.getRoot()::remove)
+                .filter(this::internalRegister)
+                .toList().isEmpty();
     }
 
     @Override
     public boolean reveal(String command) {
-        return hiddenFile.getRoot().remove(command);
+        return !plugin.commandFinder().findCommands(new HashSet<>(hiddenFile.getRoot()).stream(), command).stream()
+                .filter(hiddenFile.getRoot()::remove)
+                .toList().isEmpty();
     }
 
     @Override
     public boolean unregister(String command) {
-        return unregisteredFile.getRoot().add(command) && internalUnregister(command);
+        return !plugin.commandFinder().findCommands(command).stream()
+                .filter(s -> !s.equals("commander:command"))
+                .filter(unregisteredFile.getRoot()::add)
+                .filter(this::internalUnregister)
+                .toList().isEmpty();
     }
 
     @Override
     public void unregisterCommands() {
-        unregisteredCommands().forEach(this::internalUnregister);
+        unregisteredCommands().stream()
+                .filter(command -> !command.equals("commander:command"))
+                .forEach(this::internalUnregister);
     }
 
     private boolean internalRegister(String command) {

@@ -11,6 +11,7 @@ import net.thenextlvl.commander.velocity.CommanderPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 
@@ -18,17 +19,19 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ProxyPermissionOverride implements PermissionOverride {
     private final FileIO<Map<String, @Nullable String>> overridesFile;
+    private final CommanderPlugin plugin;
 
     public ProxyPermissionOverride(CommanderPlugin plugin) {
         this.overridesFile = new GsonFile<Map<String, @Nullable String>>(
                 IO.of(plugin.dataFolder().toFile(), "permission-overrides.json"),
                 new HashMap<>(), new TypeToken<>() {
-        }).saveIfAbsent();
+        }).reload().saveIfAbsent();
+        this.plugin = plugin;
     }
 
     @Override
     public Map<String, @Nullable String> overrides() {
-        return Map.copyOf(overridesFile.getRoot());
+        return new HashMap<>(overridesFile.getRoot());
     }
 
     @Override
@@ -55,14 +58,19 @@ public class ProxyPermissionOverride implements PermissionOverride {
 
     @Override
     public boolean override(String command, @Nullable String permission) {
-        return !Objects.equals(overridesFile.getRoot().put(command, permission), permission);
+        return !plugin.commandFinder().findCommands(command).stream()
+                .filter(s -> !Objects.equals(overridesFile.getRoot().put(s, permission), permission))
+                .toList().isEmpty();
     }
 
     @Override
     public boolean reset(String command) {
-        if (!isOverridden(command)) return false;
-        overridesFile.getRoot().remove(command);
-        return true;
+        var overridden = new HashSet<>(overridesFile.getRoot().keySet()).stream();
+        var commands = plugin.commandFinder().findCommands(overridden, command);
+        return !commands.stream()
+                .filter(this::isOverridden)
+                .map(overridesFile.getRoot()::remove)
+                .toList().isEmpty();
     }
 
     @Override

@@ -5,6 +5,12 @@ import core.i18n.file.ComponentBundle;
 
 @MethodsReturnNotNullByDefault
 public interface Commander {
+    /**
+     * Retrieves the CommandFinder instance associated with the Commander.
+     *
+     * @return the CommandFinder instance
+     */
+    CommandFinder commandFinder();
 
     /**
      * Retrieves the ComponentBundle associated with the Commander.
