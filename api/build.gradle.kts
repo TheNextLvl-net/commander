@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "net.thenextlvl.commander"
-version = "4.1.0"
+version = "4.0.0"
 
 repositories {
     mavenCentral()
