@@ -1,5 +1,6 @@
 package net.thenextlvl.commander;
 
+import net.kyori.adventure.audience.Audience;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -22,4 +23,6 @@ public interface PermissionOverride {
     boolean reset(String command);
 
     void overridePermissions();
+
+    boolean reload(Audience audience);
 }

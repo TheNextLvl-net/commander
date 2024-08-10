@@ -5,11 +5,16 @@ import core.file.FileIO;
 import core.file.format.GsonFile;
 import core.io.IO;
 import lombok.Getter;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.CommandRegistry;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 public class ProxyCommandRegistry implements CommandRegistry {
@@ -83,6 +88,55 @@ public class ProxyCommandRegistry implements CommandRegistry {
     @Override
     public void unregisterCommands() {
         unregisteredCommands().forEach(this::internalUnregister);
+    }
+
+    @Override
+    public boolean reload(Audience audience) {
+        var hidden = reloadHidden(audience);
+        var unregistered = reloadUnregistered(audience);
+        return hidden || unregistered;
+    }
+
+    private boolean reloadUnregistered(Audience audience) {
+        var previous = getUnregisteredFile().getRoot();
+        var current = getUnregisteredFile().reload();
+        if (previous.equals(current.getRoot())) return false;
+        var difference = difference(previous, current.getRoot());
+        var additions = difference.entrySet().stream()
+                .filter(Map.Entry::getValue).count();
+        plugin.bundle().sendMessage(audience, "command.reload.changes",
+                Placeholder.parsed("additions", String.valueOf(additions)),
+                Placeholder.parsed("deletions", String.valueOf(difference.size() - additions)),
+                Placeholder.parsed("file", "unregistered-commands.json"));
+        difference.forEach((command, added) -> {
+            if (added) internalUnregister(command);
+        });
+        return true;
+    }
+
+    private boolean reloadHidden(Audience audience) {
+        var previous = getHiddenFile().getRoot();
+        var current = getHiddenFile().reload();
+        if (previous.equals(current.getRoot())) return false;
+        var difference = difference(previous, current.getRoot());
+        var additions = difference.entrySet().stream()
+                .filter(Map.Entry::getValue).count();
+        plugin.bundle().sendMessage(audience, "command.reload.changes",
+                Placeholder.parsed("additions", String.valueOf(additions)),
+                Placeholder.parsed("deletions", String.valueOf(difference.size() - additions)),
+                Placeholder.parsed("file", "hidden-commands.json"));
+        return true;
+    }
+
+    private Map<String, Boolean> difference(Set<String> previous, Set<String> current) {
+        var differences = new HashMap<String, Boolean>();
+        differences.putAll(current.stream()
+                .filter(s -> !previous.contains(s))
+                .collect(Collectors.toMap(s -> s, s -> true)));
+        differences.putAll(previous.stream()
+                .filter(s -> !current.contains(s))
+                .collect(Collectors.toMap(s -> s, s -> false)));
+        return differences;
     }
 
     private boolean internalUnregister(String command) {

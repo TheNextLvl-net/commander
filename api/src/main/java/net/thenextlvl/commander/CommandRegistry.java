@@ -1,5 +1,7 @@
 package net.thenextlvl.commander;
 
+import net.kyori.adventure.audience.Audience;
+
 import java.util.Set;
 
 public interface CommandRegistry {
@@ -20,4 +22,6 @@ public interface CommandRegistry {
     boolean unregister(String command);
 
     void unregisterCommands();
+
+    boolean reload(Audience audience);
 }
