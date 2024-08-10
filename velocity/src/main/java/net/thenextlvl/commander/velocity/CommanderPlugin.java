@@ -17,6 +17,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.thenextlvl.commander.Commander;
 import net.thenextlvl.commander.velocity.command.CommanderCommand;
+import net.thenextlvl.commander.velocity.implementation.ProxyCommandFinder;
 import net.thenextlvl.commander.velocity.implementation.ProxyCommandRegistry;
 import net.thenextlvl.commander.velocity.implementation.ProxyPermissionOverride;
 import net.thenextlvl.commander.velocity.listener.CommandListener;
@@ -39,6 +40,7 @@ import java.util.Objects;
 public class CommanderPlugin implements Commander {
     private final CommanderVersionChecker versionChecker = new CommanderVersionChecker(this);
     private final ComponentBundle bundle;
+    private final ProxyCommandFinder commandFinder;
     private final ProxyCommandRegistry commandRegistry;
     private final ProxyPermissionOverride permissionOverride;
     private final Metrics.Factory metricsFactory;
@@ -60,6 +62,7 @@ public class CommanderPlugin implements Commander {
                         TagResolver.standard(),
                         Placeholder.component("prefix", bundle.component(Locale.US, "prefix"))
                 )).build());
+        this.commandFinder = new ProxyCommandFinder(this);
         this.commandRegistry = new ProxyCommandRegistry(this);
         this.permissionOverride = new ProxyPermissionOverride(this);
         checkVersionUpdate();
