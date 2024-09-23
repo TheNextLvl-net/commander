@@ -33,7 +33,7 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:3.1.0")
     implementation("net.thenextlvl.core:files:1.0.5")
     implementation("net.thenextlvl.core:i18n:1.0.19")
-    implementation("net.thenextlvl.core:paper:1.4.1")
+    implementation("net.thenextlvl.core:paper:1.5.1")
 
     annotationProcessor("org.projectlombok:lombok:1.18.34")
 }
