@@ -31,7 +31,7 @@ dependencies {
     implementation("org.bstats:bstats-velocity:3.1.0")
     implementation("net.thenextlvl.core:files:1.0.5")
     implementation("net.thenextlvl.core:i18n:1.0.19")
-    implementation("net.thenextlvl.core:version-checker:1.0.1")
+    implementation("net.thenextlvl.core:version-checker:1.1.0")
 
     annotationProcessor("org.projectlombok:lombok:1.18.34")
     annotationProcessor("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
