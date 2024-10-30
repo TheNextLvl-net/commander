@@ -28,7 +28,7 @@ dependencies {
     compileOnly("net.kyori:adventure-api:4.17.0")
 
     implementation("net.thenextlvl.core:files:1.0.5")
-    implementation("net.thenextlvl.core:i18n:1.0.19")
+    implementation("net.thenextlvl.core:i18n:1.0.20")
 
     annotationProcessor("org.projectlombok:lombok:1.18.34")
 }
