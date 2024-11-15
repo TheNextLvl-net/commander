@@ -20,7 +20,7 @@ java {
 }
 
 dependencies {
-    compileOnly("org.projectlombok:lombok:1.18.34")
+    compileOnly("org.projectlombok:lombok:1.18.36")
     compileOnly("org.jetbrains:annotations:26.0.1")
     compileOnly("net.thenextlvl.core:annotations:2.0.1")
 
@@ -30,7 +30,7 @@ dependencies {
     implementation("net.thenextlvl.core:files:2.0.0")
     implementation("net.thenextlvl.core:i18n:1.0.20")
 
-    annotationProcessor("org.projectlombok:lombok:1.18.34")
+    annotationProcessor("org.projectlombok:lombok:1.18.36")
 }
 
 publishing {
