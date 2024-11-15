@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.projectlombok:lombok:1.18.34")
+    compileOnly("org.projectlombok:lombok:1.18.36")
     compileOnly("net.thenextlvl.core:annotations:2.0.1")
     compileOnly("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
 
@@ -33,7 +33,7 @@ dependencies {
     implementation("net.thenextlvl.core:i18n:1.0.20")
     implementation("net.thenextlvl.core:version-checker:1.0.1")
 
-    annotationProcessor("org.projectlombok:lombok:1.18.34")
+    annotationProcessor("org.projectlombok:lombok:1.18.36")
     annotationProcessor("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
 }
 
