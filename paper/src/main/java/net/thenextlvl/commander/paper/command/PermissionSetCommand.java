@@ -8,10 +8,11 @@ import io.papermc.paper.command.brigadier.Commands;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.paper.CommanderPlugin;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 @RequiredArgsConstructor
 @SuppressWarnings("UnstableApiUsage")
 class PermissionSetCommand {
@@ -23,7 +24,7 @@ class PermissionSetCommand {
                         .suggests(new CommandSuggestionProvider(plugin))
                         .then(Commands.argument("permission", StringArgumentType.string())
                                 .suggests((context, suggestions) -> {
-                                    Bukkit.getPluginManager().getPermissions().stream()
+                                    plugin.getServer().getPluginManager().getPermissions().stream()
                                             .map(Permission::getName)
                                             .map(StringArgumentType::escapeIfRequired)
                                             .filter(s -> s.contains(suggestions.getRemaining()))
@@ -42,7 +43,7 @@ class PermissionSetCommand {
         plugin.bundle().sendMessage(sender, message,
                 Placeholder.parsed("permission", permission),
                 Placeholder.parsed("command", command));
-        if (success) Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
+        if (success) plugin.getServer().getOnlinePlayers().forEach(Player::updateCommands);
         return com.mojang.brigadier.Command.SINGLE_SUCCESS;
     }
 }

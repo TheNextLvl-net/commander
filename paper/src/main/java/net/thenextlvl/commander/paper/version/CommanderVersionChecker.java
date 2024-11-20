@@ -5,16 +5,18 @@ import core.version.SemanticVersion;
 import lombok.Getter;
 import net.thenextlvl.commander.paper.CommanderPlugin;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Objects;
 
 @Getter
+@NullMarked
 @SuppressWarnings("UnstableApiUsage")
 public class CommanderVersionChecker extends PaperHangarVersionChecker<SemanticVersion> {
     private final SemanticVersion versionRunning;
 
     public CommanderVersionChecker(CommanderPlugin plugin) {
-        super("CommandControl");
+        super(plugin, "TheNextLvl", "CommandControl");
         this.versionRunning = Objects.requireNonNull(parseVersion(plugin.getPluginMeta().getVersion()));
     }
 

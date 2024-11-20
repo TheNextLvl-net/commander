@@ -9,9 +9,10 @@ import io.papermc.paper.command.brigadier.Commands;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.paper.CommanderPlugin;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 @RequiredArgsConstructor
 @SuppressWarnings("UnstableApiUsage")
 class ResetCommand {
@@ -46,7 +47,7 @@ class ResetCommand {
         var s3 = plugin.commandRegistry().reveal(command);
         var message = s1 || s2 || s3 ? "command.reset" : "nothing.changed";
         plugin.bundle().sendMessage(sender, message, Placeholder.parsed("command", command));
-        if (s1 || s2 || s3) Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
+        if (s1 || s2 || s3) plugin.getServer().getOnlinePlayers().forEach(Player::updateCommands);
         return Command.SINGLE_SUCCESS;
     }
 }

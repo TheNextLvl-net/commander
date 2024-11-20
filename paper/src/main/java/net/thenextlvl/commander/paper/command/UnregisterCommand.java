@@ -8,9 +8,10 @@ import io.papermc.paper.command.brigadier.Commands;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.paper.CommanderPlugin;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 @RequiredArgsConstructor
 @SuppressWarnings("UnstableApiUsage")
 class UnregisterCommand {
@@ -29,7 +30,7 @@ class UnregisterCommand {
         var success = plugin.commandRegistry().unregister(command);
         var message = success ? "command.unregistered" : "nothing.changed";
         plugin.bundle().sendMessage(sender, message, Placeholder.parsed("command", command));
-        if (success) Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
+        if (success) plugin.getServer().getOnlinePlayers().forEach(Player::updateCommands);
         return com.mojang.brigadier.Command.SINGLE_SUCCESS;
     }
 }

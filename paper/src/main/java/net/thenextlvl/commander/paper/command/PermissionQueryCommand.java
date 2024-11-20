@@ -8,8 +8,9 @@ import io.papermc.paper.command.brigadier.Commands;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.paper.CommanderPlugin;
-import org.bukkit.Bukkit;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 @RequiredArgsConstructor
 @SuppressWarnings("UnstableApiUsage")
 class PermissionQueryCommand {
@@ -25,7 +26,7 @@ class PermissionQueryCommand {
     private int query(CommandContext<CommandSourceStack> context) {
         var sender = context.getSource().getSender();
         var command = context.getArgument("command", String.class);
-        var registered = Bukkit.getCommandMap().getKnownCommands().get(command);
+        var registered = plugin.getServer().getCommandMap().getKnownCommands().get(command);
         var permission = registered != null ? registered.getPermission() : null;
         var message = registered == null ? "command.unknown" : permission != null ?
                 "permission.query.defined" : "permission.query.undefined";

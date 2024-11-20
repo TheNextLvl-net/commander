@@ -9,11 +9,12 @@ import io.papermc.paper.command.brigadier.Commands;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.paper.CommanderPlugin;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Optional;
 
+@NullMarked
 @RequiredArgsConstructor
 @SuppressWarnings("UnstableApiUsage")
 class PermissionResetCommand {
@@ -38,12 +39,12 @@ class PermissionResetCommand {
         var command = context.getArgument("command", String.class);
         var success = plugin.permissionOverride().reset(command);
         var message = success ? "permission.reset" : "nothing.changed";
-        var permission = Optional.ofNullable(Bukkit.getCommandMap().getCommand(command))
+        var permission = Optional.ofNullable(plugin.getServer().getCommandMap().getCommand(command))
                 .map(org.bukkit.command.Command::getPermission)
                 .orElse("null");
         plugin.bundle().sendMessage(sender, message, Placeholder.parsed("command", command),
                 Placeholder.parsed("permission", permission));
-        if (success) Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
+        if (success) plugin.getServer().getOnlinePlayers().forEach(Player::updateCommands);
         return Command.SINGLE_SUCCESS;
     }
 }

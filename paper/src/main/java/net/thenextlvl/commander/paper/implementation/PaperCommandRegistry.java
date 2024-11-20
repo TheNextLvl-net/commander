@@ -9,8 +9,8 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.CommandRegistry;
 import net.thenextlvl.commander.paper.CommanderPlugin;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
+@NullMarked
 public class PaperCommandRegistry implements CommandRegistry {
     private final Map<String, Command> commands = new HashMap<>();
     private final FileIO<Set<String>> hiddenFile;
@@ -148,12 +149,12 @@ public class PaperCommandRegistry implements CommandRegistry {
     private boolean internalRegister(String command) {
         var register = commands.remove(command);
         if (register == null) return false;
-        Bukkit.getCommandMap().getKnownCommands().put(command, register);
+        plugin.getServer().getCommandMap().getKnownCommands().put(command, register);
         return true;
     }
 
     private boolean internalUnregister(String command) {
-        var registered = Bukkit.getCommandMap().getKnownCommands().remove(command);
+        var registered = plugin.getServer().getCommandMap().getKnownCommands().remove(command);
         if (registered == null) return false;
         commands.put(command, registered);
         return true;
