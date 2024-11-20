@@ -7,7 +7,6 @@ import core.version.hangar.HangarVersionChecker;
 import core.version.hangar.Platform;
 import lombok.Getter;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
-import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.Objects;
@@ -26,7 +25,7 @@ public class CommanderVersionChecker extends HangarVersionChecker<SemanticVersio
     }
 
     @Override
-    public @Nullable SemanticVersion parseVersion(String version) {
+    public SemanticVersion parseVersion(String version) {
         return SemanticVersion.parse(version);
     }
 
