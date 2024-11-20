@@ -24,9 +24,10 @@ class ReloadCommand {
     private int reload(CommandContext<CommandSourceStack> context) {
         var sender = context.getSource().getSender();
         try {
+            var config = reloadConfig();
             var commands = plugin.commandRegistry().reload(sender);
             var permissions = plugin.permissionOverride().reload(sender);
-            var success = commands || permissions;
+            var success = config || commands || permissions;
             if (success && sender instanceof Player player) player.updateCommands();
             var message = success ? "command.reload.success" : "nothing.changed";
             plugin.bundle().sendMessage(sender, message);
@@ -36,5 +37,10 @@ class ReloadCommand {
                     Placeholder.parsed("error", e.getMessage()));
             return 0;
         }
+    }
+
+    private boolean reloadConfig() {
+        var previous = plugin.config().getRoot();
+        return !plugin.config().reload().getRoot().equals(previous);
     }
 }

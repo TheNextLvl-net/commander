@@ -1,6 +1,9 @@
 package net.thenextlvl.commander.paper;
 
+import core.file.FileIO;
+import core.file.format.GsonFile;
 import core.i18n.file.ComponentBundle;
+import core.io.IO;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -8,6 +11,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.thenextlvl.commander.Commander;
 import net.thenextlvl.commander.paper.command.CommanderCommand;
+import net.thenextlvl.commander.paper.config.PluginConfig;
 import net.thenextlvl.commander.paper.implementation.PaperCommandFinder;
 import net.thenextlvl.commander.paper.implementation.PaperCommandRegistry;
 import net.thenextlvl.commander.paper.implementation.PaperPermissionOverride;
@@ -38,6 +42,10 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
                     TagResolver.standard(),
                     Placeholder.component("prefix", bundle.component(Locale.US, "prefix"))
             )).build());
+    private final FileIO<PluginConfig> config = new GsonFile<>(
+            IO.of(getDataFolder(), "config.json"),
+            new PluginConfig(true)
+    ).validate().save();
 
     private final PaperCommandFinder commandFinder = new PaperCommandFinder(this);
     private final PaperCommandRegistry commandRegistry = new PaperCommandRegistry(this);
