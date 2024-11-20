@@ -4,8 +4,8 @@ import core.paper.version.PaperHangarVersionChecker;
 import core.version.SemanticVersion;
 import lombok.Getter;
 import net.thenextlvl.commander.paper.CommanderPlugin;
-import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 
