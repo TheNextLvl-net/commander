@@ -1,9 +1,9 @@
 package net.thenextlvl.commander;
 
-import core.annotation.MethodsReturnNotNullByDefault;
 import core.i18n.file.ComponentBundle;
+import org.jspecify.annotations.NullMarked;
 
-@MethodsReturnNotNullByDefault
+@NullMarked
 public interface Commander {
     /**
      * Retrieves the CommandFinder instance associated with the Commander.

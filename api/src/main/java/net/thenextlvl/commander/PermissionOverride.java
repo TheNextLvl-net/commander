@@ -2,9 +2,11 @@ package net.thenextlvl.commander;
 
 import net.kyori.adventure.audience.Audience;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Map;
 
+@NullMarked
 public interface PermissionOverride {
     Map<String, @Nullable String> originalPermissions();
 

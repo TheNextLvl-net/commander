@@ -1,11 +1,14 @@
 package net.thenextlvl.commander;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Set;
 import java.util.stream.Stream;
 
 /**
  * The CommandFinder interface defines methods for finding commands based on a given input.
  */
+@NullMarked
 public interface CommandFinder {
     /**
      * Finds commands based on the given input.

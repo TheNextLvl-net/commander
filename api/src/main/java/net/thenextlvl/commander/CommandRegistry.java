@@ -1,9 +1,11 @@
 package net.thenextlvl.commander;
 
 import net.kyori.adventure.audience.Audience;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Set;
 
+@NullMarked
 public interface CommandRegistry {
     Set<String> hiddenCommands();
 
