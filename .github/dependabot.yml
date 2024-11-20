@@ -11,4 +11,4 @@ updates:
       - "paper"
       - "velocity"
     schedule:
-      interval: "weekly"
+      interval: "daily"
