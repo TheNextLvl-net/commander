@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "net.thenextlvl.commander"
-version = "4.1.0"
+version = "4.1.1"
 
 repositories {
     mavenCentral()
@@ -13,22 +13,23 @@ repositories {
 }
 
 java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
     withJavadocJar()
     withSourcesJar()
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+}
+
+tasks.compileJava {
+    options.release.set(21)
 }
 
 dependencies {
     compileOnly("org.projectlombok:lombok:1.18.34")
-    compileOnly("org.jetbrains:annotations:24.1.0")
-    compileOnly("net.thenextlvl.core:annotations:2.0.1")
 
     compileOnly("com.google.code.gson:gson:2.11.0")
     compileOnly("net.kyori:adventure-api:4.17.0")
 
-    implementation("net.thenextlvl.core:files:1.0.5")
-    implementation("net.thenextlvl.core:i18n:1.0.19")
+    implementation("net.thenextlvl.core:files:2.0.0")
+    implementation("net.thenextlvl.core:i18n:1.0.20")
 
     annotationProcessor("org.projectlombok:lombok:1.18.34")
 }

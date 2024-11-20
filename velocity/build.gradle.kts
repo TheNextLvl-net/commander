@@ -2,7 +2,7 @@ import io.papermc.hangarpublishplugin.model.Platforms
 
 plugins {
     id("java")
-    id("io.github.goooler.shadow") version "8.1.8"
+    id("com.gradleup.shadow") version "8.3.5"
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
     id("com.modrinth.minotaur") version "2.+"
 }
@@ -11,8 +11,11 @@ group = project(":api").group
 version = project(":api").version
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+tasks.compileJava {
+    options.release.set(21)
 }
 
 repositories {
@@ -23,18 +26,17 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.projectlombok:lombok:1.18.34")
-    compileOnly("net.thenextlvl.core:annotations:2.0.1")
-    compileOnly("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
+    compileOnly("org.projectlombok:lombok:1.18.36")
+    compileOnly("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
 
     implementation(project(":api"))
-    implementation("org.bstats:bstats-velocity:3.0.2")
-    implementation("net.thenextlvl.core:files:1.0.5")
-    implementation("net.thenextlvl.core:i18n:1.0.19")
-    implementation("net.thenextlvl.core:version-checker:1.2.1")
+    implementation("org.bstats:bstats-velocity:3.1.0")
+    implementation("net.thenextlvl.core:files:2.0.0")
+    implementation("net.thenextlvl.core:i18n:1.0.20")
+    implementation("net.thenextlvl.core:version-checker:1.2.3")
 
-    annotationProcessor("org.projectlombok:lombok:1.18.34")
-    annotationProcessor("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
+    annotationProcessor("org.projectlombok:lombok:1.18.36")
+    annotationProcessor("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
 }
 
 
