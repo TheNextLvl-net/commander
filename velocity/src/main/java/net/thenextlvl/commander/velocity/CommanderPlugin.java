@@ -23,14 +23,15 @@ import net.thenextlvl.commander.velocity.implementation.ProxyPermissionOverride;
 import net.thenextlvl.commander.velocity.listener.CommandListener;
 import net.thenextlvl.commander.velocity.version.CommanderVersionChecker;
 import org.bstats.velocity.Metrics;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Locale;
-import java.util.Objects;
 
 @Getter
+@NullMarked
 @Accessors(fluent = true)
 @Plugin(id = "commander",
         name = "Commander",
@@ -65,35 +66,24 @@ public class CommanderPlugin implements Commander {
         this.commandFinder = new ProxyCommandFinder(this);
         this.commandRegistry = new ProxyCommandRegistry(this);
         this.permissionOverride = new ProxyPermissionOverride(this);
-        checkVersionUpdate();
+        versionChecker.checkVersion();
     }
 
-    @Subscribe(order = PostOrder.LAST)
+    @SuppressWarnings("deprecation")
+    @Subscribe(order = PostOrder.CUSTOM, priority = -1)
     public void onProxyInitialize(ProxyInitializeEvent event) {
         metricsFactory.make(this, 22782);
         server().getEventManager().register(this, new CommandListener(this));
-        server().getCommandManager().register(new CommanderCommand().create(this));
+        var meta = server.getCommandManager().metaBuilder("commandv").plugin(this).build();
+        server().getCommandManager().register(meta, new CommanderCommand().create(this));
         commandRegistry().unregisterCommands();
     }
 
-    @Subscribe(order = PostOrder.FIRST)
+    @SuppressWarnings("deprecation")
+    @Subscribe(order = PostOrder.CUSTOM, priority = 999)
     public void onProxyShutdown(ProxyShutdownEvent event) {
         commandRegistry.getHiddenFile().save();
         commandRegistry.getUnregisteredFile().save();
         permissionOverride.getOverridesFile().save();
-    }
-
-    private void checkVersionUpdate() {
-        versionChecker.retrieveLatestSupportedVersion(latest -> latest.ifPresentOrElse(version -> {
-            if (version.equals(versionChecker.getVersionRunning())) {
-                logger().info("You are running the latest version of Commander");
-            } else if (version.compareTo(Objects.requireNonNull(versionChecker.getVersionRunning())) > 0) {
-                logger().warn("An update for Commander is available");
-                logger().warn("You are running version {}, the latest supported version is {}", versionChecker.getVersionRunning(), version);
-                logger().warn("Update at https://modrinth.com/plugin/commander-1 or https://hangar.papermc.io/TheNextLvl/CommandControl");
-            } else {
-                logger().warn("You are running a snapshot version of Commander");
-            }
-        }, () -> logger().error("Version check failed")));
     }
 }

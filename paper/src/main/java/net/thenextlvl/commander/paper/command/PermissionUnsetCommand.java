@@ -8,9 +8,10 @@ import io.papermc.paper.command.brigadier.Commands;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.paper.CommanderPlugin;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 @RequiredArgsConstructor
 @SuppressWarnings("UnstableApiUsage")
 class PermissionUnsetCommand {
@@ -31,7 +32,7 @@ class PermissionUnsetCommand {
         plugin.bundle().sendMessage(sender, message,
                 Placeholder.parsed("permission", "null"),
                 Placeholder.parsed("command", command));
-        if (success) Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
+        if (success) plugin.getServer().getOnlinePlayers().forEach(Player::updateCommands);
         return com.mojang.brigadier.Command.SINGLE_SUCCESS;
     }
 }

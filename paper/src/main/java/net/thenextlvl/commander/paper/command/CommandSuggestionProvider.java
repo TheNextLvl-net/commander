@@ -8,11 +8,12 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import lombok.RequiredArgsConstructor;
 import net.thenextlvl.commander.paper.CommanderPlugin;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.concurrent.CompletableFuture;
 
+@NullMarked
 @RequiredArgsConstructor
 @SuppressWarnings("UnstableApiUsage")
 class CommandSuggestionProvider implements SuggestionProvider<CommandSourceStack> {
@@ -20,7 +21,7 @@ class CommandSuggestionProvider implements SuggestionProvider<CommandSourceStack
 
     @Override
     public CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
-        Bukkit.getCommandMap().getKnownCommands().values().stream()
+        plugin.getServer().getCommandMap().getKnownCommands().values().stream()
                 .map(Command::getLabel)
                 .filter(s -> !plugin.commandRegistry().isUnregistered(s))
                 .map(StringArgumentType::escapeIfRequired)

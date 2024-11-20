@@ -8,9 +8,11 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.velocitypowered.api.command.CommandSource;
 import lombok.RequiredArgsConstructor;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.concurrent.CompletableFuture;
 
+@NullMarked
 @RequiredArgsConstructor
 class CommandSuggestionProvider implements SuggestionProvider<CommandSource> {
     private final CommanderPlugin plugin;

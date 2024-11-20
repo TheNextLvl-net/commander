@@ -14,16 +14,16 @@ import net.thenextlvl.commander.paper.implementation.PaperPermissionOverride;
 import net.thenextlvl.commander.paper.listener.CommandListener;
 import net.thenextlvl.commander.paper.version.CommanderVersionChecker;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jspecify.annotations.NullMarked;
 
 import java.io.File;
 import java.util.Locale;
-import java.util.Objects;
 
 @Getter
+@NullMarked
 @Accessors(fluent = true)
 public class CommanderPlugin extends JavaPlugin implements Commander {
     private final Metrics metrics = new Metrics(this, 22782);
@@ -45,23 +45,13 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
 
     @Override
     public void onLoad() {
-        Bukkit.getServicesManager().register(Commander.class, this, this, ServicePriority.Highest);
-        versionChecker.retrieveLatestSupportedVersion(latest -> latest.ifPresentOrElse(version -> {
-            if (version.equals(versionChecker.getVersionRunning())) {
-                getComponentLogger().info("You are running the latest version of Commander");
-            } else if (version.compareTo(Objects.requireNonNull(versionChecker.getVersionRunning())) > 0) {
-                getComponentLogger().warn("An update for Commander is available");
-                getComponentLogger().warn("You are running version {}, the latest supported version is {}", versionChecker.getVersionRunning(), version);
-                getComponentLogger().warn("Update at https://modrinth.com/plugin/commander-1 or https://hangar.papermc.io/TheNextLvl/CommandControl");
-            } else {
-                getComponentLogger().warn("You are running a snapshot version of Commander");
-            }
-        }, () -> getComponentLogger().error("Version check failed")));
+        getServer().getServicesManager().register(Commander.class, this, this, ServicePriority.Highest);
+        versionChecker().checkVersion();
     }
 
     @Override
     public void onEnable() {
-        Bukkit.getGlobalRegionScheduler().execute(this, () -> {
+        getServer().getGlobalRegionScheduler().execute(this, () -> {
             permissionOverride().overridePermissions();
             commandRegistry().unregisterCommands();
         });
@@ -74,7 +64,7 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
         commandRegistry().getHiddenFile().save();
         commandRegistry().getUnregisteredFile().save();
         permissionOverride().getOverridesFile().save();
-        metrics.shutdown();
+        metrics().shutdown();
     }
 
     private void registerCommands() {
@@ -82,6 +72,6 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
     }
 
     private void registerListeners() {
-        Bukkit.getPluginManager().registerEvents(new CommandListener(this), this);
+        getServer().getPluginManager().registerEvents(new CommandListener(this), this);
     }
 }

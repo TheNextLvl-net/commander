@@ -3,7 +3,7 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
     id("java")
-    id("io.github.goooler.shadow") version "8.1.8"
+    id("com.gradleup.shadow") version "8.3.5"
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
     id("net.minecrell.plugin-yml.paper") version "0.6.0"
     id("com.modrinth.minotaur") version "2.+"
@@ -13,8 +13,11 @@ group = project(":api").group
 version = project(":api").version
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+tasks.compileJava {
+    options.release.set(21)
 }
 
 repositories {
@@ -26,14 +29,13 @@ repositories {
 
 dependencies {
     compileOnly("org.projectlombok:lombok:1.18.36")
-    compileOnly("net.thenextlvl.core:annotations:2.0.1")
     compileOnly("io.papermc.paper:paper-api:1.21.3-R0.1-SNAPSHOT")
 
     implementation(project(":api"))
     implementation("org.bstats:bstats-bukkit:3.1.0")
     implementation("net.thenextlvl.core:files:2.0.0")
     implementation("net.thenextlvl.core:i18n:1.0.20")
-    implementation("net.thenextlvl.core:paper:1.4.1")
+    implementation("net.thenextlvl.core:paper:1.5.3")
 
     annotationProcessor("org.projectlombok:lombok:1.18.36")
 }

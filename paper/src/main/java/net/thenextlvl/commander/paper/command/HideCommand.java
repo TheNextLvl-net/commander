@@ -9,9 +9,10 @@ import io.papermc.paper.command.brigadier.Commands;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.paper.CommanderPlugin;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 @RequiredArgsConstructor
 @SuppressWarnings("UnstableApiUsage")
 class HideCommand {
@@ -21,7 +22,7 @@ class HideCommand {
         return Commands.literal("hide")
                 .then(Commands.argument("command", StringArgumentType.string())
                         .suggests((context, suggestions) -> {
-                            Bukkit.getCommandMap().getKnownCommands().values().stream()
+                            plugin.getServer().getCommandMap().getKnownCommands().values().stream()
                                     .map(org.bukkit.command.Command::getLabel)
                                     .filter(s -> !plugin.commandRegistry().isUnregistered(s))
                                     .filter(s -> !plugin.commandRegistry().isHidden(s))
@@ -39,7 +40,7 @@ class HideCommand {
         var success = plugin.commandRegistry().hide(command);
         var message = success ? "command.hidden" : "nothing.changed";
         plugin.bundle().sendMessage(sender, message, Placeholder.parsed("command", command));
-        if (success) Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
+        if (success) plugin.getServer().getOnlinePlayers().forEach(Player::updateCommands);
         return Command.SINGLE_SUCCESS;
     }
 }

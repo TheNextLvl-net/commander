@@ -9,9 +9,11 @@ import com.velocitypowered.api.command.CommandSource;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Objects;
 
+@NullMarked
 @RequiredArgsConstructor
 class PermissionSetCommand {
     private final CommanderPlugin plugin;

@@ -3,12 +3,14 @@ package net.thenextlvl.commander.velocity.implementation;
 import lombok.RequiredArgsConstructor;
 import net.thenextlvl.commander.CommandFinder;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@NullMarked
 @RequiredArgsConstructor
 public class ProxyCommandFinder implements CommandFinder {
     private final CommanderPlugin plugin;

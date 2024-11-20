@@ -3,7 +3,9 @@ package net.thenextlvl.commander.paper.command;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.thenextlvl.commander.paper.CommanderPlugin;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 @SuppressWarnings("UnstableApiUsage")
 public class CommanderCommand {
 

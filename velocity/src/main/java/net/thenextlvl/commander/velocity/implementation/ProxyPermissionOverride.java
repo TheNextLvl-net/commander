@@ -10,7 +10,8 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.PermissionOverride;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Getter
+@NullMarked
 @RequiredArgsConstructor
 public class ProxyPermissionOverride implements PermissionOverride {
     private final FileIO<Map<String, @Nullable String>> overridesFile;

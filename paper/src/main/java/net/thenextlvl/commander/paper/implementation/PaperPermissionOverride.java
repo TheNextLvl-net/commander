@@ -10,8 +10,8 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.PermissionOverride;
 import net.thenextlvl.commander.paper.CommanderPlugin;
-import org.bukkit.Bukkit;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Getter
+@NullMarked
 @RequiredArgsConstructor
 public class PaperPermissionOverride implements PermissionOverride {
     private final Map<String, @Nullable String> originalPermissions = new HashMap<>();
@@ -49,7 +50,7 @@ public class PaperPermissionOverride implements PermissionOverride {
     }
 
     @Override
-    public String permission(String command) {
+    public @Nullable String permission(String command) {
         return overridesFile.getRoot().get(command);
     }
 
@@ -115,7 +116,7 @@ public class PaperPermissionOverride implements PermissionOverride {
     }
 
     private boolean internalOverride(String command, @Nullable String permission) {
-        var registered = Bukkit.getCommandMap().getKnownCommands().get(command);
+        var registered = plugin.getServer().getCommandMap().getKnownCommands().get(command);
         if (registered == null) return false;
         if (Objects.equals(registered.getPermission(), permission)) return false;
         originalPermissions.putIfAbsent(command, registered.getPermission());
@@ -124,7 +125,7 @@ public class PaperPermissionOverride implements PermissionOverride {
     }
 
     private boolean internalReset(String command) {
-        var registered = Bukkit.getCommandMap().getKnownCommands().get(command);
+        var registered = plugin.getServer().getCommandMap().getKnownCommands().get(command);
         if (registered == null) return false;
         if (!originalPermissions.containsKey(command)) return false;
         var permission = originalPermissions.remove(command);

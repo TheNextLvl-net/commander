@@ -7,13 +7,15 @@ import com.velocitypowered.api.event.command.PlayerAvailableCommandsEvent;
 import com.velocitypowered.api.permission.Tristate;
 import lombok.RequiredArgsConstructor;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 @RequiredArgsConstructor
 public class CommandListener {
     private final CommanderPlugin commander;
 
-    @Subscribe(order = PostOrder.LAST)
-    @SuppressWarnings("UnstableApiUsage")
+    @Subscribe(order = PostOrder.CUSTOM, priority = -1)
+    @SuppressWarnings({"deprecation", "UnstableApiUsage"})
     public void onCommandSend(PlayerAvailableCommandsEvent event) {
         if (event.getPlayer().getPermissionValue("commander.bypass").equals(Tristate.TRUE)) return;
         event.getRootNode().getChildren().removeIf(commandNode -> {
@@ -23,7 +25,8 @@ public class CommandListener {
         });
     }
 
-    @Subscribe(order = PostOrder.LAST)
+    @SuppressWarnings("deprecation")
+    @Subscribe(order = PostOrder.CUSTOM, priority = -1)
     public void onPlayerChat(CommandExecuteEvent event) {
         if (!event.getResult().isAllowed()) return;
         var command = event.getCommand().replaceFirst("/", "").stripLeading();
