@@ -9,6 +9,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.CommandRegistry;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,6 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
+@NullMarked
 public class ProxyCommandRegistry implements CommandRegistry {
     private final FileIO<Set<String>> hiddenFile;
     private final FileIO<Set<String>> unregisteredFile;

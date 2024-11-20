@@ -2,7 +2,9 @@ package net.thenextlvl.commander.velocity.command;
 
 import com.velocitypowered.api.command.BrigadierCommand;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class CommanderCommand {
 
     public BrigadierCommand create(CommanderPlugin plugin) {
