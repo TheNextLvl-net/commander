@@ -36,18 +36,39 @@ public class CommanderVersionChecker extends HangarVersionChecker<SemanticVersio
     }
 
     public void checkVersion() {
-        retrieveLatestSupportedVersion().thenAccept(version -> {
-            var logger = plugin.logger();
-            if (version.equals(versionRunning)) {
-                logger.info("You are running the latest version of Commander");
-            } else if (version.compareTo(versionRunning) > 0) {
-                logger.warn("An update for Commander is available");
-                logger.warn("You are running version {}, the latest supported version is {}", versionRunning, version);
-                logger.warn("Update at https://hangar.papermc.io/TheNextLvl/{}", getSlug());
-            } else logger.warn("You are running a snapshot version of Commander");
-        }).exceptionally(throwable -> {
+        retrieveLatestSupportedVersion().thenAccept(optional -> optional.ifPresentOrElse(this::printVersionInfo,
+                () -> retrieveLatestVersion().thenAccept(this::printUnsupportedInfo).exceptionally(throwable -> {
+                    plugin.logger().warn("There are no public releases for this plugin yet");
+                    return null;
+                })
+        )).exceptionally(throwable -> {
             plugin.logger().error("Version check failed", throwable);
             return null;
         });
+    }
+
+    private void printUnsupportedInfo(SemanticVersion version) {
+        var logger = plugin.logger();
+        var proxyVersion = plugin.server().getVersion().getVersion();
+        if (version.equals(versionRunning)) {
+            logger.warn("{} seems to be unsupported by Commander version {}", proxyVersion, versionRunning);
+        } else if (version.compareTo(versionRunning) > 0) {
+            logger.warn("A new version for Commander is available but {} seems to be unsupported", proxyVersion);
+            logger.warn("You are running version {}, the latest version is {}", versionRunning, version);
+            logger.warn("Update at https://hangar.papermc.io/TheNextLvl/{}", getSlug());
+            logger.warn("Do not test in production and always make backups before updating");
+        } else logger.warn("You are running a snapshot version of Commander");
+    }
+
+    private void printVersionInfo(SemanticVersion version) {
+        var logger = plugin.logger();
+        if (version.equals(versionRunning)) {
+            logger.info("You are running the latest version of Commander");
+        } else if (version.compareTo(versionRunning) > 0) {
+            logger.warn("An update for Commander is available");
+            logger.warn("You are running version {}, the latest version is {}", versionRunning, version);
+            logger.warn("Update at https://hangar.papermc.io/TheNextLvl/{}", getSlug());
+            logger.warn("Do not test in production and always make backups before updating");
+        } else logger.warn("You are running a snapshot version of Commander");
     }
 }
