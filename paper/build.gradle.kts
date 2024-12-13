@@ -3,14 +3,14 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
     id("java")
-    id("com.gradleup.shadow") version "8.3.5"
-    id("io.papermc.hangar-publish-plugin") version "0.1.2"
+    id("com.gradleup.shadow")
+    id("com.modrinth.minotaur")
+    id("io.papermc.hangar-publish-plugin")
     id("net.minecrell.plugin-yml.paper") version "0.6.0"
-    id("com.modrinth.minotaur") version "2.+"
 }
 
-group = project(":api").group
-version = project(":api").version
+group = rootProject.group
+version = rootProject.version
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(21)
