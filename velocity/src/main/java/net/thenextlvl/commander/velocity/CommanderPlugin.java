@@ -37,7 +37,7 @@ import java.util.Locale;
         name = "Commander",
         authors = "NonSwag",
         url = "https://thenextlvl.net",
-        version = "4.2.0")
+        version = "4.2.1")
 public class CommanderPlugin implements Commander {
     private final CommanderVersionChecker versionChecker = new CommanderVersionChecker(this);
     private final ComponentBundle bundle;
