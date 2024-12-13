@@ -3,6 +3,9 @@ package net.thenextlvl.commander;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -11,12 +14,25 @@ import java.util.stream.Stream;
 @NullMarked
 public interface CommandFinder {
     /**
-     * Finds commands based on the given input.
+     * Finds and returns a set of commands that match the given pattern.
      *
-     * @param input The input used to search for commands.
-     * @return A set of strings representing the found commands.
+     * @param pattern The pattern used to search for commands.
+     * @return A set of strings representing the commands that match the pattern.
      */
-    Set<String> findCommands(String input);
+    Set<String> findCommands(Pattern pattern);
+
+    /**
+     * Filters and finds commands from the provided stream that match the given pattern.
+     *
+     * @param commands The stream of commands to be searched.
+     * @param pattern  The pattern used to filter matching commands.
+     * @return A set of strings representing the commands that match the given pattern.
+     */
+    default Set<String> findCommands(Stream<String> commands, Pattern pattern) {
+        return commands.filter(command ->
+                pattern.matcher(command).matches()
+        ).collect(Collectors.toSet());
+    }
 
     /**
      * This method finds commands based on a given input.
@@ -25,5 +41,25 @@ public interface CommandFinder {
      * @param input    The input used to search for commands.
      * @return A set of strings representing the found commands.
      */
-    Set<String> findCommands(Stream<String> commands, String input);
+    default Set<String> findCommands(Stream<String> commands, String input) {
+        try {
+            return findCommands(commands, Pattern.compile(input));
+        } catch (PatternSyntaxException e) {
+            return findCommands(commands, Pattern.compile(Pattern.quote(input)));
+        }
+    }
+
+    /**
+     * Finds commands based on the given input.
+     *
+     * @param input The input used to search for commands.
+     * @return A set of strings representing the found commands.
+     */
+    default Set<String> findCommands(String input) {
+        try {
+            return findCommands(Pattern.compile(input));
+        } catch (PatternSyntaxException e) {
+            return findCommands(Pattern.compile(Pattern.quote(input)));
+        }
+    }
 }
