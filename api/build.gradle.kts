@@ -25,7 +25,7 @@ tasks.compileJava {
 dependencies {
     compileOnly("org.projectlombok:lombok:1.18.36")
 
-    compileOnly("com.google.code.gson:gson:2.12.0")
+    compileOnly("com.google.code.gson:gson:2.12.1")
     compileOnly("net.kyori:adventure-api:4.18.0")
 
     implementation("net.thenextlvl.core:files:2.0.1")
