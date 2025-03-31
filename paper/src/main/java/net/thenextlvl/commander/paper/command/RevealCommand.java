@@ -14,7 +14,6 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 @RequiredArgsConstructor
-@SuppressWarnings("UnstableApiUsage")
 class RevealCommand {
     private final CommanderPlugin plugin;
 

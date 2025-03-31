@@ -15,7 +15,7 @@ public class CommandListener {
     private final CommanderPlugin commander;
 
     @Subscribe(order = PostOrder.CUSTOM, priority = -1)
-    @SuppressWarnings({"deprecation", "UnstableApiUsage"})
+    @SuppressWarnings({"deprecation"})
     public void onCommandSend(PlayerAvailableCommandsEvent event) {
         if (event.getPlayer().getPermissionValue("commander.bypass").equals(Tristate.TRUE)) return;
         event.getRootNode().getChildren().removeIf(commandNode -> {

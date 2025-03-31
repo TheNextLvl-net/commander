@@ -11,7 +11,6 @@ import java.util.Objects;
 
 @Getter
 @NullMarked
-@SuppressWarnings("UnstableApiUsage")
 public class CommanderVersionChecker extends PaperHangarVersionChecker<SemanticVersion> {
     private final SemanticVersion versionRunning;
 

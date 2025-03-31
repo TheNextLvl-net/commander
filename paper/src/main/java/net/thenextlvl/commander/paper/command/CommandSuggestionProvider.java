@@ -15,7 +15,6 @@ import java.util.concurrent.CompletableFuture;
 
 @NullMarked
 @RequiredArgsConstructor
-@SuppressWarnings("UnstableApiUsage")
 class CommandSuggestionProvider implements SuggestionProvider<CommandSourceStack> {
     private final CommanderPlugin plugin;
 

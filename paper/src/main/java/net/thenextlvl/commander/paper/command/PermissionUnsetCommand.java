@@ -13,7 +13,6 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 @RequiredArgsConstructor
-@SuppressWarnings("UnstableApiUsage")
 class PermissionUnsetCommand {
     private final CommanderPlugin plugin;
 

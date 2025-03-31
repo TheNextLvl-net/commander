@@ -6,7 +6,6 @@ import net.thenextlvl.commander.paper.CommanderPlugin;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
-@SuppressWarnings("UnstableApiUsage")
 public class CommanderCommand {
 
     public void register(CommanderPlugin plugin) {

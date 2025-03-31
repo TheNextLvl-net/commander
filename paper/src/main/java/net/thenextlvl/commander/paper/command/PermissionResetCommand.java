@@ -16,7 +16,6 @@ import java.util.Optional;
 
 @NullMarked
 @RequiredArgsConstructor
-@SuppressWarnings("UnstableApiUsage")
 class PermissionResetCommand {
     private final CommanderPlugin plugin;
 

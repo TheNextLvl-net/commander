@@ -13,7 +13,6 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 @RequiredArgsConstructor
-@SuppressWarnings("UnstableApiUsage")
 class ReloadCommand {
     private final CommanderPlugin plugin;
 
