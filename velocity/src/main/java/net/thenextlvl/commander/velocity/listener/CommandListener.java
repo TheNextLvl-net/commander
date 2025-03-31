@@ -1,6 +1,5 @@
 package net.thenextlvl.commander.velocity.listener;
 
-import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.command.CommandExecuteEvent;
 import com.velocitypowered.api.event.command.PlayerAvailableCommandsEvent;
@@ -14,8 +13,7 @@ import org.jspecify.annotations.NullMarked;
 public class CommandListener {
     private final CommanderPlugin commander;
 
-    @Subscribe(order = PostOrder.CUSTOM, priority = -1)
-    @SuppressWarnings({"deprecation"})
+    @Subscribe(priority = -1)
     public void onCommandSend(PlayerAvailableCommandsEvent event) {
         if (event.getPlayer().getPermissionValue("commander.bypass").equals(Tristate.TRUE)) return;
         event.getRootNode().getChildren().removeIf(commandNode -> {
@@ -25,8 +23,7 @@ public class CommandListener {
         });
     }
 
-    @SuppressWarnings("deprecation")
-    @Subscribe(order = PostOrder.CUSTOM, priority = -1)
+    @Subscribe(priority = -1)
     public void onPlayerChat(CommandExecuteEvent event) {
         if (!event.getResult().isAllowed()) return;
         var command = event.getCommand().replaceFirst("/", "").stripLeading();

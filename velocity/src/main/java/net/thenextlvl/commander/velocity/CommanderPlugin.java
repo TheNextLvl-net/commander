@@ -1,7 +1,6 @@
 package net.thenextlvl.commander.velocity;
 
 import com.google.inject.Inject;
-import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
@@ -69,8 +68,7 @@ public class CommanderPlugin implements Commander {
         versionChecker.checkVersion();
     }
 
-    @SuppressWarnings("deprecation")
-    @Subscribe(order = PostOrder.CUSTOM, priority = -1)
+    @Subscribe(priority = -1)
     public void onProxyInitialize(ProxyInitializeEvent event) {
         metricsFactory.make(this, 22782);
         server().getEventManager().register(this, new CommandListener(this));
@@ -79,8 +77,7 @@ public class CommanderPlugin implements Commander {
         commandRegistry().unregisterCommands();
     }
 
-    @SuppressWarnings("deprecation")
-    @Subscribe(order = PostOrder.CUSTOM, priority = 999)
+    @Subscribe(priority = 999)
     public void onProxyShutdown(ProxyShutdownEvent event) {
         commandRegistry.getHiddenFile().save();
         commandRegistry.getUnregisteredFile().save();
