@@ -6,7 +6,7 @@ plugins {
     id("com.gradleup.shadow")
     id("com.modrinth.minotaur")
     id("io.papermc.hangar-publish-plugin")
-    id("net.minecrell.plugin-yml.paper") version "0.6.0"
+    id("de.eldoria.plugin-yml.paper") version "0.7.1"
 }
 
 group = rootProject.group
