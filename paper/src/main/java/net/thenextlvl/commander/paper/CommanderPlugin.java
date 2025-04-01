@@ -5,7 +5,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.thenextlvl.commander.CommandFinder;
-import net.thenextlvl.commander.CommandRegistry;
 import net.thenextlvl.commander.Commander;
 import net.thenextlvl.commander.PermissionOverride;
 import net.thenextlvl.commander.paper.command.CommanderCommand;
@@ -76,7 +75,7 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
     }
 
     @Override
-    public CommandRegistry commandRegistry() {
+    public PaperCommandRegistry commandRegistry() {
         return commandRegistry;
     }
 
