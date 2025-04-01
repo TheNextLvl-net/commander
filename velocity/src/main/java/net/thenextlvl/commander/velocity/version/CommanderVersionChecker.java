@@ -5,13 +5,11 @@ import core.version.SemanticVersion;
 import core.version.hangar.HangarVersion;
 import core.version.hangar.HangarVersionChecker;
 import core.version.hangar.Platform;
-import lombok.Getter;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.Objects;
 
-@Getter
 @NullMarked
 public class CommanderVersionChecker extends HangarVersionChecker<SemanticVersion> {
     private final SemanticVersion versionRunning;
@@ -22,6 +20,11 @@ public class CommanderVersionChecker extends HangarVersionChecker<SemanticVersio
         this.plugin = plugin;
         var version = plugin.getClass().getAnnotation(Plugin.class).version();
         this.versionRunning = Objects.requireNonNull(parseVersion(version));
+    }
+
+    @Override
+    public SemanticVersion getVersionRunning() {
+        return versionRunning;
     }
 
     @Override

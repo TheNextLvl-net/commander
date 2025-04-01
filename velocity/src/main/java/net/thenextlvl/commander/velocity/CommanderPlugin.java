@@ -9,12 +9,13 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import core.i18n.file.ComponentBundle;
-import lombok.Getter;
-import lombok.experimental.Accessors;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.thenextlvl.commander.CommandFinder;
+import net.thenextlvl.commander.CommandRegistry;
 import net.thenextlvl.commander.Commander;
+import net.thenextlvl.commander.PermissionOverride;
 import net.thenextlvl.commander.velocity.command.CommanderCommand;
 import net.thenextlvl.commander.velocity.implementation.ProxyCommandFinder;
 import net.thenextlvl.commander.velocity.implementation.ProxyCommandRegistry;
@@ -29,16 +30,13 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Locale;
 
-@Getter
 @NullMarked
-@Accessors(fluent = true)
 @Plugin(id = "commander",
         name = "Commander",
         authors = "NonSwag",
         url = "https://thenextlvl.net",
         version = "4.2.1")
 public class CommanderPlugin implements Commander {
-    private final CommanderVersionChecker versionChecker = new CommanderVersionChecker(this);
     private final ComponentBundle bundle;
     private final ProxyCommandFinder commandFinder;
     private final ProxyCommandRegistry commandRegistry;
@@ -65,7 +63,7 @@ public class CommanderPlugin implements Commander {
         this.commandFinder = new ProxyCommandFinder(this);
         this.commandRegistry = new ProxyCommandRegistry(this);
         this.permissionOverride = new ProxyPermissionOverride(this);
-        versionChecker.checkVersion();
+        new CommanderVersionChecker(this).checkVersion();
     }
 
     @Subscribe(priority = -1)
@@ -79,8 +77,39 @@ public class CommanderPlugin implements Commander {
 
     @Subscribe(priority = 999)
     public void onProxyShutdown(ProxyShutdownEvent event) {
-        commandRegistry.getHiddenFile().save();
-        commandRegistry.getUnregisteredFile().save();
-        permissionOverride.getOverridesFile().save();
+        commandRegistry.save();
+        permissionOverride.save();
+    }
+
+    @Override
+    public CommandFinder commandFinder() {
+        return commandFinder;
+    }
+
+    @Override
+    public ComponentBundle bundle() {
+        return bundle;
+    }
+
+    @Override
+    public CommandRegistry commandRegistry() {
+        return commandRegistry;
+    }
+
+    @Override
+    public PermissionOverride permissionOverride() {
+        return permissionOverride;
+    }
+
+    public ProxyServer server() {
+        return server;
+    }
+
+    public Logger logger() {
+        return logger;
+    }
+
+    public Path dataFolder() {
+        return dataFolder;
     }
 }

@@ -24,6 +24,8 @@ public interface PermissionOverride {
 
     boolean reset(String command);
 
+    void save();
+
     void overridePermissions();
 
     boolean reload(Audience audience);

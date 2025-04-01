@@ -1,12 +1,13 @@
 package net.thenextlvl.commander.paper;
 
 import core.i18n.file.ComponentBundle;
-import lombok.Getter;
-import lombok.experimental.Accessors;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.thenextlvl.commander.CommandFinder;
+import net.thenextlvl.commander.CommandRegistry;
 import net.thenextlvl.commander.Commander;
+import net.thenextlvl.commander.PermissionOverride;
 import net.thenextlvl.commander.paper.command.CommanderCommand;
 import net.thenextlvl.commander.paper.implementation.PaperCommandFinder;
 import net.thenextlvl.commander.paper.implementation.PaperCommandRegistry;
@@ -22,9 +23,7 @@ import org.jspecify.annotations.NullMarked;
 import java.io.File;
 import java.util.Locale;
 
-@Getter
 @NullMarked
-@Accessors(fluent = true)
 public class CommanderPlugin extends JavaPlugin implements Commander {
     private final Metrics metrics = new Metrics(this, 22782);
     private final CommanderVersionChecker versionChecker = new CommanderVersionChecker(this);
@@ -46,7 +45,7 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
     @Override
     public void onLoad() {
         getServer().getServicesManager().register(Commander.class, this, this, ServicePriority.Highest);
-        versionChecker().checkVersion();
+        versionChecker.checkVersion();
     }
 
     @Override
@@ -61,10 +60,29 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
 
     @Override
     public void onDisable() {
-        commandRegistry().getHiddenFile().save();
-        commandRegistry().getUnregisteredFile().save();
-        permissionOverride().getOverridesFile().save();
-        metrics().shutdown();
+        commandRegistry.save();
+        permissionOverride.save();
+        metrics.shutdown();
+    }
+
+    @Override
+    public CommandFinder commandFinder() {
+        return commandFinder;
+    }
+
+    @Override
+    public ComponentBundle bundle() {
+        return bundle;
+    }
+
+    @Override
+    public CommandRegistry commandRegistry() {
+        return commandRegistry;
+    }
+
+    @Override
+    public PermissionOverride permissionOverride() {
+        return permissionOverride;
     }
 
     private void registerCommands() {
