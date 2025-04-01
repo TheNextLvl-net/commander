@@ -87,7 +87,6 @@ public class PaperCommandRegistry implements CommandRegistry {
                 .toList().isEmpty();
     }
 
-    @Override
     public void save() {
         hiddenFile.save();
         unregisteredFile.save();
@@ -100,7 +99,6 @@ public class PaperCommandRegistry implements CommandRegistry {
                 .forEach(this::internalUnregister);
     }
 
-    @Override
     public boolean reload(Audience audience) {
         var hidden = reloadHidden(audience);
         var unregistered = reloadUnregistered(audience);

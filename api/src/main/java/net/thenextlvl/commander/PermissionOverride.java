@@ -1,6 +1,5 @@
 package net.thenextlvl.commander;
 
-import net.kyori.adventure.audience.Audience;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -24,9 +23,5 @@ public interface PermissionOverride {
 
     boolean reset(String command);
 
-    void save();
-
     void overridePermissions();
-
-    boolean reload(Audience audience);
 }

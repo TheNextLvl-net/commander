@@ -13,9 +13,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.thenextlvl.commander.CommandFinder;
-import net.thenextlvl.commander.CommandRegistry;
 import net.thenextlvl.commander.Commander;
-import net.thenextlvl.commander.PermissionOverride;
 import net.thenextlvl.commander.velocity.command.CommanderCommand;
 import net.thenextlvl.commander.velocity.implementation.ProxyCommandFinder;
 import net.thenextlvl.commander.velocity.implementation.ProxyCommandRegistry;
@@ -92,12 +90,12 @@ public class CommanderPlugin implements Commander {
     }
 
     @Override
-    public CommandRegistry commandRegistry() {
+    public ProxyCommandRegistry commandRegistry() {
         return commandRegistry;
     }
 
     @Override
-    public PermissionOverride permissionOverride() {
+    public ProxyPermissionOverride permissionOverride() {
         return permissionOverride;
     }
 

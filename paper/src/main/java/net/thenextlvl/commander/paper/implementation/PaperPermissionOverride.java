@@ -73,7 +73,6 @@ public class PaperPermissionOverride implements PermissionOverride {
                 .toList().isEmpty();
     }
 
-    @Override
     public void save() {
         overridesFile.save();
     }
@@ -83,7 +82,6 @@ public class PaperPermissionOverride implements PermissionOverride {
         overridesFile.getRoot().forEach(this::internalOverride);
     }
 
-    @Override
     public boolean reload(Audience audience) {
         var previous = overridesFile.getRoot();
         var current = overridesFile.reload();
