@@ -25,7 +25,6 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.projectlombok:lombok:1.18.36")
     compileOnly("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
 
     implementation(project(":api"))
@@ -36,7 +35,6 @@ dependencies {
         exclude("com.google.code.gson")
     }
 
-    annotationProcessor("org.projectlombok:lombok:1.18.36")
     annotationProcessor("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
 }
 

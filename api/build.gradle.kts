@@ -23,15 +23,11 @@ tasks.compileJava {
 }
 
 dependencies {
-    compileOnly("org.projectlombok:lombok:1.18.36")
-
     compileOnly("com.google.code.gson:gson:2.12.1")
     compileOnly("net.kyori:adventure-api:4.19.0")
 
     implementation("net.thenextlvl.core:files:2.0.2")
     implementation("net.thenextlvl.core:i18n:1.0.21")
-
-    annotationProcessor("org.projectlombok:lombok:1.18.36")
 }
 
 publishing {
