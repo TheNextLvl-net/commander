@@ -7,25 +7,20 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.paper.CommanderPlugin;
+import net.thenextlvl.commander.paper.command.suggestion.CommandSuggestionProvider;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 class PermissionUnsetCommand {
-    private final CommanderPlugin plugin;
-
-    PermissionUnsetCommand(CommanderPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    public ArgumentBuilder<CommandSourceStack, ?> create() {
+    public static ArgumentBuilder<CommandSourceStack, ?> create(CommanderPlugin plugin) {
         return Commands.literal("unset")
                 .then(Commands.argument("command", StringArgumentType.string())
                         .suggests(new CommandSuggestionProvider(plugin))
-                        .executes(this::unset));
+                        .executes(context -> unset(context, plugin)));
     }
 
-    private int unset(CommandContext<CommandSourceStack> context) {
+    private static int unset(CommandContext<CommandSourceStack> context, CommanderPlugin plugin) {
         var sender = context.getSource().getSender();
         var command = context.getArgument("command", String.class);
         var success = plugin.permissionOverride().override(command, null);

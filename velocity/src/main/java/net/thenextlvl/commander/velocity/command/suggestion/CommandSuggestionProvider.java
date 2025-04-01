@@ -1,29 +1,27 @@
-package net.thenextlvl.commander.paper.command;
+package net.thenextlvl.commander.velocity.command.suggestion;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import io.papermc.paper.command.brigadier.CommandSourceStack;
-import net.thenextlvl.commander.paper.CommanderPlugin;
-import org.bukkit.command.Command;
+import com.velocitypowered.api.command.CommandSource;
+import net.thenextlvl.commander.velocity.CommanderPlugin;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.concurrent.CompletableFuture;
 
 @NullMarked
-class CommandSuggestionProvider implements SuggestionProvider<CommandSourceStack> {
+public class CommandSuggestionProvider implements SuggestionProvider<CommandSource> {
     private final CommanderPlugin plugin;
 
-    CommandSuggestionProvider(CommanderPlugin plugin) {
+    public CommandSuggestionProvider(CommanderPlugin plugin) {
         this.plugin = plugin;
     }
 
     @Override
-    public CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
-        plugin.getServer().getCommandMap().getKnownCommands().values().stream()
-                .map(Command::getLabel)
+    public CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSource> context, SuggestionsBuilder builder) {
+        plugin.server().getCommandManager().getAliases().stream()
                 .filter(s -> !plugin.commandRegistry().isUnregistered(s))
                 .map(StringArgumentType::escapeIfRequired)
                 .filter(s -> s.contains(builder.getRemaining()))

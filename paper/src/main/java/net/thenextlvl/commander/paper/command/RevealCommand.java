@@ -13,13 +13,7 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 class RevealCommand {
-    private final CommanderPlugin plugin;
-
-    RevealCommand(CommanderPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    public ArgumentBuilder<CommandSourceStack, ?> create() {
+    public static ArgumentBuilder<CommandSourceStack, ?> create(CommanderPlugin plugin) {
         return Commands.literal("reveal")
                 .then(Commands.argument("command", StringArgumentType.string())
                         .suggests((context, suggestions) -> {
@@ -30,10 +24,10 @@ class RevealCommand {
                                     .forEach(suggestions::suggest);
                             return suggestions.buildFuture();
                         })
-                        .executes(this::reveal));
+                        .executes(context -> reveal(context, plugin)));
     }
 
-    private int reveal(CommandContext<CommandSourceStack> context) {
+    private static int reveal(CommandContext<CommandSourceStack> context, CommanderPlugin plugin) {
         var sender = context.getSource().getSender();
         var command = context.getArgument("command", String.class);
         var success = plugin.commandRegistry().reveal(command);

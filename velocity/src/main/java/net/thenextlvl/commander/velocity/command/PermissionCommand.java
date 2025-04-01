@@ -8,16 +8,10 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 class PermissionCommand {
-    private final CommanderPlugin plugin;
-
-    PermissionCommand(CommanderPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    public ArgumentBuilder<CommandSource, ?> create() {
+    public static ArgumentBuilder<CommandSource, ?> create(CommanderPlugin plugin) {
         return BrigadierCommand.literalArgumentBuilder("permission")
-                .then(new PermissionQueryCommand(plugin).create())
-                .then(new PermissionResetCommand(plugin).create())
-                .then(new PermissionSetCommand(plugin).create());
+                .then(PermissionQueryCommand.create(plugin))
+                .then(PermissionResetCommand.create(plugin))
+                .then(PermissionSetCommand.create(plugin));
     }
 }

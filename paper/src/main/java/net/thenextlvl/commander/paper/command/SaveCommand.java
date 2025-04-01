@@ -10,17 +10,11 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 class SaveCommand {
-    private final CommanderPlugin plugin;
-
-    SaveCommand(CommanderPlugin plugin) {
-        this.plugin = plugin;
+    public static ArgumentBuilder<CommandSourceStack, ?> create(CommanderPlugin plugin) {
+        return Commands.literal("save").executes(context -> save(context, plugin));
     }
 
-    public ArgumentBuilder<CommandSourceStack, ?> create() {
-        return Commands.literal("save").executes(this::save);
-    }
-
-    private int save(CommandContext<CommandSourceStack> context) {
+    private static int save(CommandContext<CommandSourceStack> context, CommanderPlugin plugin) {
         var sender = context.getSource().getSender();
         plugin.commandRegistry().save();
         plugin.permissionOverride().save();

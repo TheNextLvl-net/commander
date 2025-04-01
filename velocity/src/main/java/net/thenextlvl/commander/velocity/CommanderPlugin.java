@@ -71,7 +71,7 @@ public class CommanderPlugin implements Commander {
         metricsFactory.make(this, 22782);
         server().getEventManager().register(this, new CommandListener(this));
         var meta = server.getCommandManager().metaBuilder("commandv").plugin(this).build();
-        server().getCommandManager().register(meta, new CommanderCommand().create(this));
+        server().getCommandManager().register(meta, CommanderCommand.create(this));
         commandRegistry().unregisterCommands();
     }
 
