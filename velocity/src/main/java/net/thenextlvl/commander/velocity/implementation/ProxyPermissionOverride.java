@@ -73,7 +73,6 @@ public class ProxyPermissionOverride implements PermissionOverride {
                 .toList().isEmpty();
     }
 
-    @Override
     public void save() {
         overridesFile.save();
     }
@@ -84,7 +83,6 @@ public class ProxyPermissionOverride implements PermissionOverride {
         throw new UnsupportedOperationException();
     }
 
-    @Override
     public boolean reload(Audience audience) {
         var previous = overridesFile.getRoot();
         var current = overridesFile.reload();

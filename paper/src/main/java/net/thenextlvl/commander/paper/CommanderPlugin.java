@@ -6,7 +6,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.thenextlvl.commander.CommandFinder;
 import net.thenextlvl.commander.Commander;
-import net.thenextlvl.commander.PermissionOverride;
 import net.thenextlvl.commander.paper.command.CommanderCommand;
 import net.thenextlvl.commander.paper.implementation.PaperCommandFinder;
 import net.thenextlvl.commander.paper.implementation.PaperCommandRegistry;
@@ -80,7 +79,7 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
     }
 
     @Override
-    public PermissionOverride permissionOverride() {
+    public PaperPermissionOverride permissionOverride() {
         return permissionOverride;
     }
 
