@@ -1,5 +1,6 @@
 package net.thenextlvl.commander;
 
+import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.Set;
@@ -17,8 +18,9 @@ public interface CommandFinder {
      * Finds and returns a set of commands that match the given pattern.
      *
      * @param pattern The pattern used to search for commands.
-     * @return A set of strings representing the commands that match the pattern.
+     * @return An unmodifiable set of strings representing the commands that match the pattern.
      */
+    @Unmodifiable
     Set<String> findCommands(Pattern pattern);
 
     /**
@@ -26,9 +28,9 @@ public interface CommandFinder {
      *
      * @param commands The stream of commands to be searched.
      * @param pattern  The pattern used to filter matching commands.
-     * @return A set of strings representing the commands that match the given pattern.
+     * @return An unmodifiable set of strings representing the commands that match the given pattern.
      */
-    default Set<String> findCommands(Stream<String> commands, Pattern pattern) {
+    default @Unmodifiable Set<String> findCommands(Stream<String> commands, Pattern pattern) {
         return commands.filter(command ->
                 pattern.matcher(command).matches()
         ).collect(Collectors.toSet());
@@ -39,9 +41,9 @@ public interface CommandFinder {
      *
      * @param commands The stream of commands to search for.
      * @param input    The input used to search for commands.
-     * @return A set of strings representing the found commands.
+     * @return An unmodifiable set of strings representing the found commands.
      */
-    default Set<String> findCommands(Stream<String> commands, String input) {
+    default @Unmodifiable Set<String> findCommands(Stream<String> commands, String input) {
         try {
             return findCommands(commands, Pattern.compile(input));
         } catch (PatternSyntaxException e) {
@@ -53,9 +55,9 @@ public interface CommandFinder {
      * Finds commands based on the given input.
      *
      * @param input The input used to search for commands.
-     * @return A set of strings representing the found commands.
+     * @return An unmodifiable set of strings representing the found commands.
      */
-    default Set<String> findCommands(String input) {
+    default @Unmodifiable Set<String> findCommands(String input) {
         try {
             return findCommands(Pattern.compile(input));
         } catch (PatternSyntaxException e) {

@@ -8,6 +8,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.PermissionOverride;
 import net.thenextlvl.commander.paper.CommanderPlugin;
+import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -31,13 +32,13 @@ public class PaperPermissionOverride implements PermissionOverride {
     }
 
     @Override
-    public Map<String, @Nullable String> overrides() {
-        return new HashMap<>(overridesFile.getRoot());
+    public @Unmodifiable Map<String, @Nullable String> originalPermissions() {
+        return Map.copyOf(originalPermissions);
     }
 
     @Override
-    public Map<String, @Nullable String> originalPermissions() {
-        return new HashMap<>(originalPermissions);
+    public @Unmodifiable Map<String, @Nullable String> overrides() {
+        return new HashMap<>(overridesFile.getRoot());
     }
 
     @Override
