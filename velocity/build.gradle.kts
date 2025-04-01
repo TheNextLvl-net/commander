@@ -31,7 +31,7 @@ dependencies {
     implementation(project(":api"))
     implementation("org.bstats:bstats-velocity:3.1.0")
     implementation("net.thenextlvl.core:files:2.0.2")
-    implementation("net.thenextlvl.core:i18n:1.0.20")
+    implementation("net.thenextlvl.core:i18n:1.0.21")
     implementation("net.thenextlvl.core:version-checker:2.0.1") {
         exclude("com.google.code.gson")
     }
