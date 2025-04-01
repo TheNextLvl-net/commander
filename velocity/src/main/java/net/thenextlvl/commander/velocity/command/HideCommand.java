@@ -12,13 +12,7 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 class HideCommand {
-    private final CommanderPlugin plugin;
-
-    HideCommand(CommanderPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    ArgumentBuilder<CommandSource, ?> create() {
+    public static ArgumentBuilder<CommandSource, ?> create(CommanderPlugin plugin) {
         return BrigadierCommand.literalArgumentBuilder("hide")
                 .then(BrigadierCommand.requiredArgumentBuilder("command", StringArgumentType.string())
                         .suggests((context, suggestions) -> {
@@ -30,10 +24,10 @@ class HideCommand {
                                     .forEach(suggestions::suggest);
                             return suggestions.buildFuture();
                         })
-                        .executes(this::hide));
+                        .executes(context -> hide(context, plugin)));
     }
 
-    private int hide(CommandContext<CommandSource> context) {
+    private static int hide(CommandContext<CommandSource> context, CommanderPlugin plugin) {
         var sender = context.getSource();
         var command = context.getArgument("command", String.class);
         var success = plugin.commandRegistry().hide(command);

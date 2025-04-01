@@ -7,19 +7,14 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.paper.CommanderPlugin;
+import net.thenextlvl.commander.paper.command.suggestion.CommandSuggestionProvider;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 class PermissionSetCommand {
-    private final CommanderPlugin plugin;
-
-    PermissionSetCommand(CommanderPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    public ArgumentBuilder<CommandSourceStack, ?> create() {
+    public static ArgumentBuilder<CommandSourceStack, ?> create(CommanderPlugin plugin) {
         return Commands.literal("set")
                 .then(Commands.argument("command", StringArgumentType.string())
                         .suggests(new CommandSuggestionProvider(plugin))
@@ -32,10 +27,10 @@ class PermissionSetCommand {
                                             .forEach(suggestions::suggest);
                                     return suggestions.buildFuture();
                                 })
-                                .executes(this::set)));
+                                .executes(context -> set(context, plugin))));
     }
 
-    private int set(CommandContext<CommandSourceStack> context) {
+    private static int set(CommandContext<CommandSourceStack> context, CommanderPlugin plugin) {
         var sender = context.getSource().getSender();
         var command = context.getArgument("command", String.class);
         var permission = context.getArgument("permission", String.class);

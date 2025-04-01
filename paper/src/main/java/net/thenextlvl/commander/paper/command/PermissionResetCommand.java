@@ -15,13 +15,7 @@ import java.util.Optional;
 
 @NullMarked
 class PermissionResetCommand {
-    private final CommanderPlugin plugin;
-
-    PermissionResetCommand(CommanderPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    public ArgumentBuilder<CommandSourceStack, ?> create() {
+    public static ArgumentBuilder<CommandSourceStack, ?> create(CommanderPlugin plugin) {
         return Commands.literal("reset")
                 .then(Commands.argument("command", StringArgumentType.string())
                         .suggests((context, suggestions) -> {
@@ -32,10 +26,10 @@ class PermissionResetCommand {
                                     .forEach(suggestions::suggest);
                             return suggestions.buildFuture();
                         })
-                        .executes(this::reset));
+                        .executes(context -> reset(context, plugin)));
     }
 
-    private int reset(CommandContext<CommandSourceStack> context) {
+    private static int reset(CommandContext<CommandSourceStack> context, CommanderPlugin plugin) {
         var sender = context.getSource().getSender();
         var command = context.getArgument("command", String.class);
         var success = plugin.permissionOverride().reset(command);

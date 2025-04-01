@@ -11,17 +11,12 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 class ReloadCommand {
-    private final CommanderPlugin plugin;
-
-    ReloadCommand(CommanderPlugin plugin) {
-        this.plugin = plugin;
+    public static ArgumentBuilder<CommandSource, ?> create(CommanderPlugin plugin) {
+        return BrigadierCommand.literalArgumentBuilder("reload")
+                .executes(context -> reload(context, plugin));
     }
 
-    public ArgumentBuilder<CommandSource, ?> create() {
-        return BrigadierCommand.literalArgumentBuilder("reload").executes(this::reload);
-    }
-
-    private int reload(CommandContext<CommandSource> context) {
+    private static int reload(CommandContext<CommandSource> context, CommanderPlugin plugin) {
         var sender = context.getSource();
         try {
             var commands = plugin.commandRegistry().reload(sender);

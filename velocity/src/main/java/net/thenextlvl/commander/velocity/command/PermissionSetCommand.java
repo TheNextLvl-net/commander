@@ -8,19 +8,14 @@ import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandSource;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
+import net.thenextlvl.commander.velocity.command.suggestion.CommandSuggestionProvider;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.Objects;
 
 @NullMarked
 class PermissionSetCommand {
-    private final CommanderPlugin plugin;
-
-    PermissionSetCommand(CommanderPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    public ArgumentBuilder<CommandSource, ?> create() {
+    public static ArgumentBuilder<CommandSource, ?> create(CommanderPlugin plugin) {
         return BrigadierCommand.literalArgumentBuilder("set")
                 .then(BrigadierCommand.requiredArgumentBuilder("command", StringArgumentType.string())
                         .suggests(new CommandSuggestionProvider(plugin))
@@ -33,10 +28,10 @@ class PermissionSetCommand {
                                             .forEach(suggestions::suggest);
                                     return suggestions.buildFuture();
                                 })
-                                .executes(this::set)));
+                                .executes(context -> set(context, plugin))));
     }
 
-    private int set(CommandContext<CommandSource> context) {
+    private static int set(CommandContext<CommandSource> context, CommanderPlugin plugin) {
         var sender = context.getSource();
         var command = context.getArgument("command", String.class);
         var permission = context.getArgument("permission", String.class);

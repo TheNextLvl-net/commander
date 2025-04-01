@@ -8,24 +8,19 @@ import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandSource;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
+import net.thenextlvl.commander.velocity.command.suggestion.CommandSuggestionProvider;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 class UnregisterCommand {
-    private final CommanderPlugin plugin;
-
-    UnregisterCommand(CommanderPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    public ArgumentBuilder<CommandSource, ?> create() {
+    public static ArgumentBuilder<CommandSource, ?> create(CommanderPlugin plugin) {
         return BrigadierCommand.literalArgumentBuilder("unregister")
                 .then(BrigadierCommand.requiredArgumentBuilder("command", StringArgumentType.string())
                         .suggests(new CommandSuggestionProvider(plugin))
-                        .executes(this::unregister));
+                        .executes(context -> unregister(context, plugin)));
     }
 
-    private int unregister(CommandContext<CommandSource> context) {
+    private static int unregister(CommandContext<CommandSource> context, CommanderPlugin plugin) {
         var sender = context.getSource();
         var command = context.getArgument("command", String.class);
         var success = plugin.commandRegistry().unregister(command);

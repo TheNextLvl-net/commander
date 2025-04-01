@@ -12,13 +12,7 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 class PermissionResetCommand {
-    private final CommanderPlugin plugin;
-
-    PermissionResetCommand(CommanderPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    public ArgumentBuilder<CommandSource, ?> create() {
+    public static ArgumentBuilder<CommandSource, ?> create(CommanderPlugin plugin) {
         return BrigadierCommand.literalArgumentBuilder("reset")
                 .then(BrigadierCommand.requiredArgumentBuilder("command", StringArgumentType.string())
                         .suggests((context, suggestions) -> {
@@ -29,10 +23,10 @@ class PermissionResetCommand {
                                     .forEach(suggestions::suggest);
                             return suggestions.buildFuture();
                         })
-                        .executes(this::reset));
+                        .executes(context -> reset(context, plugin)));
     }
 
-    private int reset(CommandContext<CommandSource> context) {
+    private static int reset(CommandContext<CommandSource> context, CommanderPlugin plugin) {
         var sender = context.getSource();
         var command = context.getArgument("command", String.class);
         var success = plugin.permissionOverride().reset(command);

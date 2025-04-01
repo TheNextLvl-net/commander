@@ -7,25 +7,20 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.paper.CommanderPlugin;
+import net.thenextlvl.commander.paper.command.suggestion.CommandSuggestionProvider;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 class UnregisterCommand {
-    private final CommanderPlugin plugin;
-
-    UnregisterCommand(CommanderPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    public ArgumentBuilder<CommandSourceStack, ?> create() {
+    public static ArgumentBuilder<CommandSourceStack, ?> create(CommanderPlugin plugin) {
         return Commands.literal("unregister")
                 .then(Commands.argument("command", StringArgumentType.string())
                         .suggests(new CommandSuggestionProvider(plugin))
-                        .executes(this::unregister));
+                        .executes(context -> unregister(context, plugin)));
     }
 
-    private int unregister(CommandContext<CommandSourceStack> context) {
+    private static int unregister(CommandContext<CommandSourceStack> context, CommanderPlugin plugin) {
         var sender = context.getSource().getSender();
         var command = context.getArgument("command", String.class);
         var success = plugin.commandRegistry().unregister(command);

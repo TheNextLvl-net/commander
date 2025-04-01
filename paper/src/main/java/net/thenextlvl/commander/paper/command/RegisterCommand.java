@@ -13,13 +13,7 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 class RegisterCommand {
-    private final CommanderPlugin plugin;
-
-    RegisterCommand(CommanderPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    public ArgumentBuilder<CommandSourceStack, ?> create() {
+    public static ArgumentBuilder<CommandSourceStack, ?> create(CommanderPlugin plugin) {
         return Commands.literal("register")
                 .then(Commands.argument("command", StringArgumentType.string())
                         .suggests((context, suggestions) -> {
@@ -29,10 +23,10 @@ class RegisterCommand {
                                     .forEach(suggestions::suggest);
                             return suggestions.buildFuture();
                         })
-                        .executes(this::register));
+                        .executes(context -> register(context, plugin)));
     }
 
-    private int register(CommandContext<CommandSourceStack> context) {
+    private static int register(CommandContext<CommandSourceStack> context, CommanderPlugin plugin) {
         var sender = context.getSource().getSender();
         var command = context.getArgument("command", String.class);
         var success = plugin.commandRegistry().register(command);

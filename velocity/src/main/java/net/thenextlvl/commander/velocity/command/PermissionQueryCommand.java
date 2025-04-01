@@ -8,24 +8,19 @@ import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandSource;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
+import net.thenextlvl.commander.velocity.command.suggestion.CommandSuggestionProvider;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 class PermissionQueryCommand {
-    private final CommanderPlugin plugin;
-
-    PermissionQueryCommand(CommanderPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    public ArgumentBuilder<CommandSource, ?> create() {
+    public static ArgumentBuilder<CommandSource, ?> create(CommanderPlugin plugin) {
         return BrigadierCommand.literalArgumentBuilder("query")
                 .then(BrigadierCommand.requiredArgumentBuilder("command", StringArgumentType.string())
                         .suggests(new CommandSuggestionProvider(plugin))
-                        .executes(this::query));
+                        .executes(context -> query(context, plugin)));
     }
 
-    private int query(CommandContext<CommandSource> context) {
+    private static int query(CommandContext<CommandSource> context, CommanderPlugin plugin) {
         var sender = context.getSource();
         var command = context.getArgument("command", String.class);
         var permission = plugin.permissionOverride().permission(command);

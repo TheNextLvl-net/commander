@@ -7,18 +7,17 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 public class CommanderCommand {
-
-    public void register(CommanderPlugin plugin) {
+    public static void register(CommanderPlugin plugin) {
         var command = Commands.literal("command")
                 .requires(stack -> stack.getSender().hasPermission("commander.admin"))
-                .then(new HideCommand(plugin).create())
-                .then(new PermissionCommand(plugin).create())
-                .then(new RegisterCommand(plugin).create())
-                .then(new ReloadCommand(plugin).create())
-                .then(new ResetCommand(plugin).create())
-                .then(new RevealCommand(plugin).create())
-                .then(new SaveCommand(plugin).create())
-                .then(new UnregisterCommand(plugin).create())
+                .then(HideCommand.create(plugin))
+                .then(PermissionCommand.create(plugin))
+                .then(RegisterCommand.create(plugin))
+                .then(ReloadCommand.create(plugin))
+                .then(ResetCommand.create(plugin))
+                .then(RevealCommand.create(plugin))
+                .then(SaveCommand.create(plugin))
+                .then(UnregisterCommand.create(plugin))
                 .build();
         plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS.newHandler(event ->
                 event.registrar().register(command)));

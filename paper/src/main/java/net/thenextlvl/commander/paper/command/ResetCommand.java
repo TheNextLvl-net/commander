@@ -13,13 +13,7 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 class ResetCommand {
-    private final CommanderPlugin plugin;
-
-    ResetCommand(CommanderPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    public ArgumentBuilder<CommandSourceStack, ?> create() {
+    public static ArgumentBuilder<CommandSourceStack, ?> create(CommanderPlugin plugin) {
         return Commands.literal("reset")
                 .then(Commands.argument("command", StringArgumentType.string())
                         .suggests((context, suggestions) -> {
@@ -37,10 +31,10 @@ class ResetCommand {
                                     .forEach(suggestions::suggest);
                             return suggestions.buildFuture();
                         })
-                        .executes(this::reset));
+                        .executes(context -> reset(context, plugin)));
     }
 
-    private int reset(CommandContext<CommandSourceStack> context) {
+    private static int reset(CommandContext<CommandSourceStack> context, CommanderPlugin plugin) {
         var sender = context.getSource().getSender();
         var command = context.getArgument("command", String.class);
         var s1 = plugin.permissionOverride().reset(command);

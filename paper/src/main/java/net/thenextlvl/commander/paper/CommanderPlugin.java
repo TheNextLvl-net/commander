@@ -86,7 +86,7 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
     }
 
     private void registerCommands() {
-        new CommanderCommand().register(this);
+        CommanderCommand.register(this);
     }
 
     private void registerListeners() {
