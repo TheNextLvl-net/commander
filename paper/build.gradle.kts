@@ -28,7 +28,6 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.projectlombok:lombok:1.18.36")
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
 
     implementation(project(":api"))
@@ -36,8 +35,6 @@ dependencies {
     implementation("net.thenextlvl.core:files:2.0.2")
     implementation("net.thenextlvl.core:i18n:1.0.21")
     implementation("net.thenextlvl.core:paper:2.0.4")
-
-    annotationProcessor("org.projectlombok:lombok:1.18.36")
 }
 
 

@@ -6,15 +6,17 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.velocitypowered.api.command.BrigadierCommand;
 import com.velocitypowered.api.command.CommandSource;
-import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
-@RequiredArgsConstructor
 class RevealCommand {
     private final CommanderPlugin plugin;
+
+    RevealCommand(CommanderPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     public ArgumentBuilder<CommandSource, ?> create() {
         return BrigadierCommand.literalArgumentBuilder("reveal")

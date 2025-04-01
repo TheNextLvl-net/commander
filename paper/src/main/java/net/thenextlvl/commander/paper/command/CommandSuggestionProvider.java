@@ -6,7 +6,6 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
-import lombok.RequiredArgsConstructor;
 import net.thenextlvl.commander.paper.CommanderPlugin;
 import org.bukkit.command.Command;
 import org.jspecify.annotations.NullMarked;
@@ -14,9 +13,12 @@ import org.jspecify.annotations.NullMarked;
 import java.util.concurrent.CompletableFuture;
 
 @NullMarked
-@RequiredArgsConstructor
 class CommandSuggestionProvider implements SuggestionProvider<CommandSourceStack> {
     private final CommanderPlugin plugin;
+
+    CommandSuggestionProvider(CommanderPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
     public CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {

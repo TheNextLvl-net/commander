@@ -4,8 +4,6 @@ import com.google.gson.reflect.TypeToken;
 import core.file.FileIO;
 import core.file.format.GsonFile;
 import core.io.IO;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.PermissionOverride;
@@ -18,9 +16,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 
-@Getter
 @NullMarked
-@RequiredArgsConstructor
 public class ProxyPermissionOverride implements PermissionOverride {
     private final FileIO<Map<String, @Nullable String>> overridesFile;
     private final CommanderPlugin plugin;
@@ -78,6 +74,11 @@ public class ProxyPermissionOverride implements PermissionOverride {
     }
 
     @Override
+    public void save() {
+        overridesFile.save();
+    }
+
+    @Override
     @Deprecated
     public void overridePermissions() throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
@@ -85,8 +86,8 @@ public class ProxyPermissionOverride implements PermissionOverride {
 
     @Override
     public boolean reload(Audience audience) {
-        var previous = getOverridesFile().getRoot();
-        var current = getOverridesFile().reload();
+        var previous = overridesFile.getRoot();
+        var current = overridesFile.reload();
         if (previous.equals(current.getRoot())) return false;
         var difference = difference(previous, current.getRoot());
         var additions = difference.entrySet().stream()

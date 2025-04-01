@@ -23,6 +23,8 @@ public interface CommandRegistry {
 
     boolean unregister(String command);
 
+    void save();
+
     void unregisterCommands();
 
     boolean reload(Audience audience);

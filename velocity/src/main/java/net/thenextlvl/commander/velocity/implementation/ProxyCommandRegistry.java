@@ -4,7 +4,6 @@ import com.google.gson.reflect.TypeToken;
 import core.file.FileIO;
 import core.file.format.GsonFile;
 import core.io.IO;
-import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.CommandRegistry;
@@ -17,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Getter
 @NullMarked
 public class ProxyCommandRegistry implements CommandRegistry {
     private final FileIO<Set<String>> hiddenFile;
@@ -88,6 +86,12 @@ public class ProxyCommandRegistry implements CommandRegistry {
     }
 
     @Override
+    public void save() {
+        hiddenFile.save();
+        unregisteredFile.save();
+    }
+
+    @Override
     public void unregisterCommands() {
         unregisteredCommands().forEach(this::internalUnregister);
     }
@@ -100,8 +104,8 @@ public class ProxyCommandRegistry implements CommandRegistry {
     }
 
     private boolean reloadUnregistered(Audience audience) {
-        var previous = getUnregisteredFile().getRoot();
-        var current = getUnregisteredFile().reload();
+        var previous = unregisteredFile.getRoot();
+        var current = unregisteredFile.reload();
         if (previous.equals(current.getRoot())) return false;
         var difference = difference(previous, current.getRoot());
         var additions = difference.entrySet().stream()
@@ -117,8 +121,8 @@ public class ProxyCommandRegistry implements CommandRegistry {
     }
 
     private boolean reloadHidden(Audience audience) {
-        var previous = getHiddenFile().getRoot();
-        var current = getHiddenFile().reload();
+        var previous = hiddenFile.getRoot();
+        var current = hiddenFile.reload();
         if (previous.equals(current.getRoot())) return false;
         var difference = difference(previous, current.getRoot());
         var additions = difference.entrySet().stream()
