@@ -8,6 +8,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.PermissionOverride;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
+import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -30,14 +31,14 @@ public class ProxyPermissionOverride implements PermissionOverride {
     }
 
     @Override
-    public Map<String, @Nullable String> overrides() {
-        return new HashMap<>(overridesFile.getRoot());
+    @Deprecated
+    public @Unmodifiable Map<String, @Nullable String> originalPermissions() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    @Deprecated
-    public Map<String, @Nullable String> originalPermissions() throws UnsupportedOperationException {
-        throw new UnsupportedOperationException();
+    public @Unmodifiable Map<String, @Nullable String> overrides() {
+        return Map.copyOf(overridesFile.getRoot());
     }
 
     @Override

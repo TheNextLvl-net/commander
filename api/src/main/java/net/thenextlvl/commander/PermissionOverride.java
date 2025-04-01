@@ -1,5 +1,6 @@
 package net.thenextlvl.commander;
 
+import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -7,8 +8,10 @@ import java.util.Map;
 
 @NullMarked
 public interface PermissionOverride {
+    @Unmodifiable
     Map<String, @Nullable String> originalPermissions();
 
+    @Unmodifiable
     Map<String, @Nullable String> overrides();
 
     @Nullable
