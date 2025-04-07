@@ -24,7 +24,7 @@ tasks.compileJava {
 
 dependencies {
     compileOnly("com.google.code.gson:gson:2.12.1")
-    compileOnly("net.kyori:adventure-api:4.19.0")
+    compileOnly("net.kyori:adventure-api:4.20.0")
 
     implementation("net.thenextlvl.core:files:2.0.2")
     implementation("net.thenextlvl.core:i18n:1.0.21")
