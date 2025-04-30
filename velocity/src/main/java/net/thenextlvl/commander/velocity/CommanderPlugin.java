@@ -6,12 +6,9 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
-import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import core.i18n.file.ComponentBundle;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.key.Key;
 import net.thenextlvl.commander.CommandFinder;
 import net.thenextlvl.commander.Commander;
 import net.thenextlvl.commander.velocity.command.CommanderCommand;
@@ -24,7 +21,6 @@ import org.bstats.velocity.Metrics;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.Locale;
 
@@ -50,14 +46,13 @@ public class CommanderPlugin implements Commander {
         this.logger = logger;
         this.dataFolder = dataFolder;
         this.metricsFactory = metricsFactory;
-        this.bundle = new ComponentBundle(new File(dataFolder.toFile(), "translations"), audience ->
-                audience instanceof Player player ? player.getPlayerSettings().getLocale() : Locale.US)
-                .register("commander", Locale.US)
-                .register("commander_german", Locale.GERMANY)
-                .miniMessage(bundle -> MiniMessage.builder().tags(TagResolver.resolver(
-                        TagResolver.standard(),
-                        Placeholder.component("prefix", bundle.component(Locale.US, "prefix"))
-                )).build());
+        var key = Key.key("commander", "translations");
+        var translations = dataFolder.resolve("translations");
+        this.bundle = ComponentBundle.builder(key, translations)
+                .placeholder("prefix", "prefix")
+                .resource("commander", Locale.US)
+                .resource("commander_german", Locale.GERMANY)
+                .build();
         this.commandFinder = new ProxyCommandFinder(this);
         this.commandRegistry = new ProxyCommandRegistry(this);
         this.permissionOverride = new ProxyPermissionOverride(this);
