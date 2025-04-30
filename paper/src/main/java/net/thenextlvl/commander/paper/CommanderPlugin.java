@@ -1,9 +1,7 @@
 package net.thenextlvl.commander.paper;
 
 import core.i18n.file.ComponentBundle;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.key.Key;
 import net.thenextlvl.commander.CommandFinder;
 import net.thenextlvl.commander.Commander;
 import net.thenextlvl.commander.paper.command.CommanderCommand;
@@ -13,12 +11,11 @@ import net.thenextlvl.commander.paper.implementation.PaperPermissionOverride;
 import net.thenextlvl.commander.paper.listener.CommandListener;
 import net.thenextlvl.commander.paper.version.CommanderVersionChecker;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.NullMarked;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Locale;
 
 @NullMarked
@@ -26,15 +23,13 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
     private final Metrics metrics = new Metrics(this, 22782);
     private final CommanderVersionChecker versionChecker = new CommanderVersionChecker(this);
 
-    private final File translations = new File(getDataFolder(), "translations");
-    private final ComponentBundle bundle = new ComponentBundle(translations, audience ->
-            audience instanceof Player player ? player.locale() : Locale.US)
-            .register("commander", Locale.US)
-            .register("commander_german", Locale.GERMANY)
-            .miniMessage(bundle -> MiniMessage.builder().tags(TagResolver.resolver(
-                    TagResolver.standard(),
-                    Placeholder.component("prefix", bundle.component(Locale.US, "prefix"))
-            )).build());
+    private final Key key = Key.key("commander", "translations");
+    private final Path translations = getDataPath().resolve("translations");
+    private final ComponentBundle bundle = ComponentBundle.builder(key, translations)
+            .placeholder("prefix", "prefix")
+            .resource("commander.properties", Locale.US)
+            .resource("commander_german.properties", Locale.GERMANY)
+            .build();
 
     private final PaperCommandFinder commandFinder = new PaperCommandFinder(this);
     private final PaperCommandRegistry commandRegistry = new PaperCommandRegistry(this);
