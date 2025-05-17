@@ -33,7 +33,7 @@ public class PaperPermissionOverride implements PermissionOverride {
 
     @Override
     public @Unmodifiable Map<String, @Nullable String> originalPermissions() {
-        return Map.copyOf(originalPermissions);
+        return new HashMap<>(originalPermissions);
     }
 
     @Override
@@ -118,10 +118,11 @@ public class PaperPermissionOverride implements PermissionOverride {
     private boolean internalOverride(String command, @Nullable String permission) {
         var registered = plugin.getServer().getCommandMap().getKnownCommands().get(command);
         if (registered == null) return false;
-        if (Objects.equals(registered.getPermission(), permission)) return false;
-        originalPermissions.putIfAbsent(command, registered.getPermission());
+        var registeredPermission = registered.getPermission();
+        if (Objects.equals(registeredPermission, permission)) return false;
+        originalPermissions.putIfAbsent(command, registeredPermission);
         registered.setPermission(permission);
-        return Objects.equals(registered.getPermission(), permission);
+        return true;
     }
 
     private boolean internalReset(String command) {
