@@ -38,7 +38,7 @@ public class ProxyPermissionOverride implements PermissionOverride {
 
     @Override
     public @Unmodifiable Map<String, @Nullable String> overrides() {
-        return Map.copyOf(overridesFile.getRoot());
+        return new HashMap<>(overridesFile.getRoot());
     }
 
     @Override
