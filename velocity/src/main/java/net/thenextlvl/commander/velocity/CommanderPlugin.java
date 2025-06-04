@@ -29,7 +29,7 @@ import java.util.Locale;
         name = "Commander",
         authors = "NonSwag",
         url = "https://thenextlvl.net",
-        version = "4.3.1")
+        version = "4.3.2")
 public class CommanderPlugin implements Commander {
     private final ComponentBundle bundle;
     private final ProxyCommandFinder commandFinder;
