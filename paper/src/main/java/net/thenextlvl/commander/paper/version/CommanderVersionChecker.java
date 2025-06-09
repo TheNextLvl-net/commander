@@ -1,15 +1,15 @@
 package net.thenextlvl.commander.paper.version;
 
-import core.paper.version.PaperHangarVersionChecker;
+import core.paper.version.PaperModrinthVersionChecker;
 import core.version.SemanticVersion;
 import net.thenextlvl.commander.paper.CommanderPlugin;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 @NullMarked
-public class CommanderVersionChecker extends PaperHangarVersionChecker<SemanticVersion> {
+public class CommanderVersionChecker extends PaperModrinthVersionChecker<SemanticVersion> {
     public CommanderVersionChecker(CommanderPlugin plugin) {
-        super(plugin, "TheNextLvl", "CommandControl");
+        super(plugin, "USLuwMUi");
     }
 
     @Override
