@@ -65,6 +65,7 @@ hangarPublish { // docs - https://docs.papermc.io/misc/hangar-publishing
     publications.register("paper") {
         id.set("CommandControl")
         version.set(versionString)
+        changelog = System.getenv("CHANGELOG")
         channel.set(if (isRelease) "Release" else "Snapshot")
         apiKey.set(System.getenv("HANGAR_API_TOKEN"))
         platforms.register(Platforms.PAPER) {
@@ -77,6 +78,7 @@ hangarPublish { // docs - https://docs.papermc.io/misc/hangar-publishing
 modrinth {
     token.set(System.getenv("MODRINTH_TOKEN"))
     projectId.set("USLuwMUi")
+    changelog = System.getenv("CHANGELOG")
     versionType = if (isRelease) "release" else "beta"
     uploadFile.set(tasks.shadowJar)
     gameVersions.set(versions)
