@@ -1,22 +1,22 @@
 package net.thenextlvl.commander.velocity.version;
 
+import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.plugin.Plugin;
 import core.version.SemanticVersion;
-import core.version.hangar.HangarVersion;
-import core.version.hangar.HangarVersionChecker;
-import core.version.hangar.Platform;
+import core.version.modrinth.ModrinthVersion;
+import core.version.modrinth.ModrinthVersionChecker;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.Objects;
 
 @NullMarked
-public class CommanderVersionChecker extends HangarVersionChecker<SemanticVersion> {
+public class CommanderVersionChecker extends ModrinthVersionChecker<SemanticVersion> {
     private final SemanticVersion versionRunning;
     private final CommanderPlugin plugin;
 
     public CommanderVersionChecker(CommanderPlugin plugin) {
-        super("CommandControl");
+        super("USLuwMUi");
         this.plugin = plugin;
         var version = plugin.getClass().getAnnotation(Plugin.class).version();
         this.versionRunning = Objects.requireNonNull(parseVersion(version));
@@ -33,9 +33,9 @@ public class CommanderVersionChecker extends HangarVersionChecker<SemanticVersio
     }
 
     @Override
-    public boolean isSupported(HangarVersion version) {
-        var versions = version.platformDependencies().get(Platform.VELOCITY);
-        return versions != null && versions.stream().anyMatch(plugin.server().getVersion().getVersion()::startsWith);
+    public boolean isSupported(ModrinthVersion version) {
+        return version.gameVersions().contains(ProtocolVersion.MAXIMUM_VERSION.getMostRecentSupportedVersion())
+               && version.loaders().contains("velocity");
     }
 
     public void checkVersion() {
@@ -52,13 +52,13 @@ public class CommanderVersionChecker extends HangarVersionChecker<SemanticVersio
 
     private void printUnsupportedInfo(SemanticVersion version) {
         var logger = plugin.logger();
-        var proxyVersion = plugin.server().getVersion().getVersion();
+        var latest = ProtocolVersion.MAXIMUM_VERSION.getMostRecentSupportedVersion();
         if (version.equals(versionRunning)) {
-            logger.warn("{} seems to be unsupported by Commander version {}", proxyVersion, versionRunning);
+            logger.warn("{} seems to be unsupported by Commander version {}", latest, versionRunning);
         } else if (version.compareTo(versionRunning) > 0) {
-            logger.warn("A new version for Commander is available but {} seems to be unsupported", proxyVersion);
+            logger.warn("A new version for Commander is available but {} seems to be unsupported", latest);
             logger.warn("You are running version {}, the latest version is {}", versionRunning, version);
-            logger.warn("Update at https://hangar.papermc.io/TheNextLvl/{}", getSlug());
+            logger.warn("Update at https://modrinth.com/project/{}", getId());
             logger.warn("Do not test in production and always make backups before updating");
         } else logger.warn("You are running a snapshot version of Commander");
     }
@@ -70,7 +70,8 @@ public class CommanderVersionChecker extends HangarVersionChecker<SemanticVersio
         } else if (version.compareTo(versionRunning) > 0) {
             logger.warn("An update for Commander is available");
             logger.warn("You are running version {}, the latest version is {}", versionRunning, version);
-            logger.warn("Update at https://hangar.papermc.io/TheNextLvl/{}", getSlug());
+            logger.warn("Update at https://modrinth.com/project/{}/?version={}&loader=velocity#download", getId(),
+                    ProtocolVersion.MAXIMUM_VERSION.getMostRecentSupportedVersion());
             logger.warn("Do not test in production and always make backups before updating");
         } else logger.warn("You are running a snapshot version of Commander");
     }
