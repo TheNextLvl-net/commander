@@ -45,9 +45,10 @@ public interface CommandFinder {
      */
     default @Unmodifiable Set<String> findCommands(Stream<String> commands, String input) {
         try {
-            return findCommands(commands, Pattern.compile(input));
+            return findCommands(commands, Pattern.compile(input.replace("*", ".*")));
         } catch (PatternSyntaxException e) {
-            return findCommands(commands, Pattern.compile(Pattern.quote(input)));
+            var escaped = Pattern.quote(input).replace("\\*", "*");
+            return findCommands(commands, Pattern.compile(escaped.replace("*", ".*")));
         }
     }
 
@@ -59,9 +60,10 @@ public interface CommandFinder {
      */
     default @Unmodifiable Set<String> findCommands(String input) {
         try {
-            return findCommands(Pattern.compile(input));
+            return findCommands(Pattern.compile(input.replace("*", ".*")));
         } catch (PatternSyntaxException e) {
-            return findCommands(Pattern.compile(Pattern.quote(input)));
+            var escaped = Pattern.quote(input).replace("\\*", "*");
+            return findCommands(Pattern.compile(escaped.replace("*", ".*")));
         }
     }
 }
