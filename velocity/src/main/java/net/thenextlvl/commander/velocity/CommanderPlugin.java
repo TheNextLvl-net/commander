@@ -50,8 +50,8 @@ public class CommanderPlugin implements Commander {
         var translations = dataFolder.resolve("translations");
         this.bundle = ComponentBundle.builder(key, translations)
                 .placeholder("prefix", "prefix")
-                .resource("commander", Locale.US)
-                .resource("commander_german", Locale.GERMANY)
+                .resource("commander.properties", Locale.US)
+                .resource("commander_german.properties", Locale.GERMANY)
                 .build();
         this.commandFinder = new ProxyCommandFinder(this);
         this.commandRegistry = new ProxyCommandRegistry(this);
