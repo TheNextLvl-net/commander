@@ -1,8 +1,8 @@
 name: Feature request
 description: Suggest an idea for this project
-labels: 
-  - 'enhancement'
-  - 'feature request'
+type: enhancement
+labels:
+  - enhancement
 
 body:
   - type: markdown
