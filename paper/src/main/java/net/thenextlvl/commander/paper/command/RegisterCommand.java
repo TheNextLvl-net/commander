@@ -34,7 +34,7 @@ class RegisterCommand {
         plugin.bundle().sendMessage(sender, message, Placeholder.parsed("command", command));
         if (success) {
             plugin.getServer().getOnlinePlayers().forEach(Player::updateCommands);
-            plugin.autoSave(sender);
+            plugin.unregisteredConflictSave(sender);
         }
         return Command.SINGLE_SUCCESS;
     }

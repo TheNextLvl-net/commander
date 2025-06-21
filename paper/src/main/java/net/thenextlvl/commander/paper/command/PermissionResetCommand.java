@@ -41,7 +41,7 @@ class PermissionResetCommand {
                 Placeholder.parsed("permission", permission));
         if (success) {
             plugin.getServer().getOnlinePlayers().forEach(Player::updateCommands);
-            plugin.autoSave(sender);
+            plugin.permissionConflictSave(sender);
         }
         return Command.SINGLE_SUCCESS;
     }

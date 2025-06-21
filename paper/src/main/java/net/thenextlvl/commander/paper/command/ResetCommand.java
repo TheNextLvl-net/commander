@@ -44,7 +44,7 @@ class ResetCommand {
         plugin.bundle().sendMessage(sender, message, Placeholder.parsed("command", command));
         if (reset) {
             plugin.getServer().getOnlinePlayers().forEach(Player::updateCommands);
-            plugin.autoSave(sender);
+            plugin.conflictSave(sender);
         }
         return Command.SINGLE_SUCCESS;
     }

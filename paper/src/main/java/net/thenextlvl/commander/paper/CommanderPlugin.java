@@ -87,8 +87,23 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
         return permissionOverride;
     }
 
-    public void autoSave(Audience audience) {
+    public void conflictSave(Audience audience) {
         if (commandRegistry.save(false) & permissionOverride.save(false)) return;
+        bundle().sendMessage(audience, "command.save.conflict");
+    }
+
+    public void hiddenConflictSave(Audience audience) {
+        if (commandRegistry.saveHidden(false)) return;
+        bundle().sendMessage(audience, "command.save.conflict");
+    }
+
+    public void unregisteredConflictSave(Audience audience) {
+        if (commandRegistry.saveHidden(false)) return;
+        bundle().sendMessage(audience, "command.save.conflict");
+    }
+
+    public void permissionConflictSave(Audience audience) {
+        if (permissionOverride.save(false)) return;
         bundle().sendMessage(audience, "command.save.conflict");
     }
 
