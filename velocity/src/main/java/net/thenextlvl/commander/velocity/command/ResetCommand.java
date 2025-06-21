@@ -36,12 +36,12 @@ class ResetCommand {
     private static int reset(CommandContext<CommandSource> context, CommanderPlugin plugin) {
         var sender = context.getSource();
         var command = context.getArgument("command", String.class);
-        var s1 = plugin.permissionOverride().reset(command);
-        var s2 = plugin.commandRegistry().register(command);
-        var s3 = plugin.commandRegistry().reveal(command);
-        var message = s1 || s2 || s3 ? "command.reset" : "nothing.changed";
+        var reset = plugin.permissionOverride().reset(command)
+                    | plugin.commandRegistry().register(command)
+                    | plugin.commandRegistry().reveal(command);
+        var message = reset ? "command.reset" : "nothing.changed";
         plugin.bundle().sendMessage(sender, message, Placeholder.parsed("command", command));
-        if (s1 || s2 || s3) plugin.autoSave(sender);
+        if (reset) plugin.autoSave(sender);
         return Command.SINGLE_SUCCESS;
     }
 }
