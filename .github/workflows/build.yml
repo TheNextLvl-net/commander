@@ -20,7 +20,7 @@ jobs:
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Commander
+          name: commander
           path: |
             paper/build/libs/*.jar
             velocity/build/libs/*.jar
