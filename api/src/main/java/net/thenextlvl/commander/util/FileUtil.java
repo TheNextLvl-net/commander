@@ -2,6 +2,7 @@ package net.thenextlvl.commander.util;
 
 import core.file.FileIO;
 import core.io.PathIO;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,6 +11,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+@ApiStatus.Internal
 public final class FileUtil {
     private static final int BUFFER_SIZE = 8192;
 
