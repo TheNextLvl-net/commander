@@ -98,7 +98,7 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
     }
 
     public void unregisteredConflictSave(Audience audience) {
-        if (commandRegistry.saveHidden(false)) return;
+        if (commandRegistry.saveUnregistered(false)) return;
         bundle().sendMessage(audience, "command.save.conflict");
     }
 
