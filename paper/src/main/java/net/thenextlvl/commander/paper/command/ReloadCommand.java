@@ -29,6 +29,7 @@ class ReloadCommand {
         } catch (Exception e) {
             plugin.bundle().sendMessage(sender, "command.reload.failed",
                     Placeholder.parsed("error", e.getMessage()));
+            plugin.getComponentLogger().warn("Failed to reload command configurations", e);
             return 0;
         }
     }
