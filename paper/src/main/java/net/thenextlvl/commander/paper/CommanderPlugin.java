@@ -1,7 +1,9 @@
 package net.thenextlvl.commander.paper;
 
 import core.i18n.file.ComponentBundle;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.thenextlvl.commander.CommandFinder;
 import net.thenextlvl.commander.Commander;
 import net.thenextlvl.commander.paper.command.CommanderCommand;
@@ -20,6 +22,7 @@ import java.util.Locale;
 
 @NullMarked
 public class CommanderPlugin extends JavaPlugin implements Commander {
+    public static final String ROOT_COMMAND = "command";
     private final Metrics metrics = new Metrics(this, 22782);
     private final CommanderVersionChecker versionChecker = new CommanderVersionChecker(this);
 
@@ -53,8 +56,8 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
 
     @Override
     public void onDisable() {
-        commandRegistry.save();
-        permissionOverride.save();
+        commandRegistry.save(true);
+        permissionOverride.save(true);
         metrics.shutdown();
     }
 
@@ -78,6 +81,21 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
         return permissionOverride;
     }
 
+    public String rootCommand() {
+        return ROOT_COMMAND;
+    }
+
+    public void autoSave(Audience audience) {
+        var savedRegistry = commandRegistry.save(false);
+        var savedPermissions = permissionOverride.save(false);
+        if (!savedRegistry || !savedPermissions) {
+            var mm = MiniMessage.miniMessage();
+            var serialized = mm.serialize(bundle.component("command.save.conflict", audience));
+            serialized = serialized.replace("{ROOTCMD}", ROOT_COMMAND);
+            audience.sendMessage(mm.deserialize(serialized));
+        }
+    }
+
     private void registerCommands() {
         CommanderCommand.register(this);
     }
@@ -86,3 +104,4 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
         getServer().getPluginManager().registerEvents(new CommandListener(this), this);
     }
 }
+

@@ -40,6 +40,7 @@ class PermissionSetCommand {
         plugin.bundle().sendMessage(sender, message,
                 Placeholder.parsed("permission", permission),
                 Placeholder.parsed("command", command));
+        if (success) plugin.autoSave(sender);
         return Command.SINGLE_SUCCESS;
     }
 }

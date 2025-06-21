@@ -4,6 +4,8 @@ import com.google.gson.reflect.TypeToken;
 import core.file.FileIO;
 import core.file.format.GsonFile;
 import core.io.IO;
+import java.nio.file.attribute.FileTime;
+import net.thenextlvl.commander.util.FileUtil;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.PermissionOverride;
@@ -21,6 +23,8 @@ import java.util.Objects;
 public class ProxyPermissionOverride implements PermissionOverride {
     private final FileIO<Map<String, @Nullable String>> overridesFile;
     private final CommanderPlugin plugin;
+    private String overridesDigest;
+    private FileTime overridesLastModified;
 
     public ProxyPermissionOverride(CommanderPlugin plugin) {
         this.overridesFile = new GsonFile<Map<String, @Nullable String>>(
@@ -28,6 +32,8 @@ public class ProxyPermissionOverride implements PermissionOverride {
                 new HashMap<>(), new TypeToken<>() {
         }).reload().saveIfAbsent();
         this.plugin = plugin;
+        this.overridesDigest = FileUtil.digest(overridesFile);
+        this.overridesLastModified = FileUtil.lastModified(overridesFile);
     }
 
     @Override
@@ -75,7 +81,15 @@ public class ProxyPermissionOverride implements PermissionOverride {
     }
 
     public void save() {
+        save(true);
+    }
+
+    public boolean save(boolean force) {
+        if (!force && FileUtil.hasChanged(overridesFile, overridesDigest, overridesLastModified)) return false;
         overridesFile.save();
+        overridesDigest = FileUtil.digest(overridesFile);
+        overridesLastModified = FileUtil.lastModified(overridesFile);
+        return true;
     }
 
     @Override
@@ -87,6 +101,8 @@ public class ProxyPermissionOverride implements PermissionOverride {
     public boolean reload(Audience audience) {
         var previous = overridesFile.getRoot();
         var current = overridesFile.reload();
+        overridesDigest = FileUtil.digest(overridesFile);
+        overridesLastModified = FileUtil.lastModified(overridesFile);
         if (previous.equals(current.getRoot())) return false;
         var difference = difference(previous, current.getRoot());
         var additions = difference.entrySet().stream()
@@ -115,4 +131,6 @@ public class ProxyPermissionOverride implements PermissionOverride {
 
     private record PermissionOverride(String command, @Nullable String permission) {
     }
+
 }
+

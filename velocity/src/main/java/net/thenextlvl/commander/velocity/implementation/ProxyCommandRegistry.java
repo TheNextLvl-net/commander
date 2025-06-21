@@ -4,6 +4,8 @@ import com.google.gson.reflect.TypeToken;
 import core.file.FileIO;
 import core.file.format.GsonFile;
 import core.io.IO;
+import java.nio.file.attribute.FileTime;
+import net.thenextlvl.commander.util.FileUtil;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.CommandRegistry;
@@ -21,6 +23,10 @@ public class ProxyCommandRegistry implements CommandRegistry {
     private final FileIO<Set<String>> hiddenFile;
     private final FileIO<Set<String>> unregisteredFile;
     private final CommanderPlugin plugin;
+    private String hiddenDigest;
+    private String unregisteredDigest;
+    private FileTime hiddenLastModified;
+    private FileTime unregisteredLastModified;
 
     public ProxyCommandRegistry(CommanderPlugin plugin) {
         this.hiddenFile = new GsonFile<Set<String>>(
@@ -32,6 +38,10 @@ public class ProxyCommandRegistry implements CommandRegistry {
                 new HashSet<>(), new TypeToken<>() {
         }).reload().saveIfAbsent();
         this.plugin = plugin;
+        this.hiddenDigest = FileUtil.digest(hiddenFile);
+        this.unregisteredDigest = FileUtil.digest(unregisteredFile);
+        this.hiddenLastModified = FileUtil.lastModified(hiddenFile);
+        this.unregisteredLastModified = FileUtil.lastModified(unregisteredFile);
     }
 
     @Override
@@ -86,8 +96,19 @@ public class ProxyCommandRegistry implements CommandRegistry {
     }
 
     public void save() {
+        save(true);
+    }
+
+    public boolean save(boolean force) {
+        if (!force && FileUtil.hasChanged(hiddenFile, hiddenDigest, hiddenLastModified)) return false;
+        if (!force && FileUtil.hasChanged(unregisteredFile, unregisteredDigest, unregisteredLastModified)) return false;
         hiddenFile.save();
         unregisteredFile.save();
+        hiddenDigest = FileUtil.digest(hiddenFile);
+        unregisteredDigest = FileUtil.digest(unregisteredFile);
+        hiddenLastModified = FileUtil.lastModified(hiddenFile);
+        unregisteredLastModified = FileUtil.lastModified(unregisteredFile);
+        return true;
     }
 
     @Override
@@ -104,6 +125,8 @@ public class ProxyCommandRegistry implements CommandRegistry {
     private boolean reloadUnregistered(Audience audience) {
         var previous = unregisteredFile.getRoot();
         var current = unregisteredFile.reload();
+        unregisteredDigest = FileUtil.digest(unregisteredFile);
+        unregisteredLastModified = FileUtil.lastModified(unregisteredFile);
         if (previous.equals(current.getRoot())) return false;
         var difference = difference(previous, current.getRoot());
         var additions = difference.entrySet().stream()
@@ -121,6 +144,8 @@ public class ProxyCommandRegistry implements CommandRegistry {
     private boolean reloadHidden(Audience audience) {
         var previous = hiddenFile.getRoot();
         var current = hiddenFile.reload();
+        hiddenDigest = FileUtil.digest(hiddenFile);
+        hiddenLastModified = FileUtil.lastModified(hiddenFile);
         if (previous.equals(current.getRoot())) return false;
         var difference = difference(previous, current.getRoot());
         var additions = difference.entrySet().stream()
@@ -147,4 +172,6 @@ public class ProxyCommandRegistry implements CommandRegistry {
         plugin.server().getCommandManager().unregister(command);
         return true;
     }
+
 }
+

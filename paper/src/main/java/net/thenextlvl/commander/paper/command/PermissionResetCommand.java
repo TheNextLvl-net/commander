@@ -39,7 +39,10 @@ class PermissionResetCommand {
                 .orElse("null");
         plugin.bundle().sendMessage(sender, message, Placeholder.parsed("command", command),
                 Placeholder.parsed("permission", permission));
-        if (success) plugin.getServer().getOnlinePlayers().forEach(Player::updateCommands);
+        if (success) {
+            plugin.getServer().getOnlinePlayers().forEach(Player::updateCommands);
+            plugin.autoSave(sender);
+        }
         return Command.SINGLE_SUCCESS;
     }
 }

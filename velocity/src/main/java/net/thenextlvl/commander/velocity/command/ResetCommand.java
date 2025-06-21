@@ -41,6 +41,7 @@ class ResetCommand {
         var s3 = plugin.commandRegistry().reveal(command);
         var message = s1 || s2 || s3 ? "command.reset" : "nothing.changed";
         plugin.bundle().sendMessage(sender, message, Placeholder.parsed("command", command));
+        if (s1 || s2 || s3) plugin.autoSave(sender);
         return Command.SINGLE_SUCCESS;
     }
 }

@@ -4,11 +4,13 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
+import net.kyori.adventure.audience.Audience;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import core.i18n.file.ComponentBundle;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.thenextlvl.commander.CommandFinder;
 import net.thenextlvl.commander.Commander;
 import net.thenextlvl.commander.velocity.command.CommanderCommand;
@@ -31,6 +33,7 @@ import java.util.Locale;
         url = "https://thenextlvl.net",
         version = "4.3.3")
 public class CommanderPlugin implements Commander {
+    public static final String ROOT_COMMAND = "commandv";
     private final ComponentBundle bundle;
     private final ProxyCommandFinder commandFinder;
     private final ProxyCommandRegistry commandRegistry;
@@ -70,8 +73,8 @@ public class CommanderPlugin implements Commander {
 
     @Subscribe(priority = 999)
     public void onProxyShutdown(ProxyShutdownEvent event) {
-        commandRegistry.save();
-        permissionOverride.save();
+        commandRegistry.save(true);
+        permissionOverride.save(true);
     }
 
     @Override
@@ -94,6 +97,22 @@ public class CommanderPlugin implements Commander {
         return permissionOverride;
     }
 
+    public String rootCommand() {
+        return ROOT_COMMAND;
+    }
+
+    public void autoSave(Audience audience) {
+        var savedRegistry = commandRegistry.save(false);
+        var savedPermissions = permissionOverride.save(false);
+        if (!savedRegistry || !savedPermissions) {
+            var mm = MiniMessage.miniMessage();
+            var serialized = mm.serialize(bundle.component("command.save.conflict", audience));
+            serialized = serialized.replace("{ROOTCMD}", ROOT_COMMAND);
+            audience.sendMessage(mm.deserialize(serialized));
+        }
+    }
+
+
     public ProxyServer server() {
         return server;
     }
@@ -106,3 +125,4 @@ public class CommanderPlugin implements Commander {
         return dataFolder;
     }
 }
+
