@@ -26,7 +26,6 @@ public final class FileUtil {
             try (var input = new DigestInputStream(Files.newInputStream(path), digest)) {
                 byte[] buffer = new byte[BUFFER_SIZE];
                 while (input.read(buffer) != -1) {
-                    // just read to update digest
                 }
             }
             var builder = new StringBuilder();
