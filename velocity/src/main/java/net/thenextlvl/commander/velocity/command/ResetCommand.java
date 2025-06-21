@@ -41,7 +41,7 @@ class ResetCommand {
                     | plugin.commandRegistry().reveal(command);
         var message = reset ? "command.reset" : "nothing.changed";
         plugin.bundle().sendMessage(sender, message, Placeholder.parsed("command", command));
-        if (reset) plugin.autoSave(sender);
+        if (reset) plugin.conflictSave(sender);
         return Command.SINGLE_SUCCESS;
     }
 }

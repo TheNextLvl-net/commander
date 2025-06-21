@@ -33,7 +33,7 @@ class PermissionResetCommand {
         var message = success ? "permission.reset" : "nothing.changed";
         plugin.bundle().sendMessage(sender, message, Placeholder.parsed("command", command),
                 Placeholder.parsed("permission", "null"));
-        if (success) plugin.autoSave(sender);
+        if (success) plugin.permissionConflictSave(sender);
         return Command.SINGLE_SUCCESS;
     }
 }

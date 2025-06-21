@@ -95,18 +95,22 @@ public class ProxyCommandRegistry implements CommandRegistry {
                 .toList().isEmpty();
     }
 
-    public void save() {
-        save(true);
+    public boolean save(boolean force) {
+        return saveHidden(force) & saveUnregistered(force);
     }
 
-    public boolean save(boolean force) {
+    public boolean saveHidden(boolean force) {
         if (!force && FileUtil.hasChanged(hiddenFile, hiddenDigest, hiddenLastModified)) return false;
-        if (!force && FileUtil.hasChanged(unregisteredFile, unregisteredDigest, unregisteredLastModified)) return false;
         hiddenFile.save();
-        unregisteredFile.save();
         hiddenDigest = FileUtil.digest(hiddenFile);
-        unregisteredDigest = FileUtil.digest(unregisteredFile);
         hiddenLastModified = FileUtil.lastModified(hiddenFile);
+        return true;
+    }
+
+    public boolean saveUnregistered(boolean force) {
+        if (!force && FileUtil.hasChanged(unregisteredFile, unregisteredDigest, unregisteredLastModified)) return false;
+        unregisteredFile.save();
+        unregisteredDigest = FileUtil.digest(unregisteredFile);
         unregisteredLastModified = FileUtil.lastModified(unregisteredFile);
         return true;
     }

@@ -26,7 +26,7 @@ class UnregisterCommand {
         var success = plugin.commandRegistry().unregister(command);
         var message = success ? "command.unregistered" : "nothing.changed";
         plugin.bundle().sendMessage(sender, message, Placeholder.parsed("command", command));
-        if (success) plugin.autoSave(sender);
+        if (success) plugin.unregisteredConflictSave(sender);
         return Command.SINGLE_SUCCESS;
     }
 }
