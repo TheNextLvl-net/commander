@@ -114,7 +114,6 @@ public class CommanderPlugin implements Commander {
     }
 
     public void unregisteredConflictSave(Audience audience) {
-        // fix copy pasta error
         if (commandRegistry.saveUnregistered(false)) return;
         bundle().sendMessage(audience, "command.save.conflict");
     }
