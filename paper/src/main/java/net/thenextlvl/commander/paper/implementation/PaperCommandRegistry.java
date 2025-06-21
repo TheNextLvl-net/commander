@@ -24,6 +24,7 @@ public class PaperCommandRegistry implements CommandRegistry {
     private final FileIO<Set<String>> hiddenFile;
     private final FileIO<Set<String>> unregisteredFile;
     private final CommanderPlugin plugin;
+
     private String hiddenDigest;
     private String unregisteredDigest;
     private long hiddenLastModified;
