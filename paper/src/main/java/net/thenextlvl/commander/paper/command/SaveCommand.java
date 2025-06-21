@@ -6,7 +6,6 @@ import com.mojang.brigadier.context.CommandContext;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.thenextlvl.commander.paper.CommanderPlugin;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
@@ -18,13 +17,9 @@ class SaveCommand {
 
     private static int save(CommandContext<CommandSourceStack> context, CommanderPlugin plugin) {
         var sender = context.getSource().getSender();
-        var reg = plugin.commandRegistry().save(true);
-        var perm = plugin.permissionOverride().save(true);
-        var message = reg && perm ? "command.saved" : "command.save.conflict";
-        var mm = MiniMessage.miniMessage();
-        var serialized = mm.serialize(plugin.bundle().component(message, sender));
-        serialized = serialized.replace("{ROOTCMD}", CommanderPlugin.ROOT_COMMAND);
-        sender.sendMessage(mm.deserialize(serialized));
+        var saved = plugin.commandRegistry().save(true) & plugin.permissionOverride().save(true);
+        var message = saved ? "command.saved" : "command.save.conflict";
+        plugin.bundle().sendMessage(sender, message);
         return Command.SINGLE_SUCCESS;
     }
 }

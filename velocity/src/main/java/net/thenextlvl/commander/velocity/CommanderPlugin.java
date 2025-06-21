@@ -11,6 +11,8 @@ import core.i18n.file.ComponentBundle;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.thenextlvl.commander.CommandFinder;
 import net.thenextlvl.commander.Commander;
 import net.thenextlvl.commander.velocity.command.CommanderCommand;
@@ -53,6 +55,10 @@ public class CommanderPlugin implements Commander {
         var translations = dataFolder.resolve("translations");
         this.bundle = ComponentBundle.builder(key, translations)
                 .placeholder("prefix", "prefix")
+                .miniMessage(MiniMessage.builder().tags(TagResolver.resolver(
+                        TagResolver.standard(),
+                        Placeholder.parsed("root_command", ROOT_COMMAND)
+                )).build())
                 .resource("commander.properties", Locale.US)
                 .resource("commander_german.properties", Locale.GERMANY)
                 .build();
@@ -66,7 +72,7 @@ public class CommanderPlugin implements Commander {
     public void onProxyInitialize(ProxyInitializeEvent event) {
         metricsFactory.make(this, 22782);
         server().getEventManager().register(this, new CommandListener(this));
-        var meta = server.getCommandManager().metaBuilder("commandv").plugin(this).build();
+        var meta = server.getCommandManager().metaBuilder(ROOT_COMMAND).plugin(this).build();
         server().getCommandManager().register(meta, CommanderCommand.create(this));
         commandRegistry().unregisterCommands();
     }
@@ -97,19 +103,9 @@ public class CommanderPlugin implements Commander {
         return permissionOverride;
     }
 
-    public String rootCommand() {
-        return ROOT_COMMAND;
-    }
-
     public void autoSave(Audience audience) {
-        var savedRegistry = commandRegistry.save(false);
-        var savedPermissions = permissionOverride.save(false);
-        if (!savedRegistry || !savedPermissions) {
-            var mm = MiniMessage.miniMessage();
-            var serialized = mm.serialize(bundle.component("command.save.conflict", audience));
-            serialized = serialized.replace("{ROOTCMD}", ROOT_COMMAND);
-            audience.sendMessage(mm.deserialize(serialized));
-        }
+        if (commandRegistry.save(false) & permissionOverride.save(false)) return;
+        bundle().sendMessage(audience, "command.save.conflict");
     }
 
 

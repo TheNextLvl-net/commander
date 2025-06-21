@@ -4,6 +4,8 @@ import core.i18n.file.ComponentBundle;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.thenextlvl.commander.CommandFinder;
 import net.thenextlvl.commander.Commander;
 import net.thenextlvl.commander.paper.command.CommanderCommand;
@@ -30,6 +32,10 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
     private final Path translations = getDataPath().resolve("translations");
     private final ComponentBundle bundle = ComponentBundle.builder(key, translations)
             .placeholder("prefix", "prefix")
+            .miniMessage(MiniMessage.builder().tags(TagResolver.resolver(
+                    TagResolver.standard(),
+                    Placeholder.parsed("root_command", ROOT_COMMAND)
+            )).build())
             .resource("commander.properties", Locale.US)
             .resource("commander_german.properties", Locale.GERMANY)
             .build();
@@ -81,19 +87,9 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
         return permissionOverride;
     }
 
-    public String rootCommand() {
-        return ROOT_COMMAND;
-    }
-
     public void autoSave(Audience audience) {
-        var savedRegistry = commandRegistry.save(false);
-        var savedPermissions = permissionOverride.save(false);
-        if (!savedRegistry || !savedPermissions) {
-            var mm = MiniMessage.miniMessage();
-            var serialized = mm.serialize(bundle.component("command.save.conflict", audience));
-            serialized = serialized.replace("{ROOTCMD}", ROOT_COMMAND);
-            audience.sendMessage(mm.deserialize(serialized));
-        }
+        if (commandRegistry.save(false) & permissionOverride.save(false)) return;
+        bundle().sendMessage(audience, "command.save.conflict");
     }
 
     private void registerCommands() {

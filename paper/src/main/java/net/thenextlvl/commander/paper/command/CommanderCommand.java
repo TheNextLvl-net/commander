@@ -8,7 +8,7 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public class CommanderCommand {
     public static void register(CommanderPlugin plugin) {
-        var command = Commands.literal("command")
+        var command = Commands.literal(CommanderPlugin.ROOT_COMMAND)
                 .requires(stack -> stack.getSender().hasPermission("commander.admin"))
                 .then(HideCommand.create(plugin))
                 .then(PermissionCommand.create(plugin))
