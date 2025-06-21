@@ -11,7 +11,6 @@ import net.thenextlvl.commander.util.FileUtil;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
 import org.jspecify.annotations.NullMarked;
 
-import java.nio.file.attribute.FileTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -23,10 +22,11 @@ public class ProxyCommandRegistry implements CommandRegistry {
     private final FileIO<Set<String>> hiddenFile;
     private final FileIO<Set<String>> unregisteredFile;
     private final CommanderPlugin plugin;
+
     private String hiddenDigest;
     private String unregisteredDigest;
-    private FileTime hiddenLastModified;
-    private FileTime unregisteredLastModified;
+    private long hiddenLastModified;
+    private long unregisteredLastModified;
 
     public ProxyCommandRegistry(CommanderPlugin plugin) {
         this.hiddenFile = new GsonFile<Set<String>>(

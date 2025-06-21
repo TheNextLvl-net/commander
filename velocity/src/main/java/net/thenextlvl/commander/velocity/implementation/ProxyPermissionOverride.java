@@ -13,7 +13,6 @@ import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import java.nio.file.attribute.FileTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -23,8 +22,9 @@ import java.util.Objects;
 public class ProxyPermissionOverride implements PermissionOverride {
     private final FileIO<Map<String, @Nullable String>> overridesFile;
     private final CommanderPlugin plugin;
+
     private String overridesDigest;
-    private FileTime overridesLastModified;
+    private long overridesLastModified;
 
     public ProxyPermissionOverride(CommanderPlugin plugin) {
         this.overridesFile = new GsonFile<Map<String, @Nullable String>>(

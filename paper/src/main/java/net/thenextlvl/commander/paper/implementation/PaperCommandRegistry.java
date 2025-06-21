@@ -4,12 +4,11 @@ import com.google.gson.reflect.TypeToken;
 import core.file.FileIO;
 import core.file.format.GsonFile;
 import core.io.IO;
-import java.nio.file.attribute.FileTime;
-import net.thenextlvl.commander.util.FileUtil;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.CommandRegistry;
 import net.thenextlvl.commander.paper.CommanderPlugin;
+import net.thenextlvl.commander.util.FileUtil;
 import org.bukkit.command.Command;
 import org.jspecify.annotations.NullMarked;
 
@@ -27,8 +26,8 @@ public class PaperCommandRegistry implements CommandRegistry {
     private final CommanderPlugin plugin;
     private String hiddenDigest;
     private String unregisteredDigest;
-    private FileTime hiddenLastModified;
-    private FileTime unregisteredLastModified;
+    private long hiddenLastModified;
+    private long unregisteredLastModified;
 
     public PaperCommandRegistry(CommanderPlugin plugin) {
         this.hiddenFile = new GsonFile<Set<String>>(
@@ -98,13 +97,21 @@ public class PaperCommandRegistry implements CommandRegistry {
     }
 
     public boolean save(boolean force) {
+        return saveHidden(force) & saveUnregistered(force);
+    }
+
+    public boolean saveHidden(boolean force) {
         if (!force && FileUtil.hasChanged(hiddenFile, hiddenDigest, hiddenLastModified)) return false;
-        if (!force && FileUtil.hasChanged(unregisteredFile, unregisteredDigest, unregisteredLastModified)) return false;
         hiddenFile.save();
-        unregisteredFile.save();
         hiddenDigest = FileUtil.digest(hiddenFile);
-        unregisteredDigest = FileUtil.digest(unregisteredFile);
         hiddenLastModified = FileUtil.lastModified(hiddenFile);
+        return true;
+    }
+
+    public boolean saveUnregistered(boolean force) {
+        if (!force && FileUtil.hasChanged(unregisteredFile, unregisteredDigest, unregisteredLastModified)) return false;
+        unregisteredFile.save();
+        unregisteredDigest = FileUtil.digest(unregisteredFile);
         unregisteredLastModified = FileUtil.lastModified(unregisteredFile);
         return true;
     }
@@ -117,9 +124,7 @@ public class PaperCommandRegistry implements CommandRegistry {
     }
 
     public boolean reload(Audience audience) {
-        var hidden = reloadHidden(audience);
-        var unregistered = reloadUnregistered(audience);
-        return hidden || unregistered;
+        return reloadHidden(audience) | reloadUnregistered(audience);
     }
 
     private boolean reloadUnregistered(Audience audience) {

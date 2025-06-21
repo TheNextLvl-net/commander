@@ -4,12 +4,11 @@ import com.google.gson.reflect.TypeToken;
 import core.file.FileIO;
 import core.file.format.GsonFile;
 import core.io.IO;
-import java.nio.file.attribute.FileTime;
-import net.thenextlvl.commander.util.FileUtil;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.PermissionOverride;
 import net.thenextlvl.commander.paper.CommanderPlugin;
+import net.thenextlvl.commander.util.FileUtil;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -24,8 +23,9 @@ public class PaperPermissionOverride implements PermissionOverride {
     private final Map<String, @Nullable String> originalPermissions = new HashMap<>();
     private final FileIO<Map<String, @Nullable String>> overridesFile;
     private final CommanderPlugin plugin;
+
     private String overridesDigest;
-    private FileTime overridesLastModified;
+    private long overridesLastModified;
 
     public PaperPermissionOverride(CommanderPlugin plugin) {
         this.overridesFile = new GsonFile<Map<String, @Nullable String>>(
