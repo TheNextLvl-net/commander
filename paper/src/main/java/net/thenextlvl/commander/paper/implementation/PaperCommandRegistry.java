@@ -97,10 +97,6 @@ public class PaperCommandRegistry implements CommandRegistry {
                 .toList().isEmpty();
     }
 
-    public void save() {
-        save(true);
-    }
-
     public boolean save(boolean force) {
         if (!force && FileUtil.hasChanged(hiddenFile, hiddenDigest, hiddenLastModified)) return false;
         if (!force && FileUtil.hasChanged(unregisteredFile, unregisteredDigest, unregisteredLastModified)) return false;

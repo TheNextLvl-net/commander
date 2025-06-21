@@ -80,10 +80,6 @@ public class ProxyPermissionOverride implements PermissionOverride {
                 .toList().isEmpty();
     }
 
-    public void save() {
-        save(true);
-    }
-
     public boolean save(boolean force) {
         if (!force && FileUtil.hasChanged(overridesFile, overridesDigest, overridesLastModified)) return false;
         overridesFile.save();
