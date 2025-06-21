@@ -7,6 +7,7 @@ import core.io.IO;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.PermissionOverride;
+import net.thenextlvl.commander.util.FileUtil;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
@@ -22,12 +23,17 @@ public class ProxyPermissionOverride implements PermissionOverride {
     private final FileIO<Map<String, @Nullable String>> overridesFile;
     private final CommanderPlugin plugin;
 
+    private String overridesDigest;
+    private long overridesLastModified;
+
     public ProxyPermissionOverride(CommanderPlugin plugin) {
         this.overridesFile = new GsonFile<Map<String, @Nullable String>>(
                 IO.of(plugin.dataFolder().toFile(), "permission-overrides.json"),
                 new HashMap<>(), new TypeToken<>() {
         }).reload().saveIfAbsent();
         this.plugin = plugin;
+        this.overridesDigest = FileUtil.digest(overridesFile);
+        this.overridesLastModified = FileUtil.lastModified(overridesFile);
     }
 
     @Override
@@ -74,8 +80,12 @@ public class ProxyPermissionOverride implements PermissionOverride {
                 .toList().isEmpty();
     }
 
-    public void save() {
+    public boolean save(boolean force) {
+        if (!force && FileUtil.hasChanged(overridesFile, overridesDigest, overridesLastModified)) return false;
         overridesFile.save();
+        overridesDigest = FileUtil.digest(overridesFile);
+        overridesLastModified = FileUtil.lastModified(overridesFile);
+        return true;
     }
 
     @Override
@@ -87,6 +97,8 @@ public class ProxyPermissionOverride implements PermissionOverride {
     public boolean reload(Audience audience) {
         var previous = overridesFile.getRoot();
         var current = overridesFile.reload();
+        overridesDigest = FileUtil.digest(overridesFile);
+        overridesLastModified = FileUtil.lastModified(overridesFile);
         if (previous.equals(current.getRoot())) return false;
         var difference = difference(previous, current.getRoot());
         var additions = difference.entrySet().stream()

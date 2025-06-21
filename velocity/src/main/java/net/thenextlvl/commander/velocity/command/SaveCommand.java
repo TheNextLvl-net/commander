@@ -17,9 +17,9 @@ class SaveCommand {
 
     private static int save(CommandContext<CommandSource> context, CommanderPlugin plugin) {
         var sender = context.getSource();
-        plugin.commandRegistry().save();
-        plugin.permissionOverride().save();
-        plugin.bundle().sendMessage(sender, "command.saved");
+        var saved = plugin.commandRegistry().save(true) & plugin.permissionOverride().save(true);
+        var message = saved ? "command.saved" : "command.save.conflict";
+        plugin.bundle().sendMessage(sender, message);
         return Command.SINGLE_SUCCESS;
     }
 }

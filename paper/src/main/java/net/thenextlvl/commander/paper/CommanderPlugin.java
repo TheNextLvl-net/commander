@@ -1,7 +1,11 @@
 package net.thenextlvl.commander.paper;
 
 import core.i18n.file.ComponentBundle;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.thenextlvl.commander.CommandFinder;
 import net.thenextlvl.commander.Commander;
 import net.thenextlvl.commander.paper.command.CommanderCommand;
@@ -20,6 +24,7 @@ import java.util.Locale;
 
 @NullMarked
 public class CommanderPlugin extends JavaPlugin implements Commander {
+    public static final String ROOT_COMMAND = "command";
     private final Metrics metrics = new Metrics(this, 22782);
     private final CommanderVersionChecker versionChecker = new CommanderVersionChecker(this);
 
@@ -27,6 +32,10 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
     private final Path translations = getDataPath().resolve("translations");
     private final ComponentBundle bundle = ComponentBundle.builder(key, translations)
             .placeholder("prefix", "prefix")
+            .miniMessage(MiniMessage.builder().tags(TagResolver.resolver(
+                    TagResolver.standard(),
+                    Placeholder.parsed("root_command", ROOT_COMMAND)
+            )).build())
             .resource("commander.properties", Locale.US)
             .resource("commander_german.properties", Locale.GERMANY)
             .build();
@@ -53,8 +62,8 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
 
     @Override
     public void onDisable() {
-        commandRegistry.save();
-        permissionOverride.save();
+        commandRegistry.save(true);
+        permissionOverride.save(true);
         metrics.shutdown();
     }
 
@@ -76,6 +85,26 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
     @Override
     public PaperPermissionOverride permissionOverride() {
         return permissionOverride;
+    }
+
+    public void conflictSave(Audience audience) {
+        if (commandRegistry.save(false) & permissionOverride.save(false)) return;
+        bundle().sendMessage(audience, "command.save.conflict");
+    }
+
+    public void hiddenConflictSave(Audience audience) {
+        if (commandRegistry.saveHidden(false)) return;
+        bundle().sendMessage(audience, "command.save.conflict");
+    }
+
+    public void unregisteredConflictSave(Audience audience) {
+        if (commandRegistry.saveHidden(false)) return;
+        bundle().sendMessage(audience, "command.save.conflict");
+    }
+
+    public void permissionConflictSave(Audience audience) {
+        if (permissionOverride.save(false)) return;
+        bundle().sendMessage(audience, "command.save.conflict");
     }
 
     private void registerCommands() {

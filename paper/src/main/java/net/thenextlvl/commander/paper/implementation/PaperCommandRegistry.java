@@ -8,6 +8,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.CommandRegistry;
 import net.thenextlvl.commander.paper.CommanderPlugin;
+import net.thenextlvl.commander.util.FileUtil;
 import org.bukkit.command.Command;
 import org.jspecify.annotations.NullMarked;
 
@@ -24,6 +25,11 @@ public class PaperCommandRegistry implements CommandRegistry {
     private final FileIO<Set<String>> unregisteredFile;
     private final CommanderPlugin plugin;
 
+    private String hiddenDigest;
+    private String unregisteredDigest;
+    private long hiddenLastModified;
+    private long unregisteredLastModified;
+
     public PaperCommandRegistry(CommanderPlugin plugin) {
         this.hiddenFile = new GsonFile<Set<String>>(
                 IO.of(plugin.getDataFolder(), "hidden-commands.json"),
@@ -34,6 +40,10 @@ public class PaperCommandRegistry implements CommandRegistry {
                 new HashSet<>(), new TypeToken<>() {
         }).reload().saveIfAbsent();
         this.plugin = plugin;
+        this.hiddenDigest = FileUtil.digest(hiddenFile);
+        this.unregisteredDigest = FileUtil.digest(unregisteredFile);
+        this.hiddenLastModified = FileUtil.lastModified(hiddenFile);
+        this.unregisteredLastModified = FileUtil.lastModified(unregisteredFile);
     }
 
     @Override
@@ -87,9 +97,24 @@ public class PaperCommandRegistry implements CommandRegistry {
                 .toList().isEmpty();
     }
 
-    public void save() {
+    public boolean save(boolean force) {
+        return saveHidden(force) & saveUnregistered(force);
+    }
+
+    public boolean saveHidden(boolean force) {
+        if (!force && FileUtil.hasChanged(hiddenFile, hiddenDigest, hiddenLastModified)) return false;
         hiddenFile.save();
+        hiddenDigest = FileUtil.digest(hiddenFile);
+        hiddenLastModified = FileUtil.lastModified(hiddenFile);
+        return true;
+    }
+
+    public boolean saveUnregistered(boolean force) {
+        if (!force && FileUtil.hasChanged(unregisteredFile, unregisteredDigest, unregisteredLastModified)) return false;
         unregisteredFile.save();
+        unregisteredDigest = FileUtil.digest(unregisteredFile);
+        unregisteredLastModified = FileUtil.lastModified(unregisteredFile);
+        return true;
     }
 
     @Override
@@ -100,14 +125,14 @@ public class PaperCommandRegistry implements CommandRegistry {
     }
 
     public boolean reload(Audience audience) {
-        var hidden = reloadHidden(audience);
-        var unregistered = reloadUnregistered(audience);
-        return hidden || unregistered;
+        return reloadHidden(audience) | reloadUnregistered(audience);
     }
 
     private boolean reloadUnregistered(Audience audience) {
         var previous = unregisteredFile.getRoot();
         var current = unregisteredFile.reload();
+        unregisteredDigest = FileUtil.digest(unregisteredFile);
+        unregisteredLastModified = FileUtil.lastModified(unregisteredFile);
         if (previous.equals(current.getRoot())) return false;
         var difference = difference(previous, current.getRoot());
         var additions = difference.entrySet().stream()
@@ -126,6 +151,8 @@ public class PaperCommandRegistry implements CommandRegistry {
     private boolean reloadHidden(Audience audience) {
         var previous = hiddenFile.getRoot();
         var current = hiddenFile.reload();
+        hiddenDigest = FileUtil.digest(hiddenFile);
+        hiddenLastModified = FileUtil.lastModified(hiddenFile);
         if (previous.equals(current.getRoot())) return false;
         var difference = difference(previous, current.getRoot());
         var additions = difference.entrySet().stream()

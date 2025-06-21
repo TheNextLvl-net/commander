@@ -32,6 +32,7 @@ class RevealCommand {
         var success = plugin.commandRegistry().reveal(command);
         var message = success ? "command.revealed" : "nothing.changed";
         plugin.bundle().sendMessage(sender, message, Placeholder.parsed("command", command));
+        if (success) plugin.hiddenConflictSave(sender);
         return Command.SINGLE_SUCCESS;
     }
 }

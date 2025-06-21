@@ -31,6 +31,7 @@ class RegisterCommand {
         var success = plugin.commandRegistry().register(command);
         var message = success ? "command.registered" : "nothing.changed";
         plugin.bundle().sendMessage(sender, message, Placeholder.parsed("command", command));
+        if (success) plugin.unregisteredConflictSave(sender);
         return Command.SINGLE_SUCCESS;
     }
 }

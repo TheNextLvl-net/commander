@@ -11,14 +11,15 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 class SaveCommand {
     public static ArgumentBuilder<CommandSourceStack, ?> create(CommanderPlugin plugin) {
-        return Commands.literal("save").executes(context -> save(context, plugin));
+        return Commands.literal("save")
+                .executes(context -> save(context, plugin));
     }
 
     private static int save(CommandContext<CommandSourceStack> context, CommanderPlugin plugin) {
         var sender = context.getSource().getSender();
-        plugin.commandRegistry().save();
-        plugin.permissionOverride().save();
-        plugin.bundle().sendMessage(sender, "command.saved");
+        var saved = plugin.commandRegistry().save(true) & plugin.permissionOverride().save(true);
+        var message = saved ? "command.saved" : "command.save.conflict";
+        plugin.bundle().sendMessage(sender, message);
         return Command.SINGLE_SUCCESS;
     }
 }

@@ -8,7 +8,11 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import core.i18n.file.ComponentBundle;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.thenextlvl.commander.CommandFinder;
 import net.thenextlvl.commander.Commander;
 import net.thenextlvl.commander.velocity.command.CommanderCommand;
@@ -31,6 +35,7 @@ import java.util.Locale;
         url = "https://thenextlvl.net",
         version = "4.3.3")
 public class CommanderPlugin implements Commander {
+    public static final String ROOT_COMMAND = "commandv";
     private final ComponentBundle bundle;
     private final ProxyCommandFinder commandFinder;
     private final ProxyCommandRegistry commandRegistry;
@@ -50,6 +55,10 @@ public class CommanderPlugin implements Commander {
         var translations = dataFolder.resolve("translations");
         this.bundle = ComponentBundle.builder(key, translations)
                 .placeholder("prefix", "prefix")
+                .miniMessage(MiniMessage.builder().tags(TagResolver.resolver(
+                        TagResolver.standard(),
+                        Placeholder.parsed("root_command", ROOT_COMMAND)
+                )).build())
                 .resource("commander.properties", Locale.US)
                 .resource("commander_german.properties", Locale.GERMANY)
                 .build();
@@ -63,15 +72,15 @@ public class CommanderPlugin implements Commander {
     public void onProxyInitialize(ProxyInitializeEvent event) {
         metricsFactory.make(this, 22782);
         server().getEventManager().register(this, new CommandListener(this));
-        var meta = server.getCommandManager().metaBuilder("commandv").plugin(this).build();
+        var meta = server.getCommandManager().metaBuilder(ROOT_COMMAND).plugin(this).build();
         server().getCommandManager().register(meta, CommanderCommand.create(this));
         commandRegistry().unregisterCommands();
     }
 
     @Subscribe(priority = 999)
     public void onProxyShutdown(ProxyShutdownEvent event) {
-        commandRegistry.save();
-        permissionOverride.save();
+        commandRegistry.save(true);
+        permissionOverride.save(true);
     }
 
     @Override
@@ -92,6 +101,26 @@ public class CommanderPlugin implements Commander {
     @Override
     public ProxyPermissionOverride permissionOverride() {
         return permissionOverride;
+    }
+
+    public void conflictSave(Audience audience) {
+        if (commandRegistry.save(false) & permissionOverride.save(false)) return;
+        bundle().sendMessage(audience, "command.save.conflict");
+    }
+
+    public void hiddenConflictSave(Audience audience) {
+        if (commandRegistry.saveHidden(false)) return;
+        bundle().sendMessage(audience, "command.save.conflict");
+    }
+
+    public void unregisteredConflictSave(Audience audience) {
+        if (commandRegistry.saveHidden(false)) return;
+        bundle().sendMessage(audience, "command.save.conflict");
+    }
+
+    public void permissionConflictSave(Audience audience) {
+        if (permissionOverride.save(false)) return;
+        bundle().sendMessage(audience, "command.save.conflict");
     }
 
     public ProxyServer server() {

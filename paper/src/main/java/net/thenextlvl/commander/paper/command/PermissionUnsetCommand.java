@@ -28,7 +28,10 @@ class PermissionUnsetCommand {
         plugin.bundle().sendMessage(sender, message,
                 Placeholder.parsed("permission", "null"),
                 Placeholder.parsed("command", command));
-        if (success) plugin.getServer().getOnlinePlayers().forEach(Player::updateCommands);
+        if (success) {
+            plugin.getServer().getOnlinePlayers().forEach(Player::updateCommands);
+            plugin.permissionConflictSave(sender);
+        }
         return com.mojang.brigadier.Command.SINGLE_SUCCESS;
     }
 }
