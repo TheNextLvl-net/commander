@@ -66,7 +66,7 @@ public interface PermissionOverride {
      * If the provided permission is null, the method attempts to remove the original permission,
      * effectively unassigning any existing permission.
      *
-     * @param command the name of the command whose permission is to be overridden
+     * @param command    the name of the command whose permission is to be overridden
      * @param permission the new permission to assign to the command, or null to remove
      * @return true if the operation was successful, false otherwise
      */

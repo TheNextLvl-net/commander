@@ -19,11 +19,8 @@ class ReloadCommand {
     private static int reload(CommandContext<CommandSource> context, CommanderPlugin plugin) {
         var sender = context.getSource();
         try {
-            var commands = plugin.commandRegistry().reload(sender);
-            var permissions = plugin.permissionOverride().reload(sender);
-            var success = commands || permissions;
-            var message = success ? "command.reload.success" : "nothing.changed";
-            plugin.bundle().sendMessage(sender, message);
+            var success = plugin.commandRegistry().reload(sender) | plugin.permissionOverride().reload(sender);
+            plugin.bundle().sendMessage(sender, success ? "command.reload.success" : "nothing.changed");
             return success ? Command.SINGLE_SUCCESS : 0;
         } catch (Exception e) {
             plugin.bundle().sendMessage(sender, "command.reload.failed",
