@@ -4,16 +4,16 @@ import com.google.gson.reflect.TypeToken;
 import core.file.FileIO;
 import core.file.format.GsonFile;
 import core.io.IO;
-import java.nio.file.attribute.FileTime;
-import net.thenextlvl.commander.util.FileUtil;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.PermissionOverride;
+import net.thenextlvl.commander.util.FileUtil;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.nio.file.attribute.FileTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -131,6 +131,4 @@ public class ProxyPermissionOverride implements PermissionOverride {
 
     private record PermissionOverride(String command, @Nullable String permission) {
     }
-
 }
-

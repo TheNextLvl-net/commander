@@ -4,14 +4,14 @@ import com.google.gson.reflect.TypeToken;
 import core.file.FileIO;
 import core.file.format.GsonFile;
 import core.io.IO;
-import java.nio.file.attribute.FileTime;
-import net.thenextlvl.commander.util.FileUtil;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.CommandRegistry;
+import net.thenextlvl.commander.util.FileUtil;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
 import org.jspecify.annotations.NullMarked;
 
+import java.nio.file.attribute.FileTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -172,6 +172,4 @@ public class ProxyCommandRegistry implements CommandRegistry {
         plugin.server().getCommandManager().unregister(command);
         return true;
     }
-
 }
-

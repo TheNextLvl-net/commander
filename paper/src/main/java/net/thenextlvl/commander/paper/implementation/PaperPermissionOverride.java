@@ -150,6 +150,4 @@ public class PaperPermissionOverride implements PermissionOverride {
         registered.setPermission(permission);
         return Objects.equals(registered.getPermission(), permission);
     }
-
 }
-

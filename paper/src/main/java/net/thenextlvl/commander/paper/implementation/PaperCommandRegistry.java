@@ -186,6 +186,4 @@ public class PaperCommandRegistry implements CommandRegistry {
         commands.put(command, registered);
         return true;
     }
-
 }
-

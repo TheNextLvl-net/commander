@@ -104,4 +104,3 @@ public class CommanderPlugin extends JavaPlugin implements Commander {
         getServer().getPluginManager().registerEvents(new CommandListener(this), this);
     }
 }
-

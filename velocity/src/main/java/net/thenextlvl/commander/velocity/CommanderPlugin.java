@@ -4,11 +4,11 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
-import net.kyori.adventure.audience.Audience;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import core.i18n.file.ComponentBundle;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.thenextlvl.commander.CommandFinder;
@@ -125,4 +125,3 @@ public class CommanderPlugin implements Commander {
         return dataFolder;
     }
 }
-
