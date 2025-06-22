@@ -33,7 +33,7 @@ import java.util.Locale;
         name = "Commander",
         authors = "NonSwag",
         url = "https://thenextlvl.net",
-        version = "4.3.3")
+        version = "4.4.0")
 public class CommanderPlugin implements Commander {
     public static final String ROOT_COMMAND = "commandv";
     private final ComponentBundle bundle;
