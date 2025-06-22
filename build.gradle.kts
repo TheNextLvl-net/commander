@@ -1,5 +1,5 @@
 group = "net.thenextlvl.commander"
-version = "4.3.3"
+version = "4.4.0"
 
 plugins {
     id("com.gradleup.shadow") version "9.0.0-beta17" apply false
