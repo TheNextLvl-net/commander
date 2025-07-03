@@ -28,7 +28,7 @@ dependencies {
     compileOnly("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
 
     implementation(project(":api"))
-    implementation("org.bstats:bstats-velocity:3.1.0")
+    implementation("org.bstats:bstats-velocity:3.1.1-SNAPSHOT")
     implementation("net.thenextlvl.core:files:3.0.0")
     implementation("net.thenextlvl.core:i18n:3.2.0")
     implementation("net.thenextlvl.core:version-checker:2.1.1") {
