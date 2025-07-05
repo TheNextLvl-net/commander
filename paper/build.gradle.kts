@@ -81,6 +81,7 @@ modrinth {
     changelog = System.getenv("CHANGELOG")
     versionType = if (isRelease) "release" else "beta"
     uploadFile.set(tasks.shadowJar)
+    versionName = "Commander " + project.version + " " + project.name
     gameVersions.set(versions)
     syncBodyFrom.set(rootProject.file("README.md").readText())
     loaders.add("paper")
