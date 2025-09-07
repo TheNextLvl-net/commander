@@ -29,7 +29,7 @@ dependencies {
 
     implementation(project(":api"))
     implementation("org.bstats:bstats-velocity:3.1.1-SNAPSHOT")
-    implementation("net.thenextlvl.core:files:3.0.0")
+    implementation("net.thenextlvl.core:files:3.0.1")
     implementation("net.thenextlvl.core:i18n:3.2.2")
     implementation("net.thenextlvl.core:version-checker:2.1.1") {
         exclude("com.google.code.gson")

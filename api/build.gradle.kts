@@ -26,7 +26,7 @@ dependencies {
     compileOnly("com.google.code.gson:gson:2.13.1")
     compileOnly("net.kyori:adventure-api:4.24.0")
 
-    implementation("net.thenextlvl.core:files:3.0.0")
+    implementation("net.thenextlvl.core:files:3.0.1")
     implementation("net.thenextlvl.core:i18n:3.2.2")
 }
 
