@@ -32,6 +32,13 @@ dependencies {
 
 publishing {
     publications.create<MavenPublication>("maven") {
+        pom.url.set("https://thenextlvl.net/docs/commander")
+        pom.scm {
+            val repository = "TheNextLvl-net/commander"
+            url.set("https://github.com/$repository")
+            connection.set("scm:git:git://github.com/$repository.git")
+            developerConnection.set("scm:git:ssh://github.com/$repository.git")
+        }
         from(components["java"])
     }
     repositories.maven {
