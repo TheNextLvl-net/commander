@@ -1,5 +1,6 @@
 package net.thenextlvl.commander;
 
+import net.thenextlvl.binder.StaticBinder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
@@ -8,6 +9,8 @@ import java.util.Set;
 
 @ApiStatus.NonExtendable
 public interface CommandRegistry {
+    CommandRegistry INSTANCE = StaticBinder.getInstance(CommandRegistry.class.getClassLoader()).find(CommandRegistry.class);
+
     /**
      * Retrieves the set of commands that are currently hidden from visibility.
      * <p>

@@ -10,7 +10,7 @@ version = rootProject.version
 repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
-    maven("https://repo.thenextlvl.net/snapshots")
+    maven("https://repo.thenextlvl.net/releases")
 }
 
 java {
@@ -24,7 +24,7 @@ tasks.compileJava {
 }
 
 dependencies {
-    api("net.thenextlvl:static-binder:0.1.1")
+    api("net.thenextlvl:static-binder:0.1.2")
 
     compileOnlyApi("org.jetbrains:annotations:26.0.2-1")
     compileOnlyApi("org.jspecify:jspecify:1.0.0")

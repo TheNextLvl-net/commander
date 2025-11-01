@@ -6,4 +6,5 @@ module net.thenextlvl.commander {
 
     requires static org.jetbrains.annotations;
     requires static org.jspecify;
+    requires net.thenextlvl.binder;
 }

@@ -1,7 +1,11 @@
 package net.thenextlvl.commander.paper;
 
 import net.kyori.adventure.audience.Audience;
+import net.thenextlvl.binder.StaticBinder;
+import net.thenextlvl.commander.CommandFinder;
+import net.thenextlvl.commander.CommandRegistry;
 import net.thenextlvl.commander.CommanderCommons;
+import net.thenextlvl.commander.PermissionOverride;
 import net.thenextlvl.commander.access.BrigadierAccess;
 import net.thenextlvl.commander.paper.access.PaperBrigadierAccess;
 import net.thenextlvl.commander.paper.implementation.PaperCommandFinder;
@@ -31,6 +35,9 @@ public class PaperCommander extends CommanderCommons {
         this.commandFinder = new PaperCommandFinder(plugin);
         this.commandRegistry = new PaperCommandRegistry(plugin);
         this.permissionOverride = new PaperPermissionOverride(plugin);
+        StaticBinder.getInstance(CommandFinder.class.getClassLoader()).bind(CommandFinder.class, commandFinder);
+        StaticBinder.getInstance(CommandRegistry.class.getClassLoader()).bind(CommandRegistry.class, commandRegistry);
+        StaticBinder.getInstance(PermissionOverride.class.getClassLoader()).bind(PermissionOverride.class, permissionOverride);
     }
 
     @Override

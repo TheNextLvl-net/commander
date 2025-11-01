@@ -1,5 +1,6 @@
 package net.thenextlvl.commander;
 
+import net.thenextlvl.binder.StaticBinder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
@@ -15,6 +16,8 @@ import java.util.stream.Stream;
  */
 @ApiStatus.NonExtendable
 public interface CommandFinder {
+    CommandFinder INSTANCE = StaticBinder.getInstance(CommandFinder.class.getClassLoader()).find(CommandFinder.class);
+
     /**
      * Finds and returns a set of commands that match the given pattern.
      *
