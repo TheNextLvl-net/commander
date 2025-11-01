@@ -16,9 +16,13 @@ public class CommandListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onCommandSend(PlayerCommandSendEvent event) {
         if (event.getPlayer().permissionValue("commander.bypass").equals(TriState.TRUE)) return;
         event.getCommands().removeAll(plugin.commons.commandRegistry().hiddenCommands());
+        event.getCommands().removeIf(command -> {
+            var permission = plugin.commons.permissionOverride().permission(command);
+            return permission != null && !event.getPlayer().hasPermission(permission);
+        });
     }
 }
