@@ -1,7 +1,9 @@
 package net.thenextlvl.commander;
 
+import net.thenextlvl.binder.StaticBinder;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
 
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -12,8 +14,12 @@ import java.util.stream.Stream;
 /**
  * The CommandFinder interface defines methods for finding commands based on a given input.
  */
-@NullMarked
+@ApiStatus.NonExtendable
 public interface CommandFinder {
+    static CommandFinder instance() {
+        return StaticBinder.getInstance(CommandFinder.class.getClassLoader()).find(CommandFinder.class);
+    }
+
     /**
      * Finds and returns a set of commands that match the given pattern.
      *
@@ -21,6 +27,7 @@ public interface CommandFinder {
      * @return An unmodifiable set of strings representing the commands that match the pattern.
      */
     @Unmodifiable
+    @Contract(pure = true)
     Set<String> findCommands(Pattern pattern);
 
     /**
@@ -30,10 +37,11 @@ public interface CommandFinder {
      * @param pattern  The pattern used to filter matching commands.
      * @return An unmodifiable set of strings representing the commands that match the given pattern.
      */
+    @Contract(pure = true)
     default @Unmodifiable Set<String> findCommands(Stream<String> commands, Pattern pattern) {
         return commands.filter(command ->
                 pattern.matcher(command).matches()
-        ).collect(Collectors.toSet());
+        ).collect(Collectors.toUnmodifiableSet());
     }
 
     /**
@@ -43,6 +51,7 @@ public interface CommandFinder {
      * @param input    The input used to search for commands.
      * @return An unmodifiable set of strings representing the found commands.
      */
+    @Contract(pure = true)
     default @Unmodifiable Set<String> findCommands(Stream<String> commands, String input) {
         try {
             return findCommands(commands, Pattern.compile(input.replace("*", ".*")));
@@ -58,6 +67,7 @@ public interface CommandFinder {
      * @param input The input used to search for commands.
      * @return An unmodifiable set of strings representing the found commands.
      */
+    @Contract(pure = true)
     default @Unmodifiable Set<String> findCommands(String input) {
         try {
             return findCommands(Pattern.compile(input.replace("*", ".*")));

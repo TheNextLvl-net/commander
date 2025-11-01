@@ -4,5 +4,6 @@ plugins {
 
 rootProject.name = "commander"
 include("api")
+include("commons")
 include("paper")
 include("velocity")
