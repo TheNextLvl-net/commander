@@ -19,6 +19,6 @@ public class CommandListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCommandSend(PlayerCommandSendEvent event) {
         if (event.getPlayer().permissionValue("commander.bypass").equals(TriState.TRUE)) return;
-        event.getCommands().removeAll(plugin.commandRegistry().hiddenCommands());
+        event.getCommands().removeAll(plugin.commons.commandRegistry().hiddenCommands());
     }
 }

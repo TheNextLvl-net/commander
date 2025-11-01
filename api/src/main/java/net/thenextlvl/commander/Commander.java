@@ -1,29 +1,24 @@
 package net.thenextlvl.commander;
 
-import core.i18n.file.ComponentBundle;
-import org.jspecify.annotations.NullMarked;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 
-@NullMarked
+@ApiStatus.NonExtendable
 public interface Commander {
     /**
      * Retrieves the CommandFinder instance associated with the Commander.
      *
      * @return the CommandFinder instance
      */
+    @Contract(pure = true)
     CommandFinder commandFinder();
-
-    /**
-     * Retrieves the ComponentBundle associated with the Commander.
-     *
-     * @return the ComponentBundle instance
-     */
-    ComponentBundle bundle();
 
     /**
      * Retrieves the CommandRegistry instance associated with the Commander.
      *
      * @return the CommandRegistry instance
      */
+    @Contract(pure = true)
     CommandRegistry commandRegistry();
 
     /**
@@ -32,5 +27,6 @@ public interface Commander {
      *
      * @return the PermissionOverride instance
      */
+    @Contract(pure = true)
     PermissionOverride permissionOverride();
 }

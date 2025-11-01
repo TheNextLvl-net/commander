@@ -30,10 +30,8 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
 
-    implementation(project(":api"))
+    implementation(project(":commons"))
     implementation("org.bstats:bstats-bukkit:3.1.0")
-    implementation("net.thenextlvl.core:files:3.0.1")
-    implementation("net.thenextlvl.core:i18n:3.2.2")
     implementation("net.thenextlvl.core:paper:2.3.1")
 }
 
@@ -52,6 +50,34 @@ paper {
     foliaSupported = true
     website = "https://thenextlvl.net"
     authors = listOf("NonSwag")
+
+    permissions {
+        register("commander.admin") {
+            children = listOf(
+                "commander.command.hide",
+                "commander.command.permission.query",
+                "commander.command.permission.reset",
+                "commander.command.permission.set",
+                "commander.command.permission.unset",
+                "commander.command.register",
+                "commander.command.reload",
+                "commander.command.reveal",
+                "commander.command.save",
+                "commander.command.unregister",
+            )
+        }
+        register("commander.command.hide") { children = listOf("commander.command") }
+        register("commander.command.permission") { children = listOf("commander.command") }
+        register("commander.command.permission.query") { children = listOf("commander.command.permission") }
+        register("commander.command.permission.reset") { children = listOf("commander.command.permission") }
+        register("commander.command.permission.set") { children = listOf("commander.command.permission") }
+        register("commander.command.permission.unset") { children = listOf("commander.command.permission") }
+        register("commander.command.register") { children = listOf("commander.command") }
+        register("commander.command.reload") { children = listOf("commander.command") }
+        register("commander.command.reveal") { children = listOf("commander.command") }
+        register("commander.command.save") { children = listOf("commander.command") }
+        register("commander.command.unregister") { children = listOf("commander.command") }
+    }
 }
 
 val versionString: String = project.version as String

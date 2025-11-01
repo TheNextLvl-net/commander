@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("java-library")
     id("maven-publish")
 }
 
@@ -8,7 +9,6 @@ version = rootProject.version
 
 repositories {
     mavenCentral()
-    maven("https://repo.thenextlvl.net/releases")
     maven("https://repo.papermc.io/repository/maven-public/")
 }
 
@@ -23,15 +23,14 @@ tasks.compileJava {
 }
 
 dependencies {
-    compileOnly("com.google.code.gson:gson:2.13.2")
-    compileOnly("net.kyori:adventure-api:4.26.0-SNAPSHOT")
-
-    implementation("net.thenextlvl.core:files:3.0.1")
-    implementation("net.thenextlvl.core:i18n:3.2.2")
+    compileOnlyApi("org.jetbrains:annotations:26.0.2-1")
+    compileOnlyApi("org.jspecify:jspecify:1.0.0")
 }
 
 publishing {
     publications.create<MavenPublication>("maven") {
+        artifactId = "commander"
+        groupId = "net.thenextlvl"
         pom.url.set("https://thenextlvl.net/docs/commander")
         pom.scm {
             val repository = "TheNextLvl-net/commander"
