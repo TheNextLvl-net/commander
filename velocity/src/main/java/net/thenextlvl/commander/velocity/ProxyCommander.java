@@ -1,5 +1,6 @@
 package net.thenextlvl.commander.velocity;
 
+import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.adventure.audience.Audience;
 import net.thenextlvl.binder.StaticBinder;
 import net.thenextlvl.commander.CommandFinder;
@@ -14,7 +15,6 @@ import net.thenextlvl.commander.velocity.implementation.ProxyPermissionOverride;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 
-import java.nio.file.Path;
 import java.util.stream.Stream;
 
 @NullMarked
@@ -28,13 +28,18 @@ public class ProxyCommander extends CommanderCommons {
     private final CommanderPlugin plugin;
 
     public ProxyCommander(CommanderPlugin plugin) {
+        super(plugin.dataFolder());
         this.plugin = plugin;
-        this.commandFinder = new ProxyCommandFinder(plugin);
-        this.commandRegistry = new ProxyCommandRegistry(plugin);
-        this.permissionOverride = new ProxyPermissionOverride(plugin);
+        this.commandFinder = new ProxyCommandFinder(this);
+        this.commandRegistry = new ProxyCommandRegistry(this);
+        this.permissionOverride = new ProxyPermissionOverride(this);
         StaticBinder.getInstance(CommandFinder.class.getClassLoader()).bind(CommandFinder.class, commandFinder);
         StaticBinder.getInstance(CommandRegistry.class.getClassLoader()).bind(CommandRegistry.class, commandRegistry);
         StaticBinder.getInstance(PermissionOverride.class.getClassLoader()).bind(PermissionOverride.class, permissionOverride);
+    }
+
+    public ProxyServer server() {
+        return plugin.server();
     }
 
     @Override
@@ -51,11 +56,6 @@ public class ProxyCommander extends CommanderCommons {
     @Override
     public String getRootCommand() {
         return "commandv";
-    }
-
-    @Override
-    public Path getDataPath() {
-        return plugin.dataFolder();
     }
 
     @Override

@@ -16,17 +16,31 @@ import java.util.stream.Stream;
 
 @NullMarked
 public abstract class CommanderCommons {
-    private final Key key = Key.key("commander", "translations");
-    private final Path translations = getDataPath().resolve("translations");
-    private final ComponentBundle bundle = ComponentBundle.builder(key, translations)
-            .placeholder("prefix", "prefix")
-            .miniMessage(MiniMessage.builder().tags(TagResolver.resolver(
-                    TagResolver.standard(),
-                    Placeholder.parsed("root_command", getRootCommand())
-            )).build())
-            .resource("commander.properties", Locale.US)
-            .resource("commander_german.properties", Locale.GERMANY)
-            .build();
+    private final Path dataPath;
+    private final ComponentBundle bundle;
+
+    protected CommanderCommons(Path dataPath) {
+        this.dataPath = dataPath;
+        var key = Key.key("commander", "translations");
+        var translations = dataPath.resolve("translations");
+        this.bundle = ComponentBundle.builder(key, translations)
+                .placeholder("prefix", "prefix")
+                .miniMessage(MiniMessage.builder().tags(TagResolver.resolver(
+                        TagResolver.standard(),
+                        Placeholder.parsed("root_command", getRootCommand())
+                )).build())
+                .resource("commander.properties", Locale.US)
+                .resource("commander_german.properties", Locale.GERMANY)
+                .build();
+    }
+
+    public ComponentBundle bundle() {
+        return bundle;
+    }
+
+    public Path getDataPath() {
+        return dataPath;
+    }
 
     public abstract CommandFinder commandFinder();
 
@@ -34,17 +48,11 @@ public abstract class CommanderCommons {
 
     public abstract CommonPermissionOverride permissionOverride();
 
-    public ComponentBundle bundle() {
-        return bundle;
-    }
-
     public abstract Logger logger();
 
     public abstract <S> BrigadierAccess<S> brigadierAccess();
 
     public abstract String getRootCommand();
-
-    public abstract Path getDataPath();
 
     public abstract Stream<String> getKnownCommands();
 

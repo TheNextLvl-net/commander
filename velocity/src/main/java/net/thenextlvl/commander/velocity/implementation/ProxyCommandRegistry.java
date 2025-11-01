@@ -1,16 +1,13 @@
 package net.thenextlvl.commander.velocity.implementation;
 
 import net.thenextlvl.commander.CommonCommandRegistry;
-import net.thenextlvl.commander.velocity.CommanderPlugin;
+import net.thenextlvl.commander.velocity.ProxyCommander;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 public class ProxyCommandRegistry extends CommonCommandRegistry {
-    private final CommanderPlugin plugin;
-
-    public ProxyCommandRegistry(CommanderPlugin plugin) {
-        super(plugin.commons);
-        this.plugin = plugin;
+    public ProxyCommandRegistry(ProxyCommander commander) {
+        super(commander);
     }
 
     @Override
@@ -20,7 +17,7 @@ public class ProxyCommandRegistry extends CommonCommandRegistry {
 
     @Override
     protected boolean internalUnregister(String command) {
-        plugin.server().getCommandManager().unregister(command);
+        ((ProxyCommander) commons).server().getCommandManager().unregister(command);
         return true;
     }
 }

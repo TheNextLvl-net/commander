@@ -1,7 +1,7 @@
 package net.thenextlvl.commander.velocity.implementation;
 
 import net.thenextlvl.commander.CommonPermissionOverride;
-import net.thenextlvl.commander.velocity.CommanderPlugin;
+import net.thenextlvl.commander.velocity.ProxyCommander;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -10,8 +10,8 @@ import java.util.Map;
 
 @NullMarked
 public class ProxyPermissionOverride extends CommonPermissionOverride {
-    public ProxyPermissionOverride(CommanderPlugin plugin) {
-        super(plugin.commons);
+    public ProxyPermissionOverride(ProxyCommander commander) {
+        super(commander);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package net.thenextlvl.commander.paper.implementation;
 
 import net.thenextlvl.commander.CommonPermissionOverride;
-import net.thenextlvl.commander.paper.CommanderPlugin;
+import net.thenextlvl.commander.paper.PaperCommander;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -13,11 +13,9 @@ import java.util.Objects;
 @NullMarked
 public class PaperPermissionOverride extends CommonPermissionOverride {
     private final Map<String, @Nullable String> originalPermissions = new HashMap<>();
-    private final CommanderPlugin plugin;
 
-    public PaperPermissionOverride(CommanderPlugin plugin) {
-        super(plugin.commons);
-        this.plugin = plugin;
+    public PaperPermissionOverride(PaperCommander commander) {
+        super(commander);
     }
 
     @Override
@@ -37,7 +35,7 @@ public class PaperPermissionOverride extends CommonPermissionOverride {
 
     @Override
     protected boolean internalOverride(String command, @Nullable String permission) {
-        var registered = plugin.getServer().getCommandMap().getKnownCommands().get(command);
+        var registered = ((PaperCommander) commons).getServer().getCommandMap().getKnownCommands().get(command);
         if (registered == null) return false;
         var registeredPermission = registered.getPermission();
         if (Objects.equals(registeredPermission, permission)) return false;
@@ -48,7 +46,7 @@ public class PaperPermissionOverride extends CommonPermissionOverride {
 
     @Override
     protected boolean internalReset(String command) {
-        var registered = plugin.getServer().getCommandMap().getKnownCommands().get(command);
+        var registered = ((PaperCommander) commons).getServer().getCommandMap().getKnownCommands().get(command);
         if (registered == null) return false;
         if (!originalPermissions.containsKey(command)) return false;
         var permission = originalPermissions.remove(command);

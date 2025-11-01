@@ -11,13 +11,13 @@ import net.thenextlvl.commander.paper.access.PaperBrigadierAccess;
 import net.thenextlvl.commander.paper.implementation.PaperCommandFinder;
 import net.thenextlvl.commander.paper.implementation.PaperCommandRegistry;
 import net.thenextlvl.commander.paper.implementation.PaperPermissionOverride;
+import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 
-import java.nio.file.Path;
 import java.util.stream.Stream;
 
 @NullMarked
@@ -31,13 +31,18 @@ public class PaperCommander extends CommanderCommons {
     private final CommanderPlugin plugin;
 
     public PaperCommander(CommanderPlugin plugin) {
+        super(plugin.getDataPath());
         this.plugin = plugin;
-        this.commandFinder = new PaperCommandFinder(plugin);
-        this.commandRegistry = new PaperCommandRegistry(plugin);
-        this.permissionOverride = new PaperPermissionOverride(plugin);
+        this.commandFinder = new PaperCommandFinder(this);
+        this.commandRegistry = new PaperCommandRegistry(this);
+        this.permissionOverride = new PaperPermissionOverride(this);
         StaticBinder.getInstance(CommandFinder.class.getClassLoader()).bind(CommandFinder.class, commandFinder);
         StaticBinder.getInstance(CommandRegistry.class.getClassLoader()).bind(CommandRegistry.class, commandRegistry);
         StaticBinder.getInstance(PermissionOverride.class.getClassLoader()).bind(PermissionOverride.class, permissionOverride);
+    }
+
+    public Server getServer() {
+        return plugin.getServer();
     }
 
     @Override
@@ -53,12 +58,7 @@ public class PaperCommander extends CommanderCommons {
 
     @Override
     public String getRootCommand() {
-        return "commander";
-    }
-
-    @Override
-    public Path getDataPath() {
-        return plugin.getDataPath();
+        return "command";
     }
 
     @Override
