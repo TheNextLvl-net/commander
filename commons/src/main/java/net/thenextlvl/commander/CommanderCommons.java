@@ -15,7 +15,7 @@ import java.util.Locale;
 import java.util.stream.Stream;
 
 @NullMarked
-public abstract class CommanderCommons implements Commander {
+public abstract class CommanderCommons {
     private final Key key = Key.key("commander", "translations");
     private final Path translations = getDataPath().resolve("translations");
     private final ComponentBundle bundle = ComponentBundle.builder(key, translations)
@@ -28,10 +28,10 @@ public abstract class CommanderCommons implements Commander {
             .resource("commander_german.properties", Locale.GERMANY)
             .build();
 
-    @Override
+    public abstract CommandFinder commandFinder();
+
     public abstract CommonCommandRegistry commandRegistry();
 
-    @Override
     public abstract CommonPermissionOverride permissionOverride();
 
     public ComponentBundle bundle() {

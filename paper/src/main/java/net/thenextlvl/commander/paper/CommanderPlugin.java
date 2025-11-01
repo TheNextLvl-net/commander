@@ -2,12 +2,10 @@ package net.thenextlvl.commander.paper;
 
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.key.Key;
-import net.thenextlvl.commander.Commander;
 import net.thenextlvl.commander.command.CommanderCommand;
 import net.thenextlvl.commander.paper.listener.CommandListener;
 import net.thenextlvl.commander.paper.version.CommanderVersionChecker;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.NullMarked;
 
@@ -28,7 +26,6 @@ public class CommanderPlugin extends JavaPlugin {
     
     @Override
     public void onLoad() {
-        getServer().getServicesManager().register(Commander.class, commons, this, ServicePriority.Highest);
         versionChecker.checkVersion();
     }
 

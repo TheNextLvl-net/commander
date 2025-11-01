@@ -1,7 +1,11 @@
 package net.thenextlvl.commander.velocity;
 
 import net.kyori.adventure.audience.Audience;
+import net.thenextlvl.binder.StaticBinder;
+import net.thenextlvl.commander.CommandFinder;
+import net.thenextlvl.commander.CommandRegistry;
 import net.thenextlvl.commander.CommanderCommons;
+import net.thenextlvl.commander.PermissionOverride;
 import net.thenextlvl.commander.access.BrigadierAccess;
 import net.thenextlvl.commander.velocity.access.ProxyBrigadierAccess;
 import net.thenextlvl.commander.velocity.implementation.ProxyCommandFinder;
@@ -28,6 +32,9 @@ public class ProxyCommander extends CommanderCommons {
         this.commandFinder = new ProxyCommandFinder(plugin);
         this.commandRegistry = new ProxyCommandRegistry(plugin);
         this.permissionOverride = new ProxyPermissionOverride(plugin);
+        StaticBinder.getInstance(CommandFinder.class.getClassLoader()).bind(CommandFinder.class, commandFinder);
+        StaticBinder.getInstance(CommandRegistry.class.getClassLoader()).bind(CommandRegistry.class, commandRegistry);
+        StaticBinder.getInstance(PermissionOverride.class.getClassLoader()).bind(PermissionOverride.class, permissionOverride);
     }
 
     @Override

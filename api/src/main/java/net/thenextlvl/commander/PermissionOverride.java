@@ -1,5 +1,6 @@
 package net.thenextlvl.commander;
 
+import net.thenextlvl.binder.StaticBinder;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
@@ -9,6 +10,8 @@ import java.util.Map;
 
 @ApiStatus.NonExtendable
 public interface PermissionOverride {
+    PermissionOverride INSTANCE = StaticBinder.getInstance(PermissionOverride.class.getClassLoader()).find(PermissionOverride.class);
+
     /**
      * Retrieves a mapping of commands and their associated original permissions.
      * <p>
