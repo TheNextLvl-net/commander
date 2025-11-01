@@ -16,17 +16,15 @@ final class RevealCommand<S> extends SimpleCommand<S> {
 
     public static <S> ArgumentBuilder<S, ?> create(CommanderCommons commons) {
         var command = new RevealCommand<S>(commons);
-        return command.create()
-                .then(commons.<S>brigadierAccess().argument("command", StringArgumentType.string())
-                        .suggests((context, suggestions) -> {
-                            commons.commandRegistry().hiddenCommands().stream()
-                                    .filter(s -> !commons.commandRegistry().isUnregistered(s))
-                                    .map(StringArgumentType::escapeIfRequired)
-                                    .filter(s -> s.contains(suggestions.getRemaining()))
-                                    .forEach(suggestions::suggest);
-                            return suggestions.buildFuture();
-                        })
-                        .executes(command));
+        return command.create().then(commons.<S>brigadierAccess().argument("command", StringArgumentType.string())
+                .suggests((context, suggestions) -> {
+                    commons.commandRegistry().hiddenCommands().stream()
+                            .filter(s -> !commons.commandRegistry().isUnregistered(s))
+                            .map(StringArgumentType::escapeIfRequired)
+                            .filter(s -> s.contains(suggestions.getRemaining()))
+                            .forEach(suggestions::suggest);
+                    return suggestions.buildFuture();
+                }).executes(command));
     }
 
     @Override
