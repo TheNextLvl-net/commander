@@ -56,9 +56,11 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean hide(String command) {
-        return commons.commandFinder().findCommands(command).stream()
+        if (!commons.commandFinder().findCommands(command).stream()
                 .map(hiddenFile.getRoot()::add)
-                .reduce(false, Boolean::logicalOr);
+                .reduce(false, Boolean::logicalOr)) return false;
+        commons.updateCommands();
+        return true;
     }
 
     @Override
@@ -73,18 +75,18 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean register(String command) {
-        return reduce(command, unregisteredFile.getRoot());
+        if (!commons.commandFinder().findCommands(unregisteredFile.getRoot().stream(), command).stream()
+                .filter(unregisteredFile.getRoot()::remove)
+                .map(this::internalRegister)
+                .reduce(false, Boolean::logicalOr)) return false;
+        commons.updateCommands();
+        return true;
     }
 
     @Override
     public boolean reveal(String command) {
-        return reduce(command, hiddenFile.getRoot());
-    }
-
-    private boolean reduce(String command, Set<String> commands) {
-        if (!commons.commandFinder().findCommands(commands.stream(), command).stream()
-                .filter(commands::remove)
-                .map(this::internalRegister)
+        if (!commons.commandFinder().findCommands(hiddenFile.getRoot().stream(), command).stream()
+                .map(hiddenFile.getRoot()::remove)
                 .reduce(false, Boolean::logicalOr)) return false;
         commons.updateCommands();
         return true;
@@ -99,11 +101,13 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean unregister(String command) {
-        return commons.commandFinder().findCommands(command).stream()
+        if (!commons.commandFinder().findCommands(command).stream()
                 .filter(s -> !s.equals(commons.getRootCommand()))
                 .filter(unregisteredFile.getRoot()::add)
                 .map(this::internalUnregister)
-                .reduce(false, Boolean::logicalOr);
+                .reduce(false, Boolean::logicalOr)) return false;
+        commons.updateCommands();
+        return true;
     }
 
     public boolean save(boolean force) {
@@ -143,6 +147,7 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
                 Formatter.number("additions", additions),
                 Formatter.number("deletions", difference.size() - additions),
                 Placeholder.parsed("file", "hidden-commands.json"));
+        commons.updateCommands();
         return true;
     }
 
@@ -155,14 +160,15 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
         var difference = difference(previous, current.getRoot());
         var additions = difference.entrySet().stream()
                 .filter(Map.Entry::getValue).count();
-        commons.bundle().sendMessage(audience, "command.reload.changes",
-                Formatter.number("additions", additions),
-                Formatter.number("deletions", difference.size() - additions),
-                Placeholder.parsed("file", "unregistered-commands.json"));
         difference.forEach((command, added) -> {
             if (added) internalUnregister(command);
             else internalRegister(command);
         });
+        commons.bundle().sendMessage(audience, "command.reload.changes",
+                Formatter.number("additions", additions),
+                Formatter.number("deletions", difference.size() - additions),
+                Placeholder.parsed("file", "unregistered-commands.json"));
+        commons.updateCommands();
         return true;
     }
 
