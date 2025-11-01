@@ -1,50 +1,28 @@
 package net.thenextlvl.commander.paper.implementation;
 
-import com.google.gson.reflect.TypeToken;
-import core.file.FileIO;
-import core.file.format.GsonFile;
-import core.io.IO;
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.thenextlvl.commander.PermissionOverride;
+import net.thenextlvl.commander.CommonPermissionOverride;
 import net.thenextlvl.commander.paper.CommanderPlugin;
-import net.thenextlvl.commander.util.FileUtil;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 
 @NullMarked
-public class PaperPermissionOverride implements PermissionOverride {
+public class PaperPermissionOverride extends CommonPermissionOverride {
     private final Map<String, @Nullable String> originalPermissions = new HashMap<>();
-    private final FileIO<Map<String, @Nullable String>> overridesFile;
     private final CommanderPlugin plugin;
 
-    private String overridesDigest;
-    private long overridesLastModified;
-
     public PaperPermissionOverride(CommanderPlugin plugin) {
-        this.overridesFile = new GsonFile<Map<String, @Nullable String>>(
-                IO.of(plugin.getDataFolder(), "permission-overrides.json"),
-                new HashMap<>(), new TypeToken<>() {
-        }).reload().saveIfAbsent();
+        super(plugin.commons);
         this.plugin = plugin;
-        this.overridesDigest = FileUtil.digest(overridesFile);
-        this.overridesLastModified = FileUtil.lastModified(overridesFile);
     }
 
     @Override
     public @Unmodifiable Map<String, @Nullable String> originalPermissions() {
-        return new HashMap<>(originalPermissions);
-    }
-
-    @Override
-    public @Unmodifiable Map<String, @Nullable String> overrides() {
-        return new HashMap<>(overridesFile.getRoot());
+        return Map.copyOf(originalPermissions);
     }
 
     @Override
@@ -53,85 +31,12 @@ public class PaperPermissionOverride implements PermissionOverride {
     }
 
     @Override
-    public @Nullable String permission(String command) {
-        return overridesFile.getRoot().get(command);
-    }
-
-    @Override
-    public boolean isOverridden(String command) {
-        return overridesFile.getRoot().containsKey(command);
-    }
-
-    @Override
-    public boolean override(String command, @Nullable String permission) {
-        var commands = plugin.commandFinder().findCommands(command).stream()
-                .filter(s -> internalOverride(s, permission))
-                .toList();
-        commands.forEach(s -> overridesFile.getRoot().put(s, permission));
-        return !commands.isEmpty();
-    }
-
-    @Override
-    public boolean reset(String command) {
-        var commands = plugin.commandFinder().findCommands(new HashSet<>(overridesFile.getRoot().keySet()).stream(), command);
-        commands.forEach(overridesFile.getRoot()::remove);
-        return !commands.stream()
-                .filter(this::internalReset)
-                .toList().isEmpty();
-    }
-
-    public void save() {
-        save(true);
-    }
-
-    public boolean save(boolean force) {
-        if (!force && FileUtil.hasChanged(overridesFile, overridesDigest, overridesLastModified)) return false;
-        overridesFile.save();
-        overridesDigest = FileUtil.digest(overridesFile);
-        overridesLastModified = FileUtil.lastModified(overridesFile);
-        return true;
-    }
-
-    @Override
     public void overridePermissions() {
         overridesFile.getRoot().forEach(this::internalOverride);
     }
 
-    public boolean reload(Audience audience) {
-        var previous = overridesFile.getRoot();
-        var current = overridesFile.reload();
-        overridesDigest = FileUtil.digest(overridesFile);
-        overridesLastModified = FileUtil.lastModified(overridesFile);
-        if (previous.equals(current.getRoot())) return false;
-        var difference = difference(previous, current.getRoot());
-        var additions = difference.entrySet().stream()
-                .filter(Map.Entry::getValue).count();
-        plugin.bundle().sendMessage(audience, "command.reload.changes",
-                Placeholder.parsed("additions", String.valueOf(additions)),
-                Placeholder.parsed("deletions", String.valueOf(difference.size() - additions)),
-                Placeholder.parsed("file", "permission-overrides.json"));
-        difference.forEach((command, added) -> {
-            if (added) override(command.command(), command.permission());
-            else reset(command.command());
-        });
-        return true;
-    }
-
-    private Map<PermissionOverride, Boolean> difference(Map<String, @Nullable String> previous, Map<String, @Nullable String> current) {
-        var differences = new HashMap<PermissionOverride, Boolean>();
-        current.entrySet().stream()
-                .filter(entry -> !Objects.equals(previous.get(entry.getKey()), entry.getValue()))
-                .forEach(entry -> differences.put(new PermissionOverride(entry.getKey(), entry.getValue()), true));
-        previous.entrySet().stream()
-                .filter(entry -> !current.containsKey(entry.getKey()))
-                .forEach(entry -> differences.put(new PermissionOverride(entry.getKey(), entry.getValue()), false));
-        return differences;
-    }
-
-    private record PermissionOverride(String command, @Nullable String permission) {
-    }
-
-    private boolean internalOverride(String command, @Nullable String permission) {
+    @Override
+    protected boolean internalOverride(String command, @Nullable String permission) {
         var registered = plugin.getServer().getCommandMap().getKnownCommands().get(command);
         if (registered == null) return false;
         var registeredPermission = registered.getPermission();
@@ -141,7 +46,8 @@ public class PaperPermissionOverride implements PermissionOverride {
         return true;
     }
 
-    private boolean internalReset(String command) {
+    @Override
+    protected boolean internalReset(String command) {
         var registered = plugin.getServer().getCommandMap().getKnownCommands().get(command);
         if (registered == null) return false;
         if (!originalPermissions.containsKey(command)) return false;

@@ -1,17 +1,9 @@
 package net.thenextlvl.commander.paper;
 
-import core.i18n.file.ComponentBundle;
-import net.kyori.adventure.audience.Audience;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import net.thenextlvl.commander.CommandFinder;
 import net.thenextlvl.commander.Commander;
-import net.thenextlvl.commander.paper.command.CommanderCommand;
-import net.thenextlvl.commander.paper.implementation.PaperCommandFinder;
-import net.thenextlvl.commander.paper.implementation.PaperCommandRegistry;
-import net.thenextlvl.commander.paper.implementation.PaperPermissionOverride;
+import net.thenextlvl.commander.command.CommanderCommand;
 import net.thenextlvl.commander.paper.listener.CommandListener;
 import net.thenextlvl.commander.paper.version.CommanderVersionChecker;
 import org.bstats.bukkit.Metrics;
@@ -20,95 +12,46 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.NullMarked;
 
 import java.nio.file.Path;
-import java.util.Locale;
 
 @NullMarked
-public class CommanderPlugin extends JavaPlugin implements Commander {
-    public static final String ROOT_COMMAND = "command";
+public class CommanderPlugin extends JavaPlugin {
     private final Metrics metrics = new Metrics(this, 22782);
     private final CommanderVersionChecker versionChecker = new CommanderVersionChecker(this);
+    public final PaperCommander commons = new PaperCommander(this); // todo: weaken visibility
 
     private final Key key = Key.key("commander", "translations");
     private final Path translations = getDataPath().resolve("translations");
-    private final ComponentBundle bundle = ComponentBundle.builder(key, translations)
-            .placeholder("prefix", "prefix")
-            .miniMessage(MiniMessage.builder().tags(TagResolver.resolver(
-                    TagResolver.standard(),
-                    Placeholder.parsed("root_command", ROOT_COMMAND)
-            )).build())
-            .resource("commander.properties", Locale.US)
-            .resource("commander_german.properties", Locale.GERMANY)
-            .build();
 
-    private final PaperCommandFinder commandFinder = new PaperCommandFinder(this);
-    private final PaperCommandRegistry commandRegistry = new PaperCommandRegistry(this);
-    private final PaperPermissionOverride permissionOverride = new PaperPermissionOverride(this);
-
+    public CommanderPlugin() {
+        registerCommands();
+    }
+    
     @Override
     public void onLoad() {
-        getServer().getServicesManager().register(Commander.class, this, this, ServicePriority.Highest);
+        getServer().getServicesManager().register(Commander.class, commons, this, ServicePriority.Highest);
         versionChecker.checkVersion();
     }
 
     @Override
     public void onEnable() {
         getServer().getGlobalRegionScheduler().execute(this, () -> {
-            permissionOverride().overridePermissions();
-            commandRegistry().unregisterCommands();
+            commons.permissionOverride().overridePermissions();
+            commons.commandRegistry().unregisterCommands();
         });
         registerListeners();
-        registerCommands();
     }
 
     @Override
     public void onDisable() {
-        commandRegistry.save(true);
-        permissionOverride.save(true);
+        commons.commandRegistry().save(true);
+        commons.permissionOverride().save(true);
         metrics.shutdown();
     }
 
-    @Override
-    public CommandFinder commandFinder() {
-        return commandFinder;
-    }
-
-    @Override
-    public ComponentBundle bundle() {
-        return bundle;
-    }
-
-    @Override
-    public PaperCommandRegistry commandRegistry() {
-        return commandRegistry;
-    }
-
-    @Override
-    public PaperPermissionOverride permissionOverride() {
-        return permissionOverride;
-    }
-
-    public void conflictSave(Audience audience) {
-        if (commandRegistry.save(false) & permissionOverride.save(false)) return;
-        bundle().sendMessage(audience, "command.save.conflict");
-    }
-
-    public void hiddenConflictSave(Audience audience) {
-        if (commandRegistry.saveHidden(false)) return;
-        bundle().sendMessage(audience, "command.save.conflict");
-    }
-
-    public void unregisteredConflictSave(Audience audience) {
-        if (commandRegistry.saveUnregistered(false)) return;
-        bundle().sendMessage(audience, "command.save.conflict");
-    }
-
-    public void permissionConflictSave(Audience audience) {
-        if (permissionOverride.save(false)) return;
-        bundle().sendMessage(audience, "command.save.conflict");
-    }
-
     private void registerCommands() {
-        CommanderCommand.register(this);
+        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS.newHandler(event -> {
+            event.registrar().register(CommanderCommand.create(commons), "The main command to interact with Commander");
+        }));
     }
 
     private void registerListeners() {
