@@ -16,7 +16,9 @@ import java.util.stream.Stream;
  */
 @ApiStatus.NonExtendable
 public interface CommandFinder {
-    CommandFinder INSTANCE = StaticBinder.getInstance(CommandFinder.class.getClassLoader()).find(CommandFinder.class);
+    static CommandFinder instance() {
+        return StaticBinder.getInstance(CommandFinder.class.getClassLoader()).find(CommandFinder.class);
+    }
 
     /**
      * Finds and returns a set of commands that match the given pattern.

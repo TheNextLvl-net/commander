@@ -9,7 +9,9 @@ import java.util.Set;
 
 @ApiStatus.NonExtendable
 public interface CommandRegistry {
-    CommandRegistry INSTANCE = StaticBinder.getInstance(CommandRegistry.class.getClassLoader()).find(CommandRegistry.class);
+    static CommandRegistry instance() {
+        return StaticBinder.getInstance(CommandRegistry.class.getClassLoader()).find(CommandRegistry.class);
+    }
 
     /**
      * Retrieves the set of commands that are currently hidden from visibility.

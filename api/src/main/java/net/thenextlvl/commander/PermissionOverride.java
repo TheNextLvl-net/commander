@@ -10,7 +10,9 @@ import java.util.Map;
 
 @ApiStatus.NonExtendable
 public interface PermissionOverride {
-    PermissionOverride INSTANCE = StaticBinder.getInstance(PermissionOverride.class.getClassLoader()).find(PermissionOverride.class);
+    static PermissionOverride instance() {
+        return StaticBinder.getInstance(PermissionOverride.class.getClassLoader()).find(PermissionOverride.class);
+    }
 
     /**
      * Retrieves a mapping of commands and their associated original permissions.
