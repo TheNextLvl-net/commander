@@ -41,6 +41,10 @@ public class PaperCommander extends CommanderCommons {
         StaticBinder.getInstance(PermissionOverride.class.getClassLoader()).bind(PermissionOverride.class, permissionOverride);
     }
 
+    public CommanderPlugin getPlugin() {
+        return plugin;
+    }
+
     public Server getServer() {
         return plugin.getServer();
     }

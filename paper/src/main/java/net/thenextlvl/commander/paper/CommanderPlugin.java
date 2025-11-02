@@ -1,15 +1,15 @@
 package net.thenextlvl.commander.paper;
 
+import com.mojang.brigadier.CommandDispatcher;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import net.kyori.adventure.key.Key;
 import net.thenextlvl.commander.command.CommanderCommand;
 import net.thenextlvl.commander.paper.listener.CommandListener;
 import net.thenextlvl.commander.paper.version.CommanderVersionChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.NullMarked;
-
-import java.nio.file.Path;
+import org.jspecify.annotations.Nullable;
 
 @NullMarked
 public class CommanderPlugin extends JavaPlugin {
@@ -17,13 +17,12 @@ public class CommanderPlugin extends JavaPlugin {
     private final CommanderVersionChecker versionChecker = new CommanderVersionChecker(this);
     public final PaperCommander commons = new PaperCommander(this); // todo: weaken visibility
 
-    private final Key key = Key.key("commander", "translations");
-    private final Path translations = getDataPath().resolve("translations");
+    private @Nullable CommandDispatcher<CommandSourceStack> commandDispatcher = null;
 
     public CommanderPlugin() {
         registerCommands();
     }
-    
+
     @Override
     public void onLoad() {
         versionChecker.checkVersion();
@@ -45,9 +44,14 @@ public class CommanderPlugin extends JavaPlugin {
         metrics.shutdown();
     }
 
+    public @Nullable CommandDispatcher<CommandSourceStack> commandDispatcher() {
+        return commandDispatcher;
+    }
+
     private void registerCommands() {
         getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS.newHandler(event -> {
             event.registrar().register(CommanderCommand.create(commons), "The main command to interact with Commander");
+            commandDispatcher = event.registrar().getDispatcher();
         }));
     }
 

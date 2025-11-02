@@ -5,6 +5,7 @@ import core.file.FileIO;
 import core.file.format.GsonFile;
 import core.io.IO;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.util.FileUtil;
 import org.jetbrains.annotations.Unmodifiable;
@@ -31,7 +32,6 @@ public abstract class CommonPermissionOverride implements PermissionOverride {
         this.overridesDigest = FileUtil.digest(overridesFile);
         this.overridesLastModified = FileUtil.lastModified(overridesFile);
         this.commons = commons;
-
     }
 
     public boolean save(boolean force) {
@@ -52,8 +52,8 @@ public abstract class CommonPermissionOverride implements PermissionOverride {
         var additions = difference.entrySet().stream()
                 .filter(Map.Entry::getValue).count();
         commons.bundle().sendMessage(audience, "command.reload.changes",
-                Placeholder.parsed("additions", String.valueOf(additions)),
-                Placeholder.parsed("deletions", String.valueOf(difference.size() - additions)),
+                Formatter.number("additions", additions),
+                Formatter.number("deletions", difference.size() - additions),
                 Placeholder.parsed("file", "permission-overrides.json"));
         difference.forEach((command, added) -> {
             if (added) override(command.command(), command.permission());
