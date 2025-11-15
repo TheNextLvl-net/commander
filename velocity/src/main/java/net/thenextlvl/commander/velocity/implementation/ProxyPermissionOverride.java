@@ -30,7 +30,6 @@ public class ProxyPermissionOverride extends CommonPermissionOverride {
 
     @Override
     protected boolean internalOverride(String command, @Nullable String permission) {
-        // todo: try to override the canUse method of the command
         return true;
     }
 

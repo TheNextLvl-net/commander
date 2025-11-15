@@ -5,10 +5,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -24,56 +21,38 @@ public interface CommandFinder {
      * Finds and returns a set of commands that match the given pattern.
      *
      * @param pattern The pattern used to search for commands.
-     * @return An unmodifiable set of strings representing the commands that match the pattern.
+     * @return A stream of strings representing the commands that match the pattern.
      */
     @Unmodifiable
     @Contract(pure = true)
-    Set<String> findCommands(Pattern pattern);
+    Stream<String> findCommands(Pattern pattern);
 
     /**
      * Filters and finds commands from the provided stream that match the given pattern.
      *
      * @param commands The stream of commands to be searched.
      * @param pattern  The pattern used to filter matching commands.
-     * @return An unmodifiable set of strings representing the commands that match the given pattern.
+     * @return A stream of strings representing the commands that match the given pattern.
      */
     @Contract(pure = true)
-    default @Unmodifiable Set<String> findCommands(Stream<String> commands, Pattern pattern) {
-        return commands.filter(command ->
-                pattern.matcher(command).matches()
-        ).collect(Collectors.toUnmodifiableSet());
-    }
+    Stream<String> findCommands(Stream<String> commands, Pattern pattern);
 
     /**
      * This method finds commands based on a given input.
      *
      * @param commands The stream of commands to search for.
      * @param input    The input used to search for commands.
-     * @return An unmodifiable set of strings representing the found commands.
+     * @return A stream of strings representing the found commands.
      */
     @Contract(pure = true)
-    default @Unmodifiable Set<String> findCommands(Stream<String> commands, String input) {
-        try {
-            return findCommands(commands, Pattern.compile(input.replace("*", ".*")));
-        } catch (PatternSyntaxException e) {
-            var escaped = Pattern.quote(input).replace("\\*", "*");
-            return findCommands(commands, Pattern.compile(escaped.replace("*", ".*")));
-        }
-    }
+    Stream<String> findCommands(Stream<String> commands, String input);
 
     /**
      * Finds commands based on the given input.
      *
      * @param input The input used to search for commands.
-     * @return An unmodifiable set of strings representing the found commands.
+     * @return A stream of strings representing the found commands.
      */
     @Contract(pure = true)
-    default @Unmodifiable Set<String> findCommands(String input) {
-        try {
-            return findCommands(Pattern.compile(input.replace("*", ".*")));
-        } catch (PatternSyntaxException e) {
-            var escaped = Pattern.quote(input).replace("\\*", "*");
-            return findCommands(Pattern.compile(escaped.replace("*", ".*")));
-        }
-    }
+    Stream<String> findCommands(String input);
 }

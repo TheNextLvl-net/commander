@@ -28,16 +28,16 @@ public class CommanderPlugin {
     private final Metrics.Factory metricsFactory;
     private final ProxyServer server;
     private final Logger logger;
-    private final Path dataFolder;
-
-    public final ProxyCommander commons = new ProxyCommander(this); // todo: weaken visibility
+    public final ProxyCommander commons; // todo: weaken visibility
+    private final Path dataPath;
 
     @Inject
-    public CommanderPlugin(ProxyServer server, Logger logger, @DataDirectory Path dataFolder, Metrics.Factory metricsFactory) {
+    public CommanderPlugin(ProxyServer server, Logger logger, @DataDirectory Path dataPath, Metrics.Factory metricsFactory) {
         this.server = server;
         this.logger = logger;
-        this.dataFolder = dataFolder;
+        this.dataPath = dataPath;
         this.metricsFactory = metricsFactory;
+        this.commons = new ProxyCommander(this);
         new CommanderVersionChecker(this).checkVersion();
     }
 
@@ -84,7 +84,7 @@ public class CommanderPlugin {
         return logger;
     }
 
-    public Path dataFolder() {
-        return dataFolder;
+    public Path dataPath() {
+        return dataPath;
     }
 }

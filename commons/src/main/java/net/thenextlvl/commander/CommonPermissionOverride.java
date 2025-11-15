@@ -15,6 +15,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 @NullMarked
 public abstract class CommonPermissionOverride implements PermissionOverride {
@@ -79,11 +80,10 @@ public abstract class CommonPermissionOverride implements PermissionOverride {
 
     @Override
     public boolean override(String command, @Nullable String permission) {
-        var commands = commons.commandFinder().findCommands(command).stream()
+        var commands = commons.commandFinder().findCommands(command);
+        Stream.concat(commands, Stream.of(command))
                 .filter(s -> internalOverride(s, permission))
-                .toList();
-        if (commands.isEmpty()) return false;
-        commands.forEach(s -> overridesFile.getRoot().put(s, permission));
+                .forEach(s -> overridesFile.getRoot().put(s, permission));
         commons.updateCommands();
         return true;
     }
@@ -91,8 +91,9 @@ public abstract class CommonPermissionOverride implements PermissionOverride {
     @Override
     public boolean reset(String command) {
         var commands = commons.commandFinder().findCommands(overridesFile.getRoot().keySet().stream(), command);
-        commands.forEach(overridesFile.getRoot()::remove);
-        if (!commands.stream().map(this::internalReset).reduce(false, Boolean::logicalOr)) return false;
+        var reset = Stream.concat(commands, Stream.of(command)).toList();
+        reset.forEach(overridesFile.getRoot()::remove);
+        if (!reset.stream().map(this::internalReset).reduce(false, Boolean::logicalOr)) return false;
         commons.updateCommands();
         return true;
     }

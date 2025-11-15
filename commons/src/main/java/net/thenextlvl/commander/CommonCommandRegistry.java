@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @NullMarked
 public abstract class CommonCommandRegistry implements CommandRegistry {
@@ -56,7 +57,8 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean hide(String command) {
-        if (!commons.commandFinder().findCommands(command).stream()
+        var commands = commons.commandFinder().findCommands(command);
+        if (!Stream.concat(commands, Stream.of(command))
                 .map(hiddenFile.getRoot()::add)
                 .reduce(false, Boolean::logicalOr)) return false;
         commons.updateCommands();
@@ -75,7 +77,7 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean register(String command) {
-        if (!commons.commandFinder().findCommands(unregisteredFile.getRoot().stream(), command).stream()
+        if (!commons.commandFinder().findCommands(unregisteredFile.getRoot().stream(), command)
                 .filter(unregisteredFile.getRoot()::remove)
                 .map(this::internalRegister)
                 .reduce(false, Boolean::logicalOr)) return false;
@@ -85,7 +87,7 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean reveal(String command) {
-        if (!commons.commandFinder().findCommands(hiddenFile.getRoot().stream(), command).stream()
+        if (!commons.commandFinder().findCommands(hiddenFile.getRoot().stream(), command)
                 .map(hiddenFile.getRoot()::remove)
                 .reduce(false, Boolean::logicalOr)) return false;
         commons.updateCommands();
@@ -101,7 +103,7 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean unregister(String command) {
-        if (!commons.commandFinder().findCommands(command).stream()
+        if (!commons.commandFinder().findCommands(command)
                 .filter(s -> !s.equals(commons.getRootCommand()))
                 .filter(unregisteredFile.getRoot()::add)
                 .map(this::internalUnregister)

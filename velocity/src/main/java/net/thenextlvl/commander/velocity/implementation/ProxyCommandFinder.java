@@ -1,14 +1,14 @@
 package net.thenextlvl.commander.velocity.implementation;
 
-import net.thenextlvl.commander.CommandFinder;
+import net.thenextlvl.commander.CommonCommandFinder;
 import net.thenextlvl.commander.velocity.ProxyCommander;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 @NullMarked
-public class ProxyCommandFinder implements CommandFinder {
+public class ProxyCommandFinder extends CommonCommandFinder {
     private final ProxyCommander commander;
 
     public ProxyCommandFinder(ProxyCommander commander) {
@@ -16,7 +16,7 @@ public class ProxyCommandFinder implements CommandFinder {
     }
 
     @Override
-    public Set<String> findCommands(Pattern pattern) {
+    public Stream<String> findCommands(Pattern pattern) {
         return findCommands(commander.server().getCommandManager().getAliases().stream(), pattern);
     }
 }
