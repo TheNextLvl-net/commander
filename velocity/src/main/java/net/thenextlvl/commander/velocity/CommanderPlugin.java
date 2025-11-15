@@ -23,7 +23,7 @@ import java.nio.file.Path;
         name = "Commander",
         authors = "NonSwag",
         url = "https://thenextlvl.net",
-        version = "4.4.0")
+        version = "5.0.0")
 public class CommanderPlugin {
     private final Metrics.Factory metricsFactory;
     private final ProxyServer server;
