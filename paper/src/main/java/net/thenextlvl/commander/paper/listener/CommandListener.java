@@ -38,7 +38,7 @@ public class CommandListener implements Listener {
         var permission = plugin.commons.permissionOverride().permission(command);
         if (permission == null || event.getPlayer().hasPermission(permission)) return;
         event.getPlayer().sendMessage(Component.translatable("command.unknown.command").appendNewline()
-                .append(Component.text(noSlash).decorate(TextDecoration.UNDERLINED)
+                .append(Component.text().append(Component.text(noSlash).decorate(TextDecoration.UNDERLINED))
                         .append(Component.translatable("command.context.here").decorate(TextDecoration.ITALIC))
                         .clickEvent(ClickEvent.suggestCommand(event.getMessage())))
                 .color(NamedTextColor.RED));
