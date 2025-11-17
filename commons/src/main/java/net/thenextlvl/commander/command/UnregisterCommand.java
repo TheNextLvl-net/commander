@@ -3,7 +3,6 @@ package net.thenextlvl.commander.command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.CommanderCommons;
 import net.thenextlvl.commander.command.brigadier.SimpleCommand;
@@ -24,7 +23,7 @@ final class UnregisterCommand<S> extends SimpleCommand<S> {
     }
 
     @Override
-    public int run(CommandContext<S> context) throws CommandSyntaxException {
+    public int run(CommandContext<S> context) {
         var sender = commons.brigadierAccess().audience(context.getSource());
         var command = context.getArgument("command", String.class);
         var success = commons.commandRegistry().unregister(command);

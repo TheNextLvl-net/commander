@@ -2,7 +2,6 @@ package net.thenextlvl.commander.command;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.thenextlvl.commander.CommanderCommons;
 import net.thenextlvl.commander.command.brigadier.SimpleCommand;
 import org.jspecify.annotations.NullMarked;
@@ -19,7 +18,7 @@ final class SaveCommand<S> extends SimpleCommand<S> {
     }
 
     @Override
-    public int run(CommandContext<S> context) throws CommandSyntaxException {
+    public int run(CommandContext<S> context) {
         var sender = commons.brigadierAccess().audience(context.getSource());
         var saved = commons.commandRegistry().save(true) & commons.permissionOverride().save(true);
         var message = saved ? "command.saved" : "nothing.changed";
