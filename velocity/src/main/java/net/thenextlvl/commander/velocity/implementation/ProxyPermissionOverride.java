@@ -29,7 +29,7 @@ public class ProxyPermissionOverride extends CommonPermissionOverride {
     }
 
     @Override
-    protected boolean internalOverride(String command, @Nullable String permission) {
+    protected boolean internalOverride(String command, String permission) {
         return true;
     }
 

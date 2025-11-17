@@ -73,15 +73,12 @@ public interface PermissionOverride {
 
     /**
      * Overrides the permission associated with a command.
-     * <p>
-     * If the provided permission is null, the method attempts to remove the original permission,
-     * effectively unassigning any existing permission.
      *
      * @param command    the name of the command whose permission is to be overridden
-     * @param permission the new permission to assign to the command, or null to remove
+     * @param permission the new permission to assign to the command
      * @return true if the operation was successful, false otherwise
      */
-    boolean override(String command, @Nullable String permission);
+    boolean override(String command, String permission);
 
     /**
      * Reverts the permission of the given command to its original state before any overrides were applied.

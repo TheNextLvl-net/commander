@@ -34,12 +34,12 @@ public class PaperPermissionOverride extends CommonPermissionOverride {
     }
 
     @Override
-    protected boolean internalOverride(String command, @Nullable String permission) {
+    protected boolean internalOverride(String command, String permission) {
         var plugin = ((PaperCommander) commons).getPlugin();
         var registered = plugin.getServer().getCommandMap().getKnownCommands().get(command);
 
         var registeredPermission = registered != null ? registered.getPermission() : null;
-        if (Objects.equals(registeredPermission, permission)) return false;
+        if (permission.equals(registeredPermission)) return false;
         originalPermissions.putIfAbsent(command, registeredPermission);
 
         var dispatcher = plugin.commandDispatcher();
