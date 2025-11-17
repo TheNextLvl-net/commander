@@ -4,7 +4,8 @@ import org.jspecify.annotations.NullMarked;
 module net.thenextlvl.commander {
     exports net.thenextlvl.commander;
 
+    requires net.thenextlvl.binder;
+
     requires static org.jetbrains.annotations;
     requires static org.jspecify;
-    requires net.thenextlvl.binder;
 }
