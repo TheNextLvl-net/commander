@@ -19,14 +19,14 @@ import java.util.stream.Stream;
 
 @NullMarked
 public abstract class CommonPermissionOverride implements PermissionOverride {
-    protected final FileIO<Map<String, @Nullable String>> overridesFile;
+    protected final FileIO<Map<String, String>> overridesFile;
     protected final CommanderCommons commons;
 
     protected String overridesDigest;
     protected long overridesLastModified;
 
     public CommonPermissionOverride(CommanderCommons commons) {
-        this.overridesFile = new GsonFile<Map<String, @Nullable String>>(
+        this.overridesFile = new GsonFile<Map<String, String>>(
                 IO.of(commons.getDataPath().resolve("permission-overrides.json")),
                 new HashMap<>(), new TypeToken<>() {
         }).reload().saveIfAbsent();
@@ -64,7 +64,7 @@ public abstract class CommonPermissionOverride implements PermissionOverride {
     }
 
     @Override
-    public @Unmodifiable Map<String, @Nullable String> overrides() {
+    public @Unmodifiable Map<String, String> overrides() {
         return Map.copyOf(overridesFile.getRoot());
     }
 
@@ -79,11 +79,12 @@ public abstract class CommonPermissionOverride implements PermissionOverride {
     }
 
     @Override
-    public boolean override(String command, @Nullable String permission) {
+    public boolean override(String command, String permission) {
         var commands = commons.commandFinder().findCommands(command);
-        Stream.concat(commands, Stream.of(command))
+        if (!Stream.concat(commands, Stream.of(command))
                 .filter(s -> internalOverride(s, permission))
-                .forEach(s -> overridesFile.getRoot().put(s, permission));
+                .map(s -> overridesFile.getRoot().put(s, permission) == null)
+                .reduce(false, Boolean::logicalOr)) return false;
         commons.updateCommands();
         return true;
     }
@@ -92,17 +93,19 @@ public abstract class CommonPermissionOverride implements PermissionOverride {
     public boolean reset(String command) {
         var commands = commons.commandFinder().findCommands(overridesFile.getRoot().keySet().stream(), command);
         var reset = Stream.concat(commands, Stream.of(command)).toList();
-        reset.forEach(overridesFile.getRoot()::remove);
+        if (!reset.stream()
+                .map(s -> overridesFile.getRoot().remove(s) != null)
+                .reduce(false, Boolean::logicalOr)) return false;
         if (!reset.stream().map(this::internalReset).reduce(false, Boolean::logicalOr)) return false;
         commons.updateCommands();
         return true;
     }
 
-    protected abstract boolean internalOverride(String command, @Nullable String permission);
+    protected abstract boolean internalOverride(String command, String permission);
 
     protected abstract boolean internalReset(String command);
 
-    protected Map<PermissionOverride, Boolean> difference(Map<String, @Nullable String> previous, Map<String, @Nullable String> current) {
+    protected Map<PermissionOverride, Boolean> difference(Map<String, String> previous, Map<String, String> current) {
         var differences = new HashMap<PermissionOverride, Boolean>();
         current.entrySet().stream()
                 .filter(entry -> !Objects.equals(previous.get(entry.getKey()), entry.getValue()))
@@ -113,6 +116,6 @@ public abstract class CommonPermissionOverride implements PermissionOverride {
         return differences;
     }
 
-    protected record PermissionOverride(String command, @Nullable String permission) {
+    protected record PermissionOverride(String command, String permission) {
     }
 }
