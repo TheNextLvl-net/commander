@@ -22,7 +22,7 @@ final class SaveCommand<S> extends SimpleCommand<S> {
     public int run(CommandContext<S> context) throws CommandSyntaxException {
         var sender = commons.brigadierAccess().audience(context.getSource());
         var saved = commons.commandRegistry().save(true) & commons.permissionOverride().save(true);
-        var message = saved ? "command.saved" : "command.save.conflict";
+        var message = saved ? "command.saved" : "nothing.changed";
         commons.bundle().sendMessage(sender, message);
         return saved ? SINGLE_SUCCESS : 0;
     }
