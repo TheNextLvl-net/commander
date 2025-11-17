@@ -6,6 +6,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.thenextlvl.commander.CommanderCommons;
 import net.thenextlvl.commander.command.brigadier.SimpleCommand;
+import net.thenextlvl.commander.command.suggestion.PermissionResetSuggestionProvider;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
@@ -17,14 +18,7 @@ final class PermissionResetCommand<S> extends SimpleCommand<S> {
     public static <S> ArgumentBuilder<S, ?> create(CommanderCommons plugin) {
         var command = new PermissionResetCommand<S>(plugin);
         return command.create().then(plugin.<S>brigadierAccess().argument("command", StringArgumentType.string())
-                .suggests((context, suggestions) -> {
-                    plugin.permissionOverride().overrides().keySet().stream()
-                            .filter(s -> !plugin.commandRegistry().isUnregistered(s))
-                            .map(StringArgumentType::escapeIfRequired)
-                            .filter(s -> s.contains(suggestions.getRemaining()))
-                            .forEach(suggestions::suggest);
-                    return suggestions.buildFuture();
-                })
+                .suggests(new PermissionResetSuggestionProvider<>(plugin))
                 .executes(command));
     }
 
