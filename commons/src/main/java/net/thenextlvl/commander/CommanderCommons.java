@@ -60,11 +60,23 @@ public abstract class CommanderCommons {
 
     public abstract void updateCommands();
 
-    public abstract void conflictSave(Audience audience);
+    public final void conflictSave(Audience audience) {
+        if (commandRegistry().save(false) & permissionOverride().save(false)) return;
+        bundle().sendMessage(audience, "command.save.conflict");
+    }
 
-    public abstract void hiddenConflictSave(Audience audience);
+    public final void hiddenConflictSave(Audience audience) {
+        if (commandRegistry().saveHidden(false)) return;
+        bundle().sendMessage(audience, "command.save.conflict");
+    }
 
-    public abstract void unregisteredConflictSave(Audience audience);
+    public final void unregisteredConflictSave(Audience audience) {
+        if (commandRegistry().saveUnregistered(false)) return;
+        bundle().sendMessage(audience, "command.save.conflict");
+    }
 
-    public abstract void permissionConflictSave(Audience audience);
+    public final void permissionConflictSave(Audience audience) {
+        if (permissionOverride().save(false)) return;
+        bundle().sendMessage(audience, "command.save.conflict");
+    }
 }

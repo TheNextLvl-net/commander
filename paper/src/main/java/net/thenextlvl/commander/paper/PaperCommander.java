@@ -1,6 +1,5 @@
 package net.thenextlvl.commander.paper;
 
-import net.kyori.adventure.audience.Audience;
 import net.thenextlvl.binder.StaticBinder;
 import net.thenextlvl.commander.CommandFinder;
 import net.thenextlvl.commander.CommandRegistry;
@@ -95,25 +94,5 @@ public class PaperCommander extends CommanderCommons {
     @Override
     public PaperPermissionOverride permissionOverride() {
         return permissionOverride;
-    }
-
-    public void conflictSave(Audience audience) {
-        if (commandRegistry().save(false) & permissionOverride().save(false)) return;
-        bundle().sendMessage(audience, "command.save.conflict");
-    }
-
-    public void hiddenConflictSave(Audience audience) {
-        if (commandRegistry().saveHidden(false)) return;
-        bundle().sendMessage(audience, "command.save.conflict");
-    }
-
-    public void unregisteredConflictSave(Audience audience) {
-        if (commandRegistry().saveUnregistered(false)) return;
-        bundle().sendMessage(audience, "command.save.conflict");
-    }
-
-    public void permissionConflictSave(Audience audience) {
-        if (permissionOverride().save(false)) return;
-        bundle().sendMessage(audience, "command.save.conflict");
     }
 }

@@ -1,7 +1,6 @@
 package net.thenextlvl.commander.velocity;
 
 import com.velocitypowered.api.proxy.ProxyServer;
-import net.kyori.adventure.audience.Audience;
 import net.thenextlvl.binder.StaticBinder;
 import net.thenextlvl.commander.CommandFinder;
 import net.thenextlvl.commander.CommandRegistry;
@@ -70,30 +69,6 @@ public class ProxyCommander extends CommanderCommons {
 
     @Override
     public void updateCommands() {
-    }
-
-    @Override
-    public void conflictSave(Audience audience) {
-        if (commandRegistry().save(false) & permissionOverride().save(false)) return;
-        bundle().sendMessage(audience, "command.save.conflict");
-    }
-
-    @Override
-    public void hiddenConflictSave(Audience audience) {
-        if (commandRegistry().saveHidden(false)) return;
-        bundle().sendMessage(audience, "command.save.conflict");
-    }
-
-    @Override
-    public void unregisteredConflictSave(Audience audience) {
-        if (commandRegistry().saveUnregistered(false)) return;
-        bundle().sendMessage(audience, "command.save.conflict");
-    }
-
-    @Override
-    public void permissionConflictSave(Audience audience) {
-        if (permissionOverride().save(false)) return;
-        bundle().sendMessage(audience, "command.save.conflict");
     }
 
     @Override
