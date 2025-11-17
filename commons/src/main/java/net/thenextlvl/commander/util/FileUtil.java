@@ -6,9 +6,7 @@ import core.io.PathIO;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.zip.CRC32C;
 
 public final class FileUtil {
     private static final int BUFFER_SIZE = 8192;
@@ -20,16 +18,16 @@ public final class FileUtil {
     public static String digest(Path path) {
         try {
             if (!Files.exists(path)) return "";
-            var digest = MessageDigest.getInstance("MD5");
-            try (var input = new DigestInputStream(Files.newInputStream(path), digest)) {
-                byte[] buffer = new byte[BUFFER_SIZE];
-                while (input.read(buffer) != -1) {
+            var crc = new CRC32C();
+            try (var input = Files.newInputStream(path)) {
+                var buffer = new byte[BUFFER_SIZE];
+                int bytesRead;
+                while ((bytesRead = input.read(buffer)) != -1) {
+                    crc.update(buffer, 0, bytesRead);
                 }
             }
-            var builder = new StringBuilder();
-            for (var b : digest.digest()) builder.append(String.format("%02x", b));
-            return builder.toString();
-        } catch (IOException | NoSuchAlgorithmException e) {
+            return Long.toHexString(crc.getValue());
+        } catch (IOException e) {
             return "";
         }
     }
