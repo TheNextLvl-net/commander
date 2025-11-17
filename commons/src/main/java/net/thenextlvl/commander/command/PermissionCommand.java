@@ -16,7 +16,6 @@ final class PermissionCommand<S> extends BrigadierCommand<S> {
         return command.create()
                 .then(PermissionQueryCommand.<S>create(commons))
                 .then(PermissionResetCommand.<S>create(commons))
-                .then(PermissionSetCommand.<S>create(commons))
-                .then(PermissionUnsetCommand.<S>create(commons));
+                .then(PermissionSetCommand.<S>create(commons));
     }
 }
