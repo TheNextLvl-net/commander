@@ -77,7 +77,7 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean register(String command) {
-        if (!commons.commandFinder().findCommands(unregisteredFile.getRoot().stream(), command)
+        if (!commons.commandFinder().findCommands(Set.copyOf(unregisteredFile.getRoot()).stream(), command)
                 .filter(unregisteredFile.getRoot()::remove)
                 .map(this::internalRegister)
                 .reduce(false, Boolean::logicalOr)) return false;
@@ -87,7 +87,7 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
 
     @Override
     public boolean reveal(String command) {
-        if (!commons.commandFinder().findCommands(hiddenFile.getRoot().stream(), command)
+        if (!commons.commandFinder().findCommands(Set.copyOf(hiddenFile.getRoot()).stream(), command)
                 .map(hiddenFile.getRoot()::remove)
                 .reduce(false, Boolean::logicalOr)) return false;
         commons.updateCommands();
