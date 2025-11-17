@@ -8,7 +8,6 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
-import net.kyori.adventure.audience.Audience;
 import net.thenextlvl.commander.command.CommanderCommand;
 import net.thenextlvl.commander.velocity.listener.CommandListener;
 import net.thenextlvl.commander.velocity.version.CommanderVersionChecker;
@@ -54,26 +53,6 @@ public class CommanderPlugin {
     public void onProxyShutdown(ProxyShutdownEvent event) {
         commons.commandRegistry().save(true);
         commons.permissionOverride().save(true);
-    }
-
-    public void conflictSave(Audience audience) {
-        if (commons.commandRegistry().save(false) & commons.permissionOverride().save(false)) return;
-        commons.bundle().sendMessage(audience, "command.save.conflict");
-    }
-
-    public void hiddenConflictSave(Audience audience) {
-        if (commons.commandRegistry().saveHidden(false)) return;
-        commons.bundle().sendMessage(audience, "command.save.conflict");
-    }
-
-    public void unregisteredConflictSave(Audience audience) {
-        if (commons.commandRegistry().saveUnregistered(false)) return;
-        commons.bundle().sendMessage(audience, "command.save.conflict");
-    }
-
-    public void permissionConflictSave(Audience audience) {
-        if (commons.permissionOverride().save(false)) return;
-        commons.bundle().sendMessage(audience, "command.save.conflict");
     }
 
     public ProxyServer server() {
