@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     api("net.thenextlvl.core:files:3.0.1")
-    api("net.thenextlvl.core:i18n:3.2.2")
+    api("net.thenextlvl:i18n:1.0.0")
     api(project(":api"))
 
     compileOnly("com.google.code.gson:gson:2.13.2")

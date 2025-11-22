@@ -1,12 +1,12 @@
 package net.thenextlvl.commander;
 
-import core.i18n.file.ComponentBundle;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.thenextlvl.commander.access.BrigadierAccess;
+import net.thenextlvl.i18n.ComponentBundle;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 
