@@ -8,13 +8,15 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import dev.faststats.core.Metrics;
+import dev.faststats.velocity.VelocityMetrics;
 import net.thenextlvl.commander.command.CommanderCommand;
 import net.thenextlvl.commander.velocity.listener.CommandListener;
 import net.thenextlvl.commander.velocity.version.CommanderVersionChecker;
-import org.bstats.velocity.Metrics;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 @NullMarked
@@ -24,25 +26,31 @@ import java.nio.file.Path;
         url = "https://thenextlvl.net",
         version = "5.0.0")
 public class CommanderPlugin {
-    private final Metrics.Factory metricsFactory;
+    private final Metrics.Factory<Object> fastStats;
+    private final org.bstats.velocity.Metrics.Factory bStats;
     private final ProxyServer server;
     private final Logger logger;
     public final ProxyCommander commons; // todo: weaken visibility
     private final Path dataPath;
 
     @Inject
-    public CommanderPlugin(ProxyServer server, Logger logger, @DataDirectory Path dataPath, Metrics.Factory metricsFactory) {
+    public CommanderPlugin(
+            ProxyServer server, Logger logger, @DataDirectory Path dataPath,
+            org.bstats.velocity.Metrics.Factory bStats, VelocityMetrics.Factory fastStats
+    ) {
         this.server = server;
         this.logger = logger;
         this.dataPath = dataPath;
-        this.metricsFactory = metricsFactory;
         this.commons = new ProxyCommander(this);
+        this.bStats = bStats;
+        this.fastStats = fastStats.token("64fe72736026ee2afa6e4d737f5ffc");
         new CommanderVersionChecker(this).checkVersion();
     }
 
     @Subscribe(priority = -1)
-    public void onProxyInitialize(ProxyInitializeEvent event) {
-        metricsFactory.make(this, 22782);
+    public void onProxyInitialize(ProxyInitializeEvent event) throws IOException {
+        fastStats.create(this);
+        bStats.make(this, 22782);
         server().getEventManager().register(this, new CommandListener(this));
         var meta = server.getCommandManager().metaBuilder(commons.getRootCommand()).plugin(this).build();
         server().getCommandManager().register(meta, new BrigadierCommand(CommanderCommand.create(commons)));

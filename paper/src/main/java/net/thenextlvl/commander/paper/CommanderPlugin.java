@@ -1,6 +1,7 @@
 package net.thenextlvl.commander.paper;
 
 import com.mojang.brigadier.CommandDispatcher;
+import dev.faststats.bukkit.BukkitMetrics;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.thenextlvl.commander.command.CommanderCommand;
@@ -11,15 +12,20 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.io.IOException;
+
 @NullMarked
 public class CommanderPlugin extends JavaPlugin {
     private final Metrics metrics = new Metrics(this, 22782);
+    private final dev.faststats.core.Metrics fastStats = BukkitMetrics.factory()
+            .token("64fe72736026ee2afa6e4d737f5ffc")
+            .create(this);
     private final CommanderVersionChecker versionChecker = new CommanderVersionChecker(this);
     public final PaperCommander commons = new PaperCommander(this); // todo: weaken visibility
 
     private @Nullable CommandDispatcher<CommandSourceStack> commandDispatcher = null;
 
-    public CommanderPlugin() {
+    public CommanderPlugin() throws IOException {
         registerCommands();
     }
 
