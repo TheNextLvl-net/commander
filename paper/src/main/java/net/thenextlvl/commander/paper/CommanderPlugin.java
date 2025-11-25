@@ -18,7 +18,7 @@ import java.io.IOException;
 public class CommanderPlugin extends JavaPlugin {
     private final Metrics metrics = new Metrics(this, 22782);
     private final dev.faststats.core.Metrics fastStats = BukkitMetrics.factory()
-            .token("64fe72736026ee2afa6e4d737f5ffc")
+            .token("651f3fbc8bfa16b7f98b6192e3a992")
             .create(this);
     private final CommanderVersionChecker versionChecker = new CommanderVersionChecker(this);
     public final PaperCommander commons = new PaperCommander(this); // todo: weaken visibility

@@ -43,7 +43,7 @@ public class CommanderPlugin {
         this.dataPath = dataPath;
         this.commons = new ProxyCommander(this);
         this.bStats = bStats;
-        this.fastStats = fastStats.token("64fe72736026ee2afa6e4d737f5ffc");
+        this.fastStats = fastStats.token("651f3fbc8bfa16b7f98b6192e3a992");
         new CommanderVersionChecker(this).checkVersion();
     }
 
