@@ -21,7 +21,7 @@ public class CommanderPlugin extends JavaPlugin {
             .token("651f3fbc8bfa16b7f98b6192e3a992")
             .create(this);
     private final CommanderVersionChecker versionChecker = new CommanderVersionChecker(this);
-    public final PaperCommander commons = new PaperCommander(this); // todo: weaken visibility
+    private final PaperCommander commons = new PaperCommander(this);
 
     private @Nullable CommandDispatcher<CommandSourceStack> commandDispatcher = null;
 
@@ -62,6 +62,6 @@ public class CommanderPlugin extends JavaPlugin {
     }
 
     private void registerListeners() {
-        getServer().getPluginManager().registerEvents(new CommandListener(this), this);
+        getServer().getPluginManager().registerEvents(new CommandListener(), this);
     }
 }

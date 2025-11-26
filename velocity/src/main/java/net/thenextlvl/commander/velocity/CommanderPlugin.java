@@ -30,7 +30,7 @@ public class CommanderPlugin {
     private final org.bstats.velocity.Metrics.Factory bStats;
     private final ProxyServer server;
     private final Logger logger;
-    public final ProxyCommander commons; // todo: weaken visibility
+    private final ProxyCommander commons;
     private final Path dataPath;
 
     @Inject
@@ -51,7 +51,7 @@ public class CommanderPlugin {
     public void onProxyInitialize(ProxyInitializeEvent event) throws IOException {
         fastStats.create(this);
         bStats.make(this, 22782);
-        server().getEventManager().register(this, new CommandListener(this));
+        server().getEventManager().register(this, new CommandListener());
         var meta = server.getCommandManager().metaBuilder(commons.getRootCommand()).plugin(this).build();
         server().getCommandManager().register(meta, new BrigadierCommand(CommanderCommand.create(commons)));
         commons.commandRegistry().unregisterCommands();
