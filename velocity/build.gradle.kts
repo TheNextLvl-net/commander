@@ -27,13 +27,10 @@ repositories {
 dependencies {
     compileOnly("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
 
-    implementation(project(":api"))
+    implementation("dev.faststats.metrics:velocity:0.2.0")
+    implementation("net.thenextlvl.version-checker:modrinth-velocity:1.0.0")
     implementation("org.bstats:bstats-velocity:3.1.0")
-    implementation("net.thenextlvl.core:files:3.0.1")
-    implementation("net.thenextlvl.core:i18n:3.2.2")
-    implementation("net.thenextlvl.core:version-checker:2.1.2") {
-        exclude("com.google.code.gson")
-    }
+    implementation(project(":commons"))
 
     annotationProcessor("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
 }

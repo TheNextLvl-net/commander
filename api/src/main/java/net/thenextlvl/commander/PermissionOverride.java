@@ -1,13 +1,19 @@
 package net.thenextlvl.commander;
 
+import net.thenextlvl.binder.StaticBinder;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
-@NullMarked
+@ApiStatus.NonExtendable
 public interface PermissionOverride {
+    static PermissionOverride instance() {
+        return StaticBinder.getInstance(PermissionOverride.class.getClassLoader()).find(PermissionOverride.class);
+    }
+
     /**
      * Retrieves a mapping of commands and their associated original permissions.
      * <p>
@@ -18,6 +24,7 @@ public interface PermissionOverride {
      * The permission value may be null if no original permission was assigned.
      */
     @Unmodifiable
+    @Contract(pure = true)
     Map<String, @Nullable String> originalPermissions();
 
     /**
@@ -30,6 +37,7 @@ public interface PermissionOverride {
      * The permission value may be null if no override is applied to the command.
      */
     @Unmodifiable
+    @Contract(pure = true)
     Map<String, @Nullable String> overrides();
 
     /**
@@ -39,6 +47,7 @@ public interface PermissionOverride {
      * @return the originally assigned permission as a string, or null if no original permission exists for the command
      */
     @Nullable
+    @Contract(pure = true)
     String originalPermission(String command);
 
     /**
@@ -49,6 +58,7 @@ public interface PermissionOverride {
      * @return the effective permission as a string, or null if no permission is assigned to the command
      */
     @Nullable
+    @Contract(pure = true)
     String permission(String command);
 
     /**
@@ -58,19 +68,17 @@ public interface PermissionOverride {
      * @param command the name of the command to check
      * @return true if the command's permission is overridden, false otherwise
      */
+    @Contract(pure = true)
     boolean isOverridden(String command);
 
     /**
      * Overrides the permission associated with a command.
-     * <p>
-     * If the provided permission is null, the method attempts to remove the original permission,
-     * effectively unassigning any existing permission.
      *
      * @param command    the name of the command whose permission is to be overridden
-     * @param permission the new permission to assign to the command, or null to remove
+     * @param permission the new permission to assign to the command
      * @return true if the operation was successful, false otherwise
      */
-    boolean override(String command, @Nullable String permission);
+    boolean override(String command, String permission);
 
     /**
      * Reverts the permission of the given command to its original state before any overrides were applied.

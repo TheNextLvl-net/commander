@@ -1,23 +1,23 @@
 package net.thenextlvl.commander.paper.implementation;
 
-import net.thenextlvl.commander.CommandFinder;
-import net.thenextlvl.commander.paper.CommanderPlugin;
+import net.thenextlvl.commander.CommonCommandFinder;
+import net.thenextlvl.commander.paper.PaperCommander;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 @NullMarked
-public class PaperCommandFinder implements CommandFinder {
-    private final CommanderPlugin plugin;
+public class PaperCommandFinder extends CommonCommandFinder {
+    private final PaperCommander commander;
 
-    public PaperCommandFinder(CommanderPlugin plugin) {
-        this.plugin = plugin;
+    public PaperCommandFinder(PaperCommander commander) {
+        this.commander = commander;
     }
 
     @Override
-    public Set<String> findCommands(Pattern pattern) {
-        return findCommands(plugin.getServer().getCommandMap().getKnownCommands().entrySet()
+    public Stream<String> findCommands(Pattern pattern) {
+        return findCommands(commander.getServer().getCommandMap().getKnownCommands().entrySet()
                 .stream().mapMulti((entry, consumer) -> {
                     consumer.accept(entry.getKey());
                     entry.getValue().getAliases().forEach(consumer);

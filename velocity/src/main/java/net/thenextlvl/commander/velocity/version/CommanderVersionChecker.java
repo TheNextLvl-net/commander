@@ -2,10 +2,10 @@ package net.thenextlvl.commander.velocity.version;
 
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.plugin.Plugin;
-import core.version.SemanticVersion;
-import core.version.modrinth.ModrinthVersion;
-import core.version.modrinth.ModrinthVersionChecker;
 import net.thenextlvl.commander.velocity.CommanderPlugin;
+import net.thenextlvl.version.SemanticVersion;
+import net.thenextlvl.version.modrinth.ModrinthVersion;
+import net.thenextlvl.version.modrinth.ModrinthVersionChecker;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.Objects;

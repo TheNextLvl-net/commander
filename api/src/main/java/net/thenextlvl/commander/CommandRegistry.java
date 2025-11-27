@@ -1,12 +1,18 @@
 package net.thenextlvl.commander;
 
+import net.thenextlvl.binder.StaticBinder;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
 
 import java.util.Set;
 
-@NullMarked
+@ApiStatus.NonExtendable
 public interface CommandRegistry {
+    static CommandRegistry instance() {
+        return StaticBinder.getInstance(CommandRegistry.class.getClassLoader()).find(CommandRegistry.class);
+    }
+
     /**
      * Retrieves the set of commands that are currently hidden from visibility.
      * <p>
@@ -16,6 +22,7 @@ public interface CommandRegistry {
      * @return an unmodifiable set of strings representing the commands that are currently hidden
      */
     @Unmodifiable
+    @Contract(pure = true)
     Set<String> hiddenCommands();
 
     /**
@@ -24,6 +31,7 @@ public interface CommandRegistry {
      * @return an unmodifiable set of strings representing the commands that are unregistered
      */
     @Unmodifiable
+    @Contract(pure = true)
     Set<String> unregisteredCommands();
 
     /**
@@ -43,6 +51,7 @@ public interface CommandRegistry {
      * @param command the name of the command to check
      * @return true if the command is hidden, false otherwise
      */
+    @Contract(pure = true)
     boolean isHidden(String command);
 
     /**
@@ -51,6 +60,7 @@ public interface CommandRegistry {
      * @param command the name of the command to check
      * @return true if the command is unregistered, false otherwise
      */
+    @Contract(pure = true)
     boolean isUnregistered(String command);
 
     /**
