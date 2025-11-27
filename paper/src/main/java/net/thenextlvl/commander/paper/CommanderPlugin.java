@@ -18,7 +18,7 @@ import java.io.IOException;
 public class CommanderPlugin extends JavaPlugin {
     private final Metrics metrics = new Metrics(this, 22782);
     private final dev.faststats.core.Metrics fastStats = BukkitMetrics.factory()
-            .token("651f3fbc8bfa16b7f98b6192e3a992")
+            .token("417c37aa7e3b468fc09ee54af4336490")
             .create(this);
     private final CommanderVersionChecker versionChecker = new CommanderVersionChecker(this);
     private final PaperCommander commons = new PaperCommander(this);
