@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    api("net.thenextlvl.core:files:3.0.1")
+    api("net.thenextlvl.core:files:3.0.2")
     api("net.thenextlvl:i18n:1.0.0")
     api(project(":api"))
 
