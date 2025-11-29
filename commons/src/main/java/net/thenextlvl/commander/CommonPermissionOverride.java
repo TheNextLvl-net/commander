@@ -1,13 +1,10 @@
 package net.thenextlvl.commander;
 
 import com.google.gson.reflect.TypeToken;
-import core.file.FileIO;
-import core.file.format.GsonFile;
-import core.io.IO;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.thenextlvl.commander.util.FileUtil;
+import net.thenextlvl.commander.file.GsonFile;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -19,35 +16,26 @@ import java.util.stream.Stream;
 
 @NullMarked
 public abstract class CommonPermissionOverride implements PermissionOverride {
-    protected final FileIO<Map<String, String>> overridesFile;
+    protected final GsonFile<Map<String, String>> overridesFile;
     protected final CommanderCommons commons;
-
-    protected String overridesDigest;
-    protected long overridesLastModified;
 
     public CommonPermissionOverride(CommanderCommons commons) {
         this.overridesFile = new GsonFile<Map<String, String>>(
-                IO.of(commons.getDataPath().resolve("permission-overrides.json")),
+                commons.getDataPath().resolve("permission-overrides.json"),
                 new HashMap<>(), new TypeToken<>() {
         }).reload().saveIfAbsent();
-        this.overridesDigest = FileUtil.digest(overridesFile);
-        this.overridesLastModified = FileUtil.lastModified(overridesFile);
         this.commons = commons;
     }
 
     public boolean save(boolean force) {
-        if (!force && FileUtil.hasChanged(overridesFile, overridesDigest, overridesLastModified)) return false;
+        if (!force && overridesFile.hasChanged()) return false;
         overridesFile.save();
-        overridesDigest = FileUtil.digest(overridesFile);
-        overridesLastModified = FileUtil.lastModified(overridesFile);
         return true;
     }
 
     public boolean reload(Audience audience) {
         var previous = overridesFile.getRoot();
         var current = overridesFile.reload();
-        overridesDigest = FileUtil.digest(overridesFile);
-        overridesLastModified = FileUtil.lastModified(overridesFile);
         if (previous.equals(current.getRoot())) return false;
         var difference = difference(previous, current.getRoot());
         var additions = difference.entrySet().stream()

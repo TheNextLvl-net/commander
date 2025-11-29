@@ -1,13 +1,10 @@
 package net.thenextlvl.commander;
 
 import com.google.gson.reflect.TypeToken;
-import core.file.FileIO;
-import core.file.format.GsonFile;
-import core.io.IO;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.thenextlvl.commander.util.FileUtil;
+import net.thenextlvl.commander.file.GsonFile;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 
@@ -20,29 +17,20 @@ import java.util.stream.Stream;
 
 @NullMarked
 public abstract class CommonCommandRegistry implements CommandRegistry {
-    protected final FileIO<Set<String>> hiddenFile;
-    protected final FileIO<Set<String>> unregisteredFile;
+    protected final GsonFile<Set<String>> hiddenFile;
+    protected final GsonFile<Set<String>> unregisteredFile;
     protected final CommanderCommons commons;
-
-    protected String hiddenDigest;
-    protected String unregisteredDigest;
-    protected long hiddenLastModified;
-    protected long unregisteredLastModified;
 
     protected CommonCommandRegistry(CommanderCommons commons) {
         this.hiddenFile = new GsonFile<Set<String>>(
-                IO.of(commons.getDataPath().resolve("hidden-commands.json")),
+                commons.getDataPath().resolve("hidden-commands.json"),
                 new HashSet<>(), new TypeToken<>() {
         }).reload().saveIfAbsent();
         this.unregisteredFile = new GsonFile<Set<String>>(
-                IO.of(commons.getDataPath().resolve("removed-commands.json")),
+                commons.getDataPath().resolve("removed-commands.json"),
                 new HashSet<>(), new TypeToken<>() {
         }).reload().saveIfAbsent();
         this.commons = commons;
-        this.hiddenDigest = FileUtil.digest(hiddenFile);
-        this.unregisteredDigest = FileUtil.digest(unregisteredFile);
-        this.hiddenLastModified = FileUtil.lastModified(hiddenFile);
-        this.unregisteredLastModified = FileUtil.lastModified(unregisteredFile);
     }
 
     @Override
@@ -117,18 +105,14 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
     }
 
     public boolean saveHidden(boolean force) {
-        if (!force && FileUtil.hasChanged(hiddenFile, hiddenDigest, hiddenLastModified)) return false;
+        if (!force && hiddenFile.hasChanged()) return false;
         hiddenFile.save();
-        hiddenDigest = FileUtil.digest(hiddenFile);
-        hiddenLastModified = FileUtil.lastModified(hiddenFile);
         return true;
     }
 
     public boolean saveUnregistered(boolean force) {
-        if (!force && FileUtil.hasChanged(unregisteredFile, unregisteredDigest, unregisteredLastModified)) return false;
+        if (!force && unregisteredFile.hasChanged()) return false;
         unregisteredFile.save();
-        unregisteredDigest = FileUtil.digest(unregisteredFile);
-        unregisteredLastModified = FileUtil.lastModified(unregisteredFile);
         return true;
     }
 
@@ -139,8 +123,6 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
     private boolean reloadHidden(Audience audience) {
         var previous = hiddenFile.getRoot();
         var current = hiddenFile.reload();
-        hiddenDigest = FileUtil.digest(hiddenFile);
-        hiddenLastModified = FileUtil.lastModified(hiddenFile);
         if (previous.equals(current.getRoot())) return false;
         var difference = difference(previous, current.getRoot());
         var additions = difference.entrySet().stream()
@@ -156,8 +138,6 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
     private boolean reloadUnregistered(Audience audience) {
         var previous = unregisteredFile.getRoot();
         var current = unregisteredFile.reload();
-        unregisteredDigest = FileUtil.digest(unregisteredFile);
-        unregisteredLastModified = FileUtil.lastModified(unregisteredFile);
         if (previous.equals(current.getRoot())) return false;
         var difference = difference(previous, current.getRoot());
         var additions = difference.entrySet().stream()
