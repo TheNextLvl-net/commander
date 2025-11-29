@@ -67,7 +67,6 @@ modrinth {
     changelog = System.getenv("CHANGELOG")
     versionType = if (isRelease) "release" else "beta"
     uploadFile.set(tasks.shadowJar)
-    versionName = "Commander " + project.version + " " + project.name
     gameVersions.set((property("gameVersions") as String)
         .split(",")
         .map { it.trim() })
