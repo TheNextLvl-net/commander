@@ -30,7 +30,6 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
 
     implementation("dev.faststats.metrics:bukkit:0.4.2")
-    implementation("net.thenextlvl.core:paper:2.3.1")
     implementation("net.thenextlvl.version-checker:modrinth-paper:1.0.0")
     implementation("org.bstats:bstats-bukkit:3.1.0")
     implementation(project(":commons"))
