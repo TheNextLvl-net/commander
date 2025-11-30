@@ -87,7 +87,7 @@ public final class GsonFile<R> {
     public GsonFile<R> save(FileAttribute<?>... attributes) {
         try {
             var root = getRoot();
-            Files.createDirectories(file.getParent(), attributes);
+            Files.createDirectories(file.toAbsolutePath().getParent(), attributes);
             try (var writer = new BufferedWriter(new OutputStreamWriter(
                     Files.newOutputStream(file, WRITE, CREATE, TRUNCATE_EXISTING),
                     StandardCharsets.UTF_8
