@@ -18,5 +18,5 @@ dependencies {
 
     compileOnly("com.google.code.gson:gson:2.13.2")
     compileOnly("com.mojang:brigadier:1.3.10")
-    compileOnly("net.kyori:adventure-api:4.26.1")
+    compileOnly("net.kyori:adventure-api:4.26.2-SNAPSHOT")
 }
