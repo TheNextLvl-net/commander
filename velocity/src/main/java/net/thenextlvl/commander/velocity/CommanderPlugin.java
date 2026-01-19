@@ -8,6 +8,7 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import dev.faststats.core.ErrorTracker;
 import dev.faststats.core.Metrics;
 import dev.faststats.velocity.VelocityMetrics;
 import net.thenextlvl.commander.command.CommanderCommand;
@@ -16,7 +17,6 @@ import net.thenextlvl.commander.velocity.version.CommanderVersionChecker;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 
-import java.io.IOException;
 import java.nio.file.Path;
 
 @NullMarked
@@ -43,12 +43,13 @@ public class CommanderPlugin {
         this.dataPath = dataPath;
         this.commons = new ProxyCommander(this);
         this.bStats = bStats;
-        this.fastStats = fastStats.token("417c37aa7e3b468fc09ee54af4336490");
+        this.fastStats = fastStats.token("417c37aa7e3b468fc09ee54af4336490")
+                .errorTracker(ErrorTracker.contextAware());
         new CommanderVersionChecker(this).checkVersion();
     }
 
     @Subscribe(priority = -1)
-    public void onProxyInitialize(ProxyInitializeEvent event) throws IOException {
+    public void onProxyInitialize(ProxyInitializeEvent event) {
         fastStats.create(this);
         bStats.make(this, 22782);
         server().getEventManager().register(this, new CommandListener());
