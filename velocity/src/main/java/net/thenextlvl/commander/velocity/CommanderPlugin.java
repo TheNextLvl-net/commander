@@ -9,7 +9,6 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import dev.faststats.core.ErrorTracker;
-import dev.faststats.core.Metrics;
 import dev.faststats.velocity.VelocityMetrics;
 import net.thenextlvl.commander.command.CommanderCommand;
 import net.thenextlvl.commander.velocity.listener.CommandListener;
@@ -26,7 +25,7 @@ import java.nio.file.Path;
         url = "https://thenextlvl.net",
         version = "5.0.0")
 public class CommanderPlugin {
-    private final Metrics.Factory<Object> fastStats;
+    private final VelocityMetrics.Factory fastStats;
     private final org.bstats.velocity.Metrics.Factory bStats;
     private final ProxyServer server;
     private final Logger logger;
