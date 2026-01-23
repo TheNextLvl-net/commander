@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    api("net.thenextlvl:i18n:1.1.0")
+    api("net.thenextlvl:i18n:1.2.0")
     api(project(":api"))
 
     compileOnly("com.google.code.gson:gson:2.13.2")
