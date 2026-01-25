@@ -25,14 +25,14 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
+    compileOnly("com.velocitypowered:velocity-api:3.5.0-SNAPSHOT")
 
     implementation("dev.faststats.metrics:velocity:0.13.1")
     implementation("net.thenextlvl.version-checker:modrinth-velocity:1.0.1")
     implementation("org.bstats:bstats-velocity:3.1.0")
     implementation(project(":commons"))
 
-    annotationProcessor("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
+    annotationProcessor("com.velocitypowered:velocity-api:3.5.0-SNAPSHOT")
 }
 
 
