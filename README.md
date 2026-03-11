@@ -27,4 +27,4 @@ To completely reset a command, use: `/command reset [command]`
 
 ---
 
-[![Usage](https://faststats.dev/embed/default:b027d374-827c-4e6f-9a59-18c91ad0b854:servers-and-players?w=1012)](https://faststats.dev/project/characters)
+[![Usage](https://faststats.dev/embed/default:b027d374-827c-4e6f-9a59-18c91ad0b854:servers-and-players?w=1012)](https://faststats.dev/project/commander)
