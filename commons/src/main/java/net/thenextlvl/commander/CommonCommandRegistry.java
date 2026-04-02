@@ -9,26 +9,26 @@ import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @NullMarked
 public abstract class CommonCommandRegistry implements CommandRegistry {
-    protected final GsonFile<Set<String>> hiddenFile;
-    protected final GsonFile<Set<String>> unregisteredFile;
+    protected final GsonFile<CopyOnWriteArraySet<String>> hiddenFile;
+    protected final GsonFile<CopyOnWriteArraySet<String>> unregisteredFile;
     protected final CommanderCommons commons;
 
-    protected CommonCommandRegistry(CommanderCommons commons) {
-        this.hiddenFile = new GsonFile<Set<String>>(
+    protected CommonCommandRegistry(final CommanderCommons commons) {
+        this.hiddenFile = new GsonFile<CopyOnWriteArraySet<String>>(
                 commons.getDataPath().resolve("hidden-commands.json"),
-                new HashSet<>(), new TypeToken<>() {
+                new CopyOnWriteArraySet<>(), new TypeToken<>() {
         }).reload().saveIfAbsent();
-        this.unregisteredFile = new GsonFile<Set<String>>(
+        this.unregisteredFile = new GsonFile<CopyOnWriteArraySet<String>>(
                 commons.getDataPath().resolve("removed-commands.json"),
-                new HashSet<>(), new TypeToken<>() {
+                new CopyOnWriteArraySet<>(), new TypeToken<>() {
         }).reload().saveIfAbsent();
         this.commons = commons;
     }
@@ -44,8 +44,8 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
     }
 
     @Override
-    public boolean hide(String command) {
-        var commands = commons.commandFinder().findCommands(command);
+    public boolean hide(final String command) {
+        final var commands = commons.commandFinder().findCommands(command);
         if (!Stream.concat(commands, Stream.of(command))
                 .map(hiddenFile.getRoot()::add)
                 .reduce(false, Boolean::logicalOr)) return false;
@@ -54,17 +54,17 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
     }
 
     @Override
-    public boolean isHidden(String command) {
+    public boolean isHidden(final String command) {
         return hiddenFile.getRoot().contains(command);
     }
 
     @Override
-    public boolean isUnregistered(String command) {
+    public boolean isUnregistered(final String command) {
         return unregisteredFile.getRoot().contains(command);
     }
 
     @Override
-    public boolean register(String command) {
+    public boolean register(final String command) {
         if (!commons.commandFinder().findCommands(Set.copyOf(unregisteredFile.getRoot()).stream(), command)
                 .filter(unregisteredFile.getRoot()::remove)
                 .map(this::internalRegister)
@@ -74,7 +74,7 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
     }
 
     @Override
-    public boolean reveal(String command) {
+    public boolean reveal(final String command) {
         if (!commons.commandFinder().findCommands(Set.copyOf(hiddenFile.getRoot()).stream(), command)
                 .map(hiddenFile.getRoot()::remove)
                 .reduce(false, Boolean::logicalOr)) return false;
@@ -90,7 +90,7 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
     }
 
     @Override
-    public boolean unregister(String command) {
+    public boolean unregister(final String command) {
         if (!commons.commandFinder().findCommands(command)
                 .filter(s -> !s.equals(commons.getRootCommand()))
                 .filter(unregisteredFile.getRoot()::add)
@@ -100,32 +100,32 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
         return true;
     }
 
-    public boolean save(boolean force) {
+    public boolean save(final boolean force) {
         return saveHidden(force) & saveUnregistered(force);
     }
 
-    public boolean saveHidden(boolean force) {
+    public boolean saveHidden(final boolean force) {
         if (!force && hiddenFile.hasChanged()) return false;
         hiddenFile.save();
         return true;
     }
 
-    public boolean saveUnregistered(boolean force) {
+    public boolean saveUnregistered(final boolean force) {
         if (!force && unregisteredFile.hasChanged()) return false;
         unregisteredFile.save();
         return true;
     }
 
-    public boolean reload(Audience audience) {
+    public boolean reload(final Audience audience) {
         return reloadHidden(audience) | reloadUnregistered(audience);
     }
 
-    private boolean reloadHidden(Audience audience) {
-        var previous = hiddenFile.getRoot();
-        var current = hiddenFile.reload();
+    private boolean reloadHidden(final Audience audience) {
+        final var previous = hiddenFile.getRoot();
+        final var current = hiddenFile.reload();
         if (previous.equals(current.getRoot())) return false;
-        var difference = difference(previous, current.getRoot());
-        var additions = difference.entrySet().stream()
+        final var difference = difference(previous, current.getRoot());
+        final var additions = difference.entrySet().stream()
                 .filter(Map.Entry::getValue).count();
         commons.bundle().sendMessage(audience, "command.reload.changes",
                 Formatter.number("additions", additions),
@@ -135,12 +135,12 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
         return true;
     }
 
-    private boolean reloadUnregistered(Audience audience) {
-        var previous = unregisteredFile.getRoot();
-        var current = unregisteredFile.reload();
+    private boolean reloadUnregistered(final Audience audience) {
+        final var previous = unregisteredFile.getRoot();
+        final var current = unregisteredFile.reload();
         if (previous.equals(current.getRoot())) return false;
-        var difference = difference(previous, current.getRoot());
-        var additions = difference.entrySet().stream()
+        final var difference = difference(previous, current.getRoot());
+        final var additions = difference.entrySet().stream()
                 .filter(Map.Entry::getValue).count();
         difference.forEach((command, added) -> {
             if (added) internalUnregister(command);
@@ -158,8 +158,8 @@ public abstract class CommonCommandRegistry implements CommandRegistry {
 
     protected abstract boolean internalUnregister(String command);
 
-    private Map<String, Boolean> difference(Set<String> previous, Set<String> current) {
-        var differences = new HashMap<String, Boolean>();
+    private Map<String, Boolean> difference(final Set<String> previous, final Set<String> current) {
+        final var differences = new HashMap<String, Boolean>();
         differences.putAll(current.stream()
                 .filter(s -> !previous.contains(s))
                 .collect(Collectors.toMap(s -> s, s -> true)));
