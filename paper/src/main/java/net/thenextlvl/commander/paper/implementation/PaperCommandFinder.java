@@ -4,6 +4,7 @@ import net.thenextlvl.commander.CommonCommandFinder;
 import net.thenextlvl.commander.paper.PaperCommander;
 import org.jspecify.annotations.NullMarked;
 
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -16,11 +17,11 @@ public class PaperCommandFinder extends CommonCommandFinder {
     }
 
     @Override
-    public Stream<String> findCommands(Pattern pattern) {
-        return findCommands(commander.getServer().getCommandMap().getKnownCommands().entrySet()
-                .stream().mapMulti((entry, consumer) -> {
-                    consumer.accept(entry.getKey());
-                    entry.getValue().getAliases().forEach(consumer);
-                }), pattern);
+    public Stream<String> findCommands(final Pattern pattern) {
+        final var entries = commander.getServer().getCommandMap().getKnownCommands().entrySet();
+        return findCommands(Set.copyOf(entries).stream().mapMulti((entry, consumer) -> {
+            consumer.accept(entry.getKey());
+            entry.getValue().getAliases().forEach(consumer);
+        }), pattern);
     }
 }
