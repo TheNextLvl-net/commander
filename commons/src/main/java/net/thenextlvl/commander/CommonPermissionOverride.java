@@ -12,17 +12,18 @@ import org.jspecify.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 @NullMarked
 public abstract class CommonPermissionOverride implements PermissionOverride {
-    protected final GsonFile<Map<String, String>> overridesFile;
+    protected final GsonFile<ConcurrentHashMap<String, String>> overridesFile;
     protected final CommanderCommons commons;
 
-    public CommonPermissionOverride(CommanderCommons commons) {
-        this.overridesFile = new GsonFile<Map<String, String>>(
+    public CommonPermissionOverride(final CommanderCommons commons) {
+        this.overridesFile = new GsonFile<ConcurrentHashMap<String, String>>(
                 commons.getDataPath().resolve("permission-overrides.json"),
-                new HashMap<>(), new TypeToken<>() {
+                new ConcurrentHashMap<>(), new TypeToken<>() {
         }).reload().saveIfAbsent();
         this.commons = commons;
     }
