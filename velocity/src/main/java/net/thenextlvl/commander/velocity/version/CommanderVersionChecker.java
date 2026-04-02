@@ -15,10 +15,10 @@ public class CommanderVersionChecker extends ModrinthVersionChecker<SemanticVers
     private final SemanticVersion versionRunning;
     private final CommanderPlugin plugin;
 
-    public CommanderVersionChecker(CommanderPlugin plugin) {
+    public CommanderVersionChecker(final CommanderPlugin plugin) {
         super("USLuwMUi");
         this.plugin = plugin;
-        var version = plugin.getClass().getAnnotation(Plugin.class).version();
+        final var version = plugin.getClass().getAnnotation(Plugin.class).version();
         this.versionRunning = Objects.requireNonNull(parseVersion(version));
     }
 
@@ -28,14 +28,14 @@ public class CommanderVersionChecker extends ModrinthVersionChecker<SemanticVers
     }
 
     @Override
-    public SemanticVersion parseVersion(String version) {
+    public SemanticVersion parseVersion(final String version) {
         return SemanticVersion.parse(version);
     }
 
     @Override
-    public boolean isSupported(ModrinthVersion version) {
+    public boolean isSupported(final ModrinthVersion version) {
         return version.gameVersions().contains(ProtocolVersion.MAXIMUM_VERSION.getMostRecentSupportedVersion())
-               && version.loaders().contains("velocity");
+                && version.loaders().contains("velocity");
     }
 
     public void checkVersion() {
@@ -50,9 +50,9 @@ public class CommanderVersionChecker extends ModrinthVersionChecker<SemanticVers
         });
     }
 
-    private void printUnsupportedInfo(SemanticVersion version) {
-        var logger = plugin.logger();
-        var latest = ProtocolVersion.MAXIMUM_VERSION.getMostRecentSupportedVersion();
+    private void printUnsupportedInfo(final SemanticVersion version) {
+        final var logger = plugin.logger();
+        final var latest = ProtocolVersion.MAXIMUM_VERSION.getMostRecentSupportedVersion();
         if (version.equals(versionRunning)) {
             logger.warn("{} seems to be unsupported by Commander version {}", latest, versionRunning);
         } else if (version.compareTo(versionRunning) > 0) {
@@ -63,8 +63,8 @@ public class CommanderVersionChecker extends ModrinthVersionChecker<SemanticVers
         } else logger.warn("You are running a snapshot version of Commander");
     }
 
-    private void printVersionInfo(SemanticVersion version) {
-        var logger = plugin.logger();
+    private void printVersionInfo(final SemanticVersion version) {
+        final var logger = plugin.logger();
         if (version.equals(versionRunning)) {
             logger.info("You are running the latest version of Commander");
         } else if (version.compareTo(versionRunning) > 0) {

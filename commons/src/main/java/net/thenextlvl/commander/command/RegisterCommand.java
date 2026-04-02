@@ -10,12 +10,12 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 final class RegisterCommand<S> extends SimpleCommand<S> {
-    private RegisterCommand(CommanderCommons commons) {
+    private RegisterCommand(final CommanderCommons commons) {
         super(commons, "register", "commander.command.register");
     }
 
-    public static <S> ArgumentBuilder<S, ?> create(CommanderCommons commons) {
-        var command = new RegisterCommand<S>(commons);
+    public static <S> ArgumentBuilder<S, ?> create(final CommanderCommons commons) {
+        final var command = new RegisterCommand<S>(commons);
         return command.create()
                 .then(commons.<S>brigadierAccess().argument("command", StringArgumentType.string())
                         .suggests((context, suggestions) -> {
@@ -28,11 +28,11 @@ final class RegisterCommand<S> extends SimpleCommand<S> {
     }
 
     @Override
-    public int run(CommandContext<S> context) {
-        var sender = commons.brigadierAccess().audience(context.getSource());
-        var command = context.getArgument("command", String.class);
-        var success = commons.commandRegistry().register(command);
-        var message = success ? "command.registered" : "nothing.changed";
+    public int run(final CommandContext<S> context) {
+        final var sender = commons.brigadierAccess().audience(context.getSource());
+        final var command = context.getArgument("command", String.class);
+        final var success = commons.commandRegistry().register(command);
+        final var message = success ? "command.registered" : "nothing.changed";
         commons.bundle().sendMessage(sender, message, Placeholder.parsed("command", command));
         if (success) commons.unregisteredConflictSave(sender);
         return success ? SINGLE_SUCCESS : 0;

@@ -17,21 +17,21 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public class CommandListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onCommandSend(PlayerCommandSendEvent event) {
+    public void onCommandSend(final PlayerCommandSendEvent event) {
         if (event.getPlayer().permissionValue("commander.bypass").equals(TriState.TRUE)) return;
         event.getCommands().removeAll(CommandRegistry.instance().hiddenCommands());
-        var permissionOverride = PermissionOverride.instance();
+        final var permissionOverride = PermissionOverride.instance();
         event.getCommands().removeIf(command -> {
-            var permission = permissionOverride.permission(command);
+            final var permission = permissionOverride.permission(command);
             return permission != null && !event.getPlayer().hasPermission(permission);
         });
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        var noSlash = event.getMessage().substring(1);
-        var command = noSlash.split(" ", 2)[0];
-        var permission = PermissionOverride.instance().permission(command);
+    public void onCommandPreprocess(final PlayerCommandPreprocessEvent event) {
+        final var noSlash = event.getMessage().substring(1);
+        final var command = noSlash.split(" ", 2)[0];
+        final var permission = PermissionOverride.instance().permission(command);
         if (permission == null || event.getPlayer().hasPermission(permission)) return;
         event.getPlayer().sendMessage(Component.translatable("command.unknown.command").appendNewline()
                 .append(Component.text().append(Component.text(noSlash).decorate(TextDecoration.UNDERLINED))

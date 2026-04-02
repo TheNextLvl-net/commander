@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 public class PaperCommandFinder extends CommonCommandFinder {
     private final PaperCommander commander;
 
-    public PaperCommandFinder(PaperCommander commander) {
+    public PaperCommandFinder(final PaperCommander commander) {
         this.commander = commander;
     }
 

@@ -7,11 +7,11 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 public final class CommanderCommand<S> extends BrigadierCommand<S> {
-    private CommanderCommand(CommanderCommons commons) {
+    private CommanderCommand(final CommanderCommons commons) {
         super(commons, commons.getRootCommand(), "commander.command");
     }
 
-    public static <S> LiteralCommandNode<S> create(CommanderCommons commons) {
+    public static <S> LiteralCommandNode<S> create(final CommanderCommons commons) {
         return new CommanderCommand<S>(commons).create()
                 .then(HideCommand.<S>create(commons))
                 .then(PermissionCommand.<S>create(commons))

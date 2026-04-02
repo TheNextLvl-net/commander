@@ -7,7 +7,7 @@ import org.jspecify.annotations.Nullable;
 
 @NullMarked
 public abstract class SimpleCommand<S> extends BrigadierCommand<S> implements Command<S> {
-    protected SimpleCommand(CommanderCommons commons, String name, @Nullable String permission) {
+    protected SimpleCommand(final CommanderCommons commons, final String name, @Nullable final String permission) {
         super(commons, name, permission);
     }
 }

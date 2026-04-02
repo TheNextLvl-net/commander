@@ -19,10 +19,10 @@ public abstract class CommanderCommons {
     private final Path dataPath;
     private final ComponentBundle bundle;
 
-    protected CommanderCommons(Path dataPath) {
+    protected CommanderCommons(final Path dataPath) {
         this.dataPath = dataPath;
-        var key = Key.key("commander", "translations");
-        var translations = dataPath.resolve("translations");
+        final var key = Key.key("commander", "translations");
+        final var translations = dataPath.resolve("translations");
         this.bundle = ComponentBundle.builder(key, translations)
                 .placeholder("prefix", "prefix")
                 .miniMessage(MiniMessage.builder().tags(TagResolver.resolver(
@@ -60,22 +60,22 @@ public abstract class CommanderCommons {
 
     public abstract void updateCommands();
 
-    public final void conflictSave(Audience audience) {
+    public final void conflictSave(final Audience audience) {
         if (commandRegistry().save(false) & permissionOverride().save(false)) return;
         bundle().sendMessage(audience, "command.save.conflict");
     }
 
-    public final void hiddenConflictSave(Audience audience) {
+    public final void hiddenConflictSave(final Audience audience) {
         if (commandRegistry().saveHidden(false)) return;
         bundle().sendMessage(audience, "command.save.conflict");
     }
 
-    public final void unregisteredConflictSave(Audience audience) {
+    public final void unregisteredConflictSave(final Audience audience) {
         if (commandRegistry().saveUnregistered(false)) return;
         bundle().sendMessage(audience, "command.save.conflict");
     }
 
-    public final void permissionConflictSave(Audience audience) {
+    public final void permissionConflictSave(final Audience audience) {
         if (permissionOverride().save(false)) return;
         bundle().sendMessage(audience, "command.save.conflict");
     }

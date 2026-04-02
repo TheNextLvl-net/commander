@@ -8,12 +8,12 @@ import org.jspecify.annotations.Nullable;
 
 @NullMarked
 public class CommanderVersionChecker extends PaperModrinthVersionChecker<SemanticVersion> {
-    public CommanderVersionChecker(CommanderPlugin plugin) {
+    public CommanderVersionChecker(final CommanderPlugin plugin) {
         super(plugin, "USLuwMUi");
     }
 
     @Override
-    public @Nullable SemanticVersion parseVersion(String version) {
+    public @Nullable SemanticVersion parseVersion(final String version) {
         return SemanticVersion.parse(version);
     }
 }

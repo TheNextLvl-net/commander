@@ -7,12 +7,12 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 final class PermissionCommand<S> extends BrigadierCommand<S> {
-    private PermissionCommand(CommanderCommons commons) {
+    private PermissionCommand(final CommanderCommons commons) {
         super(commons, "permission", "commander.command.permission");
     }
 
-    public static <S> ArgumentBuilder<S, ?> create(CommanderCommons commons) {
-        var command = new PermissionCommand<S>(commons);
+    public static <S> ArgumentBuilder<S, ?> create(final CommanderCommons commons) {
+        final var command = new PermissionCommand<S>(commons);
         return command.create()
                 .then(PermissionQueryCommand.<S>create(commons))
                 .then(PermissionResetCommand.<S>create(commons))

@@ -14,7 +14,7 @@ import java.util.Objects;
 public class PaperPermissionOverride extends CommonPermissionOverride {
     private final Map<String, @Nullable String> originalPermissions = new HashMap<>();
 
-    public PaperPermissionOverride(PaperCommander commander) {
+    public PaperPermissionOverride(final PaperCommander commander) {
         super(commander);
     }
 
@@ -24,7 +24,7 @@ public class PaperPermissionOverride extends CommonPermissionOverride {
     }
 
     @Override
-    public @Nullable String originalPermission(String command) {
+    public @Nullable String originalPermission(final String command) {
         return originalPermissions.get(command);
     }
 
@@ -34,16 +34,16 @@ public class PaperPermissionOverride extends CommonPermissionOverride {
     }
 
     @Override
-    protected boolean internalOverride(String command, String permission) {
-        var plugin = ((PaperCommander) commons).getPlugin();
-        var registered = plugin.getServer().getCommandMap().getKnownCommands().get(command);
+    protected boolean internalOverride(final String command, final String permission) {
+        final var plugin = ((PaperCommander) commons).getPlugin();
+        final var registered = plugin.getServer().getCommandMap().getKnownCommands().get(command);
 
-        var registeredPermission = registered != null ? registered.getPermission() : null;
+        final var registeredPermission = registered != null ? registered.getPermission() : null;
         if (permission.equals(registeredPermission)) return false;
         originalPermissions.putIfAbsent(command, registeredPermission);
 
-        var dispatcher = plugin.commandDispatcher();
-        var child = dispatcher != null ? dispatcher.getRoot().getChild(command) : null;
+        final var dispatcher = plugin.commandDispatcher();
+        final var child = dispatcher != null ? dispatcher.getRoot().getChild(command) : null;
         if (child != null) return true;
 
         if (registered == null) return false;
@@ -52,15 +52,15 @@ public class PaperPermissionOverride extends CommonPermissionOverride {
     }
 
     @Override
-    protected boolean internalReset(String command) {
-        var plugin = ((PaperCommander) commons).getPlugin();
-        var registered = plugin.getServer().getCommandMap().getKnownCommands().get(command);
+    protected boolean internalReset(final String command) {
+        final var plugin = ((PaperCommander) commons).getPlugin();
+        final var registered = plugin.getServer().getCommandMap().getKnownCommands().get(command);
 
         if (!originalPermissions.containsKey(command)) return false;
-        var permission = originalPermissions.remove(command);
+        final var permission = originalPermissions.remove(command);
 
-        var dispatcher = plugin.commandDispatcher();
-        var child = dispatcher != null ? dispatcher.getRoot().getChild(command) : null;
+        final var dispatcher = plugin.commandDispatcher();
+        final var child = dispatcher != null ? dispatcher.getRoot().getChild(command) : null;
         if (child != null) return true;
 
         if (registered == null) return false;

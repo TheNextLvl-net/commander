@@ -34,8 +34,8 @@ public class CommanderPlugin {
 
     @Inject
     public CommanderPlugin(
-            ProxyServer server, Logger logger, @DataDirectory Path dataPath,
-            org.bstats.velocity.Metrics.Factory bStats, VelocityMetrics.Factory fastStats
+            final ProxyServer server, final Logger logger, @DataDirectory final Path dataPath,
+            final org.bstats.velocity.Metrics.Factory bStats, final VelocityMetrics.Factory fastStats
     ) {
         this.server = server;
         this.logger = logger;
@@ -48,17 +48,17 @@ public class CommanderPlugin {
     }
 
     @Subscribe(priority = -1)
-    public void onProxyInitialize(ProxyInitializeEvent event) {
+    public void onProxyInitialize(final ProxyInitializeEvent event) {
         fastStats.create(this);
         bStats.make(this, 22782);
         server().getEventManager().register(this, new CommandListener());
-        var meta = server.getCommandManager().metaBuilder(commons.getRootCommand()).plugin(this).build();
+        final var meta = server.getCommandManager().metaBuilder(commons.getRootCommand()).plugin(this).build();
         server().getCommandManager().register(meta, new BrigadierCommand(CommanderCommand.create(commons)));
         commons.commandRegistry().unregisterCommands();
     }
 
     @Subscribe(priority = 999)
-    public void onProxyShutdown(ProxyShutdownEvent event) {
+    public void onProxyShutdown(final ProxyShutdownEvent event) {
         commons.commandRegistry().save(true);
         commons.permissionOverride().save(true);
     }

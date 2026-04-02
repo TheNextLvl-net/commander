@@ -41,7 +41,7 @@ public final class GsonFile<R> {
     private String digest = "";
     private long lastModified = 0;
 
-    public GsonFile(Path file, R root, TypeToken<R> token) {
+    public GsonFile(final Path file, final R root, final TypeToken<R> token) {
         this.defaultRoot = root;
         this.file = file;
         this.root = root;
@@ -54,7 +54,7 @@ public final class GsonFile<R> {
         return root = load();
     }
 
-    private GsonFile<R> setRoot(R root) {
+    private GsonFile<R> setRoot(final R root) {
         this.loaded = true;
         this.root = root;
         return this;
@@ -64,19 +64,19 @@ public final class GsonFile<R> {
         return setRoot(load());
     }
 
-    public GsonFile<R> saveIfAbsent(FileAttribute<?>... attributes) {
+    public GsonFile<R> saveIfAbsent(final FileAttribute<?>... attributes) {
         return Files.isRegularFile(file) ? this : save(attributes);
     }
 
     private R load() {
         if (!Files.isRegularFile(file)) return getRoot();
-        try (var reader = new JsonReader(new InputStreamReader(
+        try (final var reader = new JsonReader(new InputStreamReader(
                 Files.newInputStream(file, READ),
                 StandardCharsets.UTF_8
         ))) {
-            R root = GSON.fromJson(reader, type);
+            final R root = GSON.fromJson(reader, type);
             return root != null ? root : defaultRoot;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         } finally {
             this.digest = digest();
@@ -84,18 +84,18 @@ public final class GsonFile<R> {
         }
     }
 
-    public GsonFile<R> save(FileAttribute<?>... attributes) {
+    public GsonFile<R> save(final FileAttribute<?>... attributes) {
         try {
-            var root = getRoot();
+            final var root = getRoot();
             Files.createDirectories(file.toAbsolutePath().getParent(), attributes);
-            try (var writer = new BufferedWriter(new OutputStreamWriter(
+            try (final var writer = new BufferedWriter(new OutputStreamWriter(
                     Files.newOutputStream(file, WRITE, CREATE, TRUNCATE_EXISTING),
                     StandardCharsets.UTF_8
             ))) {
                 GSON.toJson(root, type, writer);
                 return this;
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         } finally {
             this.digest = digest();
@@ -110,16 +110,16 @@ public final class GsonFile<R> {
     private String digest() {
         try {
             if (!Files.exists(file)) return "";
-            var crc = new CRC32C();
-            try (var input = Files.newInputStream(file)) {
-                var buffer = new byte[BUFFER_SIZE];
+            final var crc = new CRC32C();
+            try (final var input = Files.newInputStream(file)) {
+                final var buffer = new byte[BUFFER_SIZE];
                 int bytesRead;
                 while ((bytesRead = input.read(buffer)) != -1) {
                     crc.update(buffer, 0, bytesRead);
                 }
             }
             return Long.toHexString(crc.getValue());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             return "";
         }
     }
@@ -128,7 +128,7 @@ public final class GsonFile<R> {
         try {
             if (!Files.exists(file)) return System.currentTimeMillis();
             return Files.getLastModifiedTime(file).toMillis();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             return System.currentTimeMillis();
         }
     }

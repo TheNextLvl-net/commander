@@ -11,12 +11,12 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 final class PermissionSetCommand<S> extends SimpleCommand<S> {
-    private PermissionSetCommand(CommanderCommons commons) {
+    private PermissionSetCommand(final CommanderCommons commons) {
         super(commons, "set", "commander.command.permission.set");
     }
 
-    public static <S> ArgumentBuilder<S, ?> create(CommanderCommons commons) {
-        var command = new PermissionSetCommand<S>(commons);
+    public static <S> ArgumentBuilder<S, ?> create(final CommanderCommons commons) {
+        final var command = new PermissionSetCommand<S>(commons);
         return command.create().then(commons.<S>brigadierAccess().argument("command", StringArgumentType.string())
                 .suggests(new CommandSuggestionProvider<>(commons))
                 .then(commons.<S>brigadierAccess().argument("permission", StringArgumentType.string())
@@ -30,12 +30,12 @@ final class PermissionSetCommand<S> extends SimpleCommand<S> {
     }
 
     @Override
-    public int run(CommandContext<S> context) {
-        var sender = commons.brigadierAccess().audience(context.getSource());
-        var command = context.getArgument("command", String.class);
-        var permission = context.getArgument("permission", String.class);
-        var success = commons.permissionOverride().override(command, permission);
-        var message = success ? "permission.set" : "nothing.changed";
+    public int run(final CommandContext<S> context) {
+        final var sender = commons.brigadierAccess().audience(context.getSource());
+        final var command = context.getArgument("command", String.class);
+        final var permission = context.getArgument("permission", String.class);
+        final var success = commons.permissionOverride().override(command, permission);
+        final var message = success ? "permission.set" : "nothing.changed";
         commons.bundle().sendMessage(sender, message,
                 Placeholder.parsed("permission", permission),
                 Placeholder.parsed("command", command));

@@ -11,23 +11,23 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 final class PermissionQueryCommand<S> extends SimpleCommand<S> {
-    private PermissionQueryCommand(CommanderCommons commons) {
+    private PermissionQueryCommand(final CommanderCommons commons) {
         super(commons, "query", "commander.command.permission.query");
     }
 
-    public static <S> ArgumentBuilder<S, ?> create(CommanderCommons commons) {
-        var command = new PermissionQueryCommand<S>(commons);
+    public static <S> ArgumentBuilder<S, ?> create(final CommanderCommons commons) {
+        final var command = new PermissionQueryCommand<S>(commons);
         return command.create().then(commons.<S>brigadierAccess().argument("command", StringArgumentType.string())
                 .suggests(new CommandSuggestionProvider<>(commons))
                 .executes(command));
     }
 
     @Override
-    public int run(CommandContext<S> context) {
-        var sender = commons.brigadierAccess().audience(context.getSource());
-        var command = context.getArgument("command", String.class);
-        var permission = commons.permissionOverride().permission(command);
-        var message = permission != null ? "permission.query.defined" : "permission.query.undefined";
+    public int run(final CommandContext<S> context) {
+        final var sender = commons.brigadierAccess().audience(context.getSource());
+        final var command = context.getArgument("command", String.class);
+        final var permission = commons.permissionOverride().permission(command);
+        final var message = permission != null ? "permission.query.defined" : "permission.query.undefined";
         commons.bundle().sendMessage(sender, message,
                 Placeholder.parsed("permission", String.valueOf(permission)),
                 Placeholder.parsed("command", command));

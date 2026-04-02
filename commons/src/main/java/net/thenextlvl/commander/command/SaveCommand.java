@@ -8,20 +8,20 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 final class SaveCommand<S> extends SimpleCommand<S> {
-    private SaveCommand(CommanderCommons commons) {
+    private SaveCommand(final CommanderCommons commons) {
         super(commons, "save", "commander.command.save");
     }
 
-    public static <S> ArgumentBuilder<S, ?> create(CommanderCommons commons) {
-        var command = new SaveCommand<S>(commons);
+    public static <S> ArgumentBuilder<S, ?> create(final CommanderCommons commons) {
+        final var command = new SaveCommand<S>(commons);
         return command.create().executes(command);
     }
 
     @Override
-    public int run(CommandContext<S> context) {
-        var sender = commons.brigadierAccess().audience(context.getSource());
-        var saved = commons.commandRegistry().save(true) & commons.permissionOverride().save(true);
-        var message = saved ? "command.saved" : "nothing.changed";
+    public int run(final CommandContext<S> context) {
+        final var sender = commons.brigadierAccess().audience(context.getSource());
+        final var saved = commons.commandRegistry().save(true) & commons.permissionOverride().save(true);
+        final var message = saved ? "command.saved" : "nothing.changed";
         commons.bundle().sendMessage(sender, message);
         return saved ? SINGLE_SUCCESS : 0;
     }

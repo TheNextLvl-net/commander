@@ -11,23 +11,23 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 final class PermissionResetCommand<S> extends SimpleCommand<S> {
-    private PermissionResetCommand(CommanderCommons commons) {
+    private PermissionResetCommand(final CommanderCommons commons) {
         super(commons, "reset", "commander.command.permission.reset");
     }
 
-    public static <S> ArgumentBuilder<S, ?> create(CommanderCommons plugin) {
-        var command = new PermissionResetCommand<S>(plugin);
+    public static <S> ArgumentBuilder<S, ?> create(final CommanderCommons plugin) {
+        final var command = new PermissionResetCommand<S>(plugin);
         return command.create().then(plugin.<S>brigadierAccess().argument("command", StringArgumentType.string())
                 .suggests(new PermissionResetSuggestionProvider<>(plugin))
                 .executes(command));
     }
 
     @Override
-    public int run(CommandContext<S> context) {
-        var sender = commons.brigadierAccess().audience(context.getSource());
-        var command = context.getArgument("command", String.class);
-        var success = commons.permissionOverride().reset(command);
-        var message = success ? "permission.reset" : "nothing.changed";
+    public int run(final CommandContext<S> context) {
+        final var sender = commons.brigadierAccess().audience(context.getSource());
+        final var command = context.getArgument("command", String.class);
+        final var success = commons.permissionOverride().reset(command);
+        final var message = success ? "permission.reset" : "nothing.changed";
         commons.bundle().sendMessage(sender, message, Placeholder.parsed("command", command));
         if (success) commons.permissionConflictSave(sender);
         return success ? SINGLE_SUCCESS : 0;

@@ -14,12 +14,12 @@ import java.util.concurrent.CompletableFuture;
 public class CommandSuggestionProvider<S> implements SuggestionProvider<S> {
     private final CommanderCommons commons;
 
-    public CommandSuggestionProvider(CommanderCommons commons) {
+    public CommandSuggestionProvider(final CommanderCommons commons) {
         this.commons = commons;
     }
 
     @Override
-    public CompletableFuture<Suggestions> getSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+    public CompletableFuture<Suggestions> getSuggestions(final CommandContext<S> context, final SuggestionsBuilder builder) {
         commons.getKnownCommands()
                 .filter(s -> !commons.commandRegistry().isUnregistered(s))
                 .map(StringArgumentType::escapeIfRequired)

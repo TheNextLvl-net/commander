@@ -6,17 +6,17 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 public class ProxyCommandRegistry extends CommonCommandRegistry {
-    public ProxyCommandRegistry(ProxyCommander commander) {
+    public ProxyCommandRegistry(final ProxyCommander commander) {
         super(commander);
     }
 
     @Override
-    protected boolean internalRegister(String command) {
+    protected boolean internalRegister(final String command) {
         return true;
     }
 
     @Override
-    protected boolean internalUnregister(String command) {
+    protected boolean internalUnregister(final String command) {
         ((ProxyCommander) commons).server().getCommandManager().unregister(command);
         return true;
     }

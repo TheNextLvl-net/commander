@@ -9,23 +9,23 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 final class ReloadCommand<S> extends SimpleCommand<S> {
-    private ReloadCommand(CommanderCommons commons) {
+    private ReloadCommand(final CommanderCommons commons) {
         super(commons, "reload", "commander.command.reload");
     }
 
-    public static <S> ArgumentBuilder<S, ?> create(CommanderCommons plugin) {
-        var command = new ReloadCommand<S>(plugin);
+    public static <S> ArgumentBuilder<S, ?> create(final CommanderCommons plugin) {
+        final var command = new ReloadCommand<S>(plugin);
         return command.create().executes(command);
     }
 
     @Override
-    public int run(CommandContext<S> context) {
-        var sender = commons.brigadierAccess().audience(context.getSource());
+    public int run(final CommandContext<S> context) {
+        final var sender = commons.brigadierAccess().audience(context.getSource());
         try {
-            var success = commons.commandRegistry().reload(sender) | commons.permissionOverride().reload(sender);
+            final var success = commons.commandRegistry().reload(sender) | commons.permissionOverride().reload(sender);
             commons.bundle().sendMessage(sender, success ? "command.reload.success" : "nothing.changed");
             return success ? SINGLE_SUCCESS : 0;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             commons.bundle().sendMessage(sender, "command.reload.failed",
                     Placeholder.parsed("error", e.getMessage()));
             commons.logger().warn("Failed to reload command configurations", e);

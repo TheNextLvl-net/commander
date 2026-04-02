@@ -11,12 +11,12 @@ import java.util.stream.Stream;
 public class ProxyCommandFinder extends CommonCommandFinder {
     private final ProxyCommander commander;
 
-    public ProxyCommandFinder(ProxyCommander commander) {
+    public ProxyCommandFinder(final ProxyCommander commander) {
         this.commander = commander;
     }
 
     @Override
-    public Stream<String> findCommands(Pattern pattern) {
+    public Stream<String> findCommands(final Pattern pattern) {
         return findCommands(commander.server().getCommandManager().getAliases().stream(), pattern);
     }
 }

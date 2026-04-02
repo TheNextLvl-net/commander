@@ -54,9 +54,10 @@ hangarPublish { // docs - https://docs.papermc.io/misc/hangar-publishing
         apiKey.set(System.getenv("HANGAR_API_TOKEN"))
         platforms.register(Platforms.VELOCITY) {
             jar.set(tasks.shadowJar.flatMap { it.archiveFile })
-            platformVersions.set((property("velocityVersions") as String)
-                .split(",")
-                .map { it.trim() })
+            platformVersions.set(
+                (property("velocityVersions") as String)
+                    .split(",")
+                    .map { it.trim() })
         }
     }
 }
@@ -67,8 +68,9 @@ modrinth {
     changelog = System.getenv("CHANGELOG")
     versionType = if (isRelease) "release" else "beta"
     uploadFile.set(tasks.shadowJar)
-    gameVersions.set((property("gameVersions") as String)
-        .split(",")
-        .map { it.trim() })
+    gameVersions.set(
+        (property("gameVersions") as String)
+            .split(",")
+            .map { it.trim() })
     loaders.add("velocity")
 }

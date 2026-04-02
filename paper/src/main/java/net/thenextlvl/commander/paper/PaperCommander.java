@@ -29,7 +29,7 @@ public class PaperCommander extends CommanderCommons {
 
     private final CommanderPlugin plugin;
 
-    public PaperCommander(CommanderPlugin plugin) {
+    public PaperCommander(final CommanderPlugin plugin) {
         super(plugin.getDataPath());
         this.plugin = plugin;
         this.commandFinder = new PaperCommandFinder(this);

@@ -28,18 +28,18 @@ public abstract class CommonPermissionOverride implements PermissionOverride {
         this.commons = commons;
     }
 
-    public boolean save(boolean force) {
+    public boolean save(final boolean force) {
         if (!force && overridesFile.hasChanged()) return false;
         overridesFile.save();
         return true;
     }
 
-    public boolean reload(Audience audience) {
-        var previous = overridesFile.getRoot();
-        var current = overridesFile.reload();
+    public boolean reload(final Audience audience) {
+        final var previous = overridesFile.getRoot();
+        final var current = overridesFile.reload();
         if (previous.equals(current.getRoot())) return false;
-        var difference = difference(previous, current.getRoot());
-        var additions = difference.entrySet().stream()
+        final var difference = difference(previous, current.getRoot());
+        final var additions = difference.entrySet().stream()
                 .filter(Map.Entry::getValue).count();
         commons.bundle().sendMessage(audience, "command.reload.changes",
                 Formatter.number("additions", additions),
@@ -58,18 +58,18 @@ public abstract class CommonPermissionOverride implements PermissionOverride {
     }
 
     @Override
-    public @Nullable String permission(String command) {
+    public @Nullable String permission(final String command) {
         return overridesFile.getRoot().get(command);
     }
 
     @Override
-    public boolean isOverridden(String command) {
+    public boolean isOverridden(final String command) {
         return overridesFile.getRoot().containsKey(command);
     }
 
     @Override
-    public boolean override(String command, String permission) {
-        var commands = commons.commandFinder().findCommands(command);
+    public boolean override(final String command, final String permission) {
+        final var commands = commons.commandFinder().findCommands(command);
         if (!Stream.concat(commands, Stream.of(command))
                 .filter(s -> internalOverride(s, permission))
                 .map(s -> overridesFile.getRoot().put(s, permission) == null)
@@ -79,9 +79,9 @@ public abstract class CommonPermissionOverride implements PermissionOverride {
     }
 
     @Override
-    public boolean reset(String command) {
-        var commands = commons.commandFinder().findCommands(overridesFile.getRoot().keySet().stream(), command);
-        var reset = Stream.concat(commands, Stream.of(command)).toList();
+    public boolean reset(final String command) {
+        final var commands = commons.commandFinder().findCommands(overridesFile.getRoot().keySet().stream(), command);
+        final var reset = Stream.concat(commands, Stream.of(command)).toList();
         if (!reset.stream()
                 .map(s -> overridesFile.getRoot().remove(s) != null)
                 .reduce(false, Boolean::logicalOr)) return false;
@@ -94,8 +94,8 @@ public abstract class CommonPermissionOverride implements PermissionOverride {
 
     protected abstract boolean internalReset(String command);
 
-    protected Map<PermissionOverride, Boolean> difference(Map<String, String> previous, Map<String, String> current) {
-        var differences = new HashMap<PermissionOverride, Boolean>();
+    protected Map<PermissionOverride, Boolean> difference(final Map<String, String> previous, final Map<String, String> current) {
+        final var differences = new HashMap<PermissionOverride, Boolean>();
         current.entrySet().stream()
                 .filter(entry -> !Objects.equals(previous.get(entry.getKey()), entry.getValue()))
                 .forEach(entry -> differences.put(new PermissionOverride(entry.getKey(), entry.getValue()), true));

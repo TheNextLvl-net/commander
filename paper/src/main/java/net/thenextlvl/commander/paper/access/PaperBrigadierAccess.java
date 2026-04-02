@@ -12,22 +12,22 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public class PaperBrigadierAccess extends BrigadierAccess<CommandSourceStack> {
     @Override
-    public LiteralArgumentBuilder<CommandSourceStack> literal(String name) {
+    public LiteralArgumentBuilder<CommandSourceStack> literal(final String name) {
         return Commands.literal(name);
     }
 
     @Override
-    public <T> RequiredArgumentBuilder<CommandSourceStack, T> argument(String name, ArgumentType<T> type) {
+    public <T> RequiredArgumentBuilder<CommandSourceStack, T> argument(final String name, final ArgumentType<T> type) {
         return Commands.argument(name, type);
     }
 
     @Override
-    public boolean hasPermission(CommandSourceStack source, String permission) {
+    public boolean hasPermission(final CommandSourceStack source, final String permission) {
         return source.getSender().hasPermission(permission);
     }
 
     @Override
-    public Audience audience(CommandSourceStack source) {
+    public Audience audience(final CommandSourceStack source) {
         return source.getSender();
     }
 }

@@ -14,12 +14,12 @@ import java.util.concurrent.CompletableFuture;
 public class PermissionResetSuggestionProvider<S> implements SuggestionProvider<S> {
     private final CommanderCommons commons;
 
-    public PermissionResetSuggestionProvider(CommanderCommons commons) {
+    public PermissionResetSuggestionProvider(final CommanderCommons commons) {
         this.commons = commons;
     }
 
     @Override
-    public CompletableFuture<Suggestions> getSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+    public CompletableFuture<Suggestions> getSuggestions(final CommandContext<S> context, final SuggestionsBuilder builder) {
         commons.permissionOverride().overrides().keySet().stream()
                 .filter(s -> !commons.commandRegistry().isUnregistered(s))
                 .map(StringArgumentType::escapeIfRequired)

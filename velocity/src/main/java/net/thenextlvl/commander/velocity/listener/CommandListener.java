@@ -16,23 +16,23 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public class CommandListener {
     @Subscribe(priority = -1)
-    public void onCommandSend(PlayerAvailableCommandsEvent event) {
+    public void onCommandSend(final PlayerAvailableCommandsEvent event) {
         if (event.getPlayer().getPermissionValue("commander.bypass").equals(Tristate.TRUE)) return;
-        var commandRegistry = CommandRegistry.instance();
-        var permissionOverride = PermissionOverride.instance();
+        final var commandRegistry = CommandRegistry.instance();
+        final var permissionOverride = PermissionOverride.instance();
         event.getRootNode().getChildren().removeIf(commandNode -> {
             if (commandRegistry.isHidden(commandNode.getName())) return true;
-            var permission = permissionOverride.permission(commandNode.getName());
+            final var permission = permissionOverride.permission(commandNode.getName());
             return permission != null && !event.getPlayer().hasPermission(permission);
         });
     }
 
     @Subscribe(priority = -1)
-    public void onPlayerChat(CommandExecuteEvent event) {
+    public void onPlayerChat(final CommandExecuteEvent event) {
         if (!event.getResult().isAllowed()) return;
-        var command = event.getCommand().split(" ", 2)[0];
+        final var command = event.getCommand().split(" ", 2)[0];
         if (event.getCommandSource() instanceof ConsoleCommandSource) return;
-        var permission = PermissionOverride.instance().permission(command);
+        final var permission = PermissionOverride.instance().permission(command);
         if (permission == null || event.getCommandSource().hasPermission(permission)) return;
         event.getCommandSource().sendMessage(Component.translatable("command.unknown.command").appendNewline()
                 .append(Component.text().append(Component.text(event.getCommand()).decorate(TextDecoration.UNDERLINED))

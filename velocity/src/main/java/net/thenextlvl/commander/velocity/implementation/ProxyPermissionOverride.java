@@ -10,7 +10,7 @@ import java.util.Map;
 
 @NullMarked
 public class ProxyPermissionOverride extends CommonPermissionOverride {
-    public ProxyPermissionOverride(ProxyCommander commander) {
+    public ProxyPermissionOverride(final ProxyCommander commander) {
         super(commander);
     }
 
@@ -20,7 +20,7 @@ public class ProxyPermissionOverride extends CommonPermissionOverride {
     }
 
     @Override
-    public @Nullable String originalPermission(String command) {
+    public @Nullable String originalPermission(final String command) {
         return null;
     }
 
@@ -29,12 +29,12 @@ public class ProxyPermissionOverride extends CommonPermissionOverride {
     }
 
     @Override
-    protected boolean internalOverride(String command, String permission) {
+    protected boolean internalOverride(final String command, final String permission) {
         return true;
     }
 
     @Override
-    protected boolean internalReset(String command) {
+    protected boolean internalReset(final String command) {
         return true;
     }
 }

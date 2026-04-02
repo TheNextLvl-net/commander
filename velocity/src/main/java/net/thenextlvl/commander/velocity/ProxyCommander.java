@@ -26,7 +26,7 @@ public class ProxyCommander extends CommanderCommons {
 
     private final CommanderPlugin plugin;
 
-    public ProxyCommander(CommanderPlugin plugin) {
+    public ProxyCommander(final CommanderPlugin plugin) {
         super(plugin.dataPath());
         this.plugin = plugin;
         this.commandFinder = new ProxyCommandFinder(this);

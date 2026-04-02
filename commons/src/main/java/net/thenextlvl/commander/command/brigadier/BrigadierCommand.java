@@ -15,7 +15,7 @@ public abstract class BrigadierCommand<S> {
     private final @Nullable String permission;
     private final String name;
 
-    protected BrigadierCommand(CommanderCommons commons, String name, @Nullable String permission) {
+    protected BrigadierCommand(final CommanderCommons commons, final String name, @Nullable final String permission) {
         this.commons = commons;
         this.permission = permission;
         this.name = name;
@@ -26,14 +26,14 @@ public abstract class BrigadierCommand<S> {
                 .requires(this::canUse);
     }
 
-    protected boolean canUse(S source) {
+    protected boolean canUse(final S source) {
         return permission == null || commons.brigadierAccess().hasPermission(source, permission);
     }
 
-    protected <T> Optional<T> tryGetArgument(CommandContext<S> context, String name, Class<T> type) {
+    protected <T> Optional<T> tryGetArgument(final CommandContext<S> context, final String name, final Class<T> type) {
         try {
             return Optional.of(context.getArgument(name, type));
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             if (e.getMessage().equals("No such argument '" + name + "' exists on this command"))
                 return Optional.empty();
             throw e;
