@@ -13,11 +13,11 @@ group = rootProject.group
 version = rootProject.version
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
 }
 
 tasks.compileJava {
-    options.release.set(21)
+    options.release.set(25)
 }
 
 repositories {
@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:26.1.1.build.+")
 
     implementation("dev.faststats.metrics:bukkit:0.20.1")
     implementation("net.thenextlvl.version-checker:modrinth-paper:1.0.1")
@@ -46,7 +46,7 @@ paper {
     name = "Commander"
     load = BukkitPluginDescription.PluginLoadOrder.STARTUP
     main = "net.thenextlvl.commander.paper.CommanderPlugin"
-    apiVersion = "1.21"
+    apiVersion = "26.1"
     foliaSupported = true
     website = "https://thenextlvl.net"
     authors = listOf("NonSwag")

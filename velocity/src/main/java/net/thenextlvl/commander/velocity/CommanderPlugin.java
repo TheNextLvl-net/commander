@@ -23,7 +23,7 @@ import java.nio.file.Path;
         name = "Commander",
         authors = "NonSwag",
         url = "https://thenextlvl.net",
-        version = "5.0.2")
+        version = "5.1.0")
 public class CommanderPlugin {
     private final VelocityMetrics.Factory fastStats;
     private final org.bstats.velocity.Metrics.Factory bStats;
