@@ -1,8 +1,8 @@
 package net.thenextlvl.commander.paper;
 
 import com.mojang.brigadier.CommandDispatcher;
-import dev.faststats.bukkit.BukkitMetrics;
-import dev.faststats.core.ErrorTracker;
+import dev.faststats.ErrorTracker;
+import dev.faststats.bukkit.BukkitContext;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.thenextlvl.commander.command.CommanderCommand;
@@ -15,11 +15,13 @@ import org.jspecify.annotations.Nullable;
 
 @NullMarked
 public class CommanderPlugin extends JavaPlugin {
+    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+    private final BukkitContext context = new BukkitContext.Factory(this, "417c37aa7e3b468fc09ee54af4336490")
+            .metrics(dev.faststats.Metrics.Factory::create)
+            .errorTrackerService(ERROR_TRACKER)
+            .create();
     private final Metrics metrics = new Metrics(this, 22782);
-    private final dev.faststats.core.Metrics fastStats = BukkitMetrics.factory()
-            .token("417c37aa7e3b468fc09ee54af4336490")
-            .errorTracker(ErrorTracker.contextAware())
-            .create(this);
+
     private final CommanderVersionChecker versionChecker = new CommanderVersionChecker(this);
     private final PaperCommander commons = new PaperCommander(this);
 
@@ -36,6 +38,7 @@ public class CommanderPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        context.ready();
         getServer().getGlobalRegionScheduler().execute(this, () -> {
             commons.permissionOverride().overridePermissions();
             commons.commandRegistry().unregisterCommands();
@@ -47,6 +50,7 @@ public class CommanderPlugin extends JavaPlugin {
     public void onDisable() {
         commons.commandRegistry().save(true);
         commons.permissionOverride().save(true);
+        context.shutdown();
         metrics.shutdown();
     }
 

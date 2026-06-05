@@ -8,11 +8,12 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
-import dev.faststats.core.ErrorTracker;
-import dev.faststats.velocity.VelocityMetrics;
+import dev.faststats.ErrorTracker;
+import dev.faststats.velocity.VelocityContext;
 import net.thenextlvl.commander.command.CommanderCommand;
 import net.thenextlvl.commander.velocity.listener.CommandListener;
 import net.thenextlvl.commander.velocity.version.CommanderVersionChecker;
+import org.bstats.velocity.Metrics;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 
@@ -25,8 +26,10 @@ import java.nio.file.Path;
         url = "https://thenextlvl.net",
         version = "5.1.0")
 public class CommanderPlugin {
-    private final VelocityMetrics.Factory fastStats;
-    private final org.bstats.velocity.Metrics.Factory bStats;
+    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+
+    private final VelocityContext context;
+    private final Metrics.Factory bStats;
     private final ProxyServer server;
     private final Logger logger;
     private final ProxyCommander commons;
@@ -35,21 +38,23 @@ public class CommanderPlugin {
     @Inject
     public CommanderPlugin(
             final ProxyServer server, final Logger logger, @DataDirectory final Path dataPath,
-            final org.bstats.velocity.Metrics.Factory bStats, final VelocityMetrics.Factory fastStats
+            final Metrics.Factory bStats, final VelocityContext.Factory context
     ) {
         this.server = server;
         this.logger = logger;
         this.dataPath = dataPath;
         this.commons = new ProxyCommander(this);
         this.bStats = bStats;
-        this.fastStats = fastStats.token("417c37aa7e3b468fc09ee54af4336490")
-                .errorTracker(ErrorTracker.contextAware());
+        this.context = context.token("417c37aa7e3b468fc09ee54af4336490")
+                .metrics(dev.faststats.Metrics.Factory::create)
+                .errorTrackerService(ERROR_TRACKER)
+                .create();
         new CommanderVersionChecker(this).checkVersion();
     }
 
     @Subscribe(priority = -1)
     public void onProxyInitialize(final ProxyInitializeEvent event) {
-        fastStats.create(this);
+        context.ready();
         bStats.make(this, 22782);
         server().getEventManager().register(this, new CommandListener());
         final var meta = server.getCommandManager().metaBuilder(commons.getRootCommand()).plugin(this).build();
