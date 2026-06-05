@@ -66,6 +66,7 @@ public class CommanderPlugin {
     public void onProxyShutdown(final ProxyShutdownEvent event) {
         commons.commandRegistry().save(true);
         commons.permissionOverride().save(true);
+        context.shutdown();
     }
 
     public ProxyServer server() {
