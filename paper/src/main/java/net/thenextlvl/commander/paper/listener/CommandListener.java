@@ -1,5 +1,6 @@
 package net.thenextlvl.commander.paper.listener;
 
+import com.destroystokyo.paper.event.brigadier.AsyncPlayerSendCommandsEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -11,18 +12,19 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 public class CommandListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onCommandSend(final PlayerCommandSendEvent event) {
+    public void onCommandSend(final AsyncPlayerSendCommandsEvent<?> event) {
+        if (!event.isAsynchronous() && event.hasFiredAsync()) return;
         if (event.getPlayer().permissionValue("commander.bypass").equals(TriState.TRUE)) return;
-        event.getCommands().removeAll(CommandRegistry.instance().hiddenCommands());
+        final var hiddenCommands = CommandRegistry.instance().hiddenCommands();
         final var permissionOverride = PermissionOverride.instance();
-        event.getCommands().removeIf(command -> {
-            final var permission = permissionOverride.permission(command);
+        event.getCommandNode().getChildren().removeIf(node -> {
+            if (hiddenCommands.contains(node.getName())) return true;
+            final var permission = permissionOverride.permission(node.getName());
             return permission != null && !event.getPlayer().hasPermission(permission);
         });
     }
