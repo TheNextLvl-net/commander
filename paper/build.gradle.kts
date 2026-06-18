@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:26.1.2.build.+")
+    compileOnly("io.papermc.paper:paper-api:26.2.rc.2.+")
 
     implementation("dev.faststats.metrics:bukkit:0.27.0")
     implementation("net.thenextlvl.version-checker:modrinth-paper:1.0.1")
