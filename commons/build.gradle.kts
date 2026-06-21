@@ -1,15 +1,5 @@
 plugins {
-    id("java")
     id("java-library")
-}
-
-group = rootProject.group
-version = rootProject.version
-
-repositories {
-    mavenCentral()
-    maven("https://repo.papermc.io/repository/maven-public/")
-    maven("https://repo.thenextlvl.net/releases")
 }
 
 dependencies {

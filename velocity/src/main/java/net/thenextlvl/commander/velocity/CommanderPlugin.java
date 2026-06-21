@@ -23,8 +23,8 @@ import java.nio.file.Path;
 @Plugin(id = "commander",
         name = "Commander",
         authors = "NonSwag",
-        url = "https://thenextlvl.net",
-        version = "5.1.0")
+        url = "https://thenextlvl.net/docs/commander",
+        version = "5.1.1")
 public class CommanderPlugin {
     public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
 

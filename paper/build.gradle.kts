@@ -1,33 +1,7 @@
-import io.papermc.hangarpublishplugin.model.Platforms
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
-    id("java")
-    id("com.gradleup.shadow")
-    id("com.modrinth.minotaur")
-    id("io.papermc.hangar-publish-plugin")
     id("de.eldoria.plugin-yml.paper") version "0.9.0"
-}
-
-group = rootProject.group
-version = rootProject.version
-
-java {
-    toolchain.languageVersion = JavaLanguageVersion.of(25)
-}
-
-tasks.compileJava {
-    options.release.set(21)
-}
-
-configurations.compileClasspath {
-    attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 25)
-}
-
-repositories {
-    mavenCentral()
-    maven("https://repo.thenextlvl.net/releases")
-    maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 dependencies {
@@ -39,20 +13,13 @@ dependencies {
     implementation(project(":commons"))
 }
 
-
-tasks.shadowJar {
-    archiveBaseName.set("commander-paper")
-    relocate("org.bstats", "net.thenextlvl.commander.bstats")
-    minimize()
-}
-
 paper {
     name = "Commander"
     load = BukkitPluginDescription.PluginLoadOrder.STARTUP
     main = "net.thenextlvl.commander.paper.CommanderPlugin"
     apiVersion = "1.21"
     foliaSupported = true
-    website = "https://thenextlvl.net"
+    website = "https://thenextlvl.net/docs/commander"
     authors = listOf("NonSwag")
 
     permissions {
@@ -82,37 +49,4 @@ paper {
         register("commander.command.save") { children = listOf("commander.command") }
         register("commander.command.unregister") { children = listOf("commander.command") }
     }
-}
-
-val versionString: String = project.version as String
-val isRelease: Boolean = !versionString.contains("-pre")
-
-val versions: List<String> = (property("gameVersions") as String)
-    .split(",")
-    .map { it.trim() }
-
-hangarPublish { // docs - https://docs.papermc.io/misc/hangar-publishing
-    publications.register("paper") {
-        id.set("CommandControl")
-        version.set(versionString)
-        changelog = System.getenv("CHANGELOG")
-        channel.set(if (isRelease) "Release" else "Snapshot")
-        apiKey.set(System.getenv("HANGAR_API_TOKEN"))
-        platforms.register(Platforms.PAPER) {
-            jar.set(tasks.shadowJar.flatMap { it.archiveFile })
-            platformVersions.set(versions)
-        }
-    }
-}
-
-modrinth {
-    token.set(System.getenv("MODRINTH_TOKEN"))
-    projectId.set("USLuwMUi")
-    changelog = System.getenv("CHANGELOG")
-    versionType = if (isRelease) "release" else "beta"
-    uploadFile.set(tasks.shadowJar)
-    gameVersions.set(versions)
-    syncBodyFrom.set(rootProject.file("README.md").readText())
-    loaders.add("paper")
-    loaders.add("folia")
 }
