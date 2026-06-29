@@ -1,10 +1,10 @@
 package net.thenextlvl.commander.paper;
 
 import com.mojang.brigadier.CommandDispatcher;
-import dev.faststats.ErrorTracker;
 import dev.faststats.bukkit.BukkitContext;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import net.thenextlvl.commander.CommanderCommons;
 import net.thenextlvl.commander.command.CommanderCommand;
 import net.thenextlvl.commander.paper.listener.CommandListener;
 import net.thenextlvl.commander.paper.version.CommanderVersionChecker;
@@ -15,10 +15,9 @@ import org.jspecify.annotations.Nullable;
 
 @NullMarked
 public class CommanderPlugin extends JavaPlugin {
-    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
     private final BukkitContext context = new BukkitContext.Factory(this, "417c37aa7e3b468fc09ee54af4336490")
             .metrics(dev.faststats.Metrics.Factory::create)
-            .errorTrackerService(ERROR_TRACKER)
+            .errorTrackerService(CommanderCommons.ERROR_TRACKER)
             .create();
     private final Metrics metrics = new Metrics(this, 22782);
 

@@ -1,5 +1,6 @@
 package net.thenextlvl.commander;
 
+import dev.faststats.ErrorTracker;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -16,6 +17,8 @@ import java.util.stream.Stream;
 
 @NullMarked
 public abstract class CommanderCommons {
+    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
+
     private final Path dataPath;
     private final ComponentBundle bundle;
 
