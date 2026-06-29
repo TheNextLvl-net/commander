@@ -1,35 +1,29 @@
 package net.thenextlvl.commander;
 
-import com.google.gson.reflect.TypeToken;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.thenextlvl.commander.file.GsonFile;
+import net.thenextlvl.commander.file.JsonFile;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @NullMarked
 public abstract class CommonCommandRegistry implements CommandRegistry {
-    protected final GsonFile<CopyOnWriteArraySet<String>> hiddenFile;
-    protected final GsonFile<CopyOnWriteArraySet<String>> unregisteredFile;
+    protected final JsonFile.ArraySet hiddenFile;
+    protected final JsonFile.ArraySet unregisteredFile;
     protected final CommanderCommons commons;
 
     protected CommonCommandRegistry(final CommanderCommons commons) {
-        this.hiddenFile = new GsonFile<CopyOnWriteArraySet<String>>(
-                commons.getDataPath().resolve("hidden-commands.json"),
-                new CopyOnWriteArraySet<>(), new TypeToken<>() {
-        }).reload().saveIfAbsent();
-        this.unregisteredFile = new GsonFile<CopyOnWriteArraySet<String>>(
-                commons.getDataPath().resolve("removed-commands.json"),
-                new CopyOnWriteArraySet<>(), new TypeToken<>() {
-        }).reload().saveIfAbsent();
+        this.hiddenFile = new JsonFile.ArraySet(commons.getDataPath().resolve("hidden-commands.json"));
+        this.hiddenFile.reload().saveIfAbsent();
+        this.unregisteredFile = new JsonFile.ArraySet(commons.getDataPath().resolve("removed-commands.json"));
+        this.unregisteredFile.reload().saveIfAbsent();
         this.commons = commons;
     }
 

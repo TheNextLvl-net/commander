@@ -1,10 +1,9 @@
 package net.thenextlvl.commander;
 
-import com.google.gson.reflect.TypeToken;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.thenextlvl.commander.file.GsonFile;
+import net.thenextlvl.commander.file.JsonFile;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -12,19 +11,16 @@ import org.jspecify.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 @NullMarked
 public abstract class CommonPermissionOverride implements PermissionOverride {
-    protected final GsonFile<ConcurrentHashMap<String, String>> overridesFile;
+    protected final JsonFile.HashMap overridesFile;
     protected final CommanderCommons commons;
 
     public CommonPermissionOverride(final CommanderCommons commons) {
-        this.overridesFile = new GsonFile<ConcurrentHashMap<String, String>>(
-                commons.getDataPath().resolve("permission-overrides.json"),
-                new ConcurrentHashMap<>(), new TypeToken<>() {
-        }).reload().saveIfAbsent();
+        this.overridesFile = new JsonFile.HashMap(commons.getDataPath().resolve("permission-overrides.json"));
+        this.overridesFile.reload().saveIfAbsent();
         this.commons = commons;
     }
 

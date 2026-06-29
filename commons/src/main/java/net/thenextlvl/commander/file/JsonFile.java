@@ -2,28 +2,22 @@ package net.thenextlvl.commander.file;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import net.thenextlvl.commander.CommanderCommons;
 import org.jspecify.annotations.NullMarked;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileAttribute;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.zip.CRC32C;
 
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.READ;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-import static java.nio.file.StandardOpenOption.WRITE;
-
 @NullMarked
-public final class GsonFile<R> {
+public abstract class JsonFile<R> {
     private static final int BUFFER_SIZE = 8192;
     private static final Gson GSON = new GsonBuilder()
             .disableHtmlEscaping()
@@ -32,8 +26,6 @@ public final class GsonFile<R> {
             .create();
 
     private final Path file;
-    private final R defaultRoot;
-    private final Type type;
 
     private R root;
     private boolean loaded;
@@ -41,11 +33,9 @@ public final class GsonFile<R> {
     private String digest = "";
     private long lastModified = 0;
 
-    public GsonFile(final Path file, final R root, final TypeToken<R> token) {
-        this.defaultRoot = root;
+    protected JsonFile(final Path file, final R root) {
         this.file = file;
         this.root = root;
-        this.type = token.getType();
     }
 
     public R getRoot() {
@@ -54,49 +44,46 @@ public final class GsonFile<R> {
         return root = load();
     }
 
-    private GsonFile<R> setRoot(final R root) {
+    private JsonFile<R> setRoot(final R root) {
         this.loaded = true;
         this.root = root;
         return this;
     }
 
-    public GsonFile<R> reload() {
+    public JsonFile<R> reload() {
         return setRoot(load());
     }
 
-    public GsonFile<R> saveIfAbsent(final FileAttribute<?>... attributes) {
+    public JsonFile<R> saveIfAbsent(final FileAttribute<?>... attributes) {
         return Files.isRegularFile(file) ? this : save(attributes);
     }
 
     private R load() {
         if (!Files.isRegularFile(file)) return getRoot();
-        try (final var reader = new JsonReader(new InputStreamReader(
-                Files.newInputStream(file, READ),
-                StandardCharsets.UTF_8
-        ))) {
-            final R root = GSON.fromJson(reader, type);
-            return root != null ? root : defaultRoot;
+        try (final var reader = Files.newBufferedReader(file)) {
+            return read(JsonParser.parseReader(reader));
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            CommanderCommons.ERROR_TRACKER.trackError(e).handled(false);
+            throw new UncheckedIOException("Failed to read file: " + file.getFileName(), e);
         } finally {
             this.digest = digest();
             this.lastModified = lastModified();
         }
     }
 
-    public GsonFile<R> save(final FileAttribute<?>... attributes) {
+    protected abstract R read(JsonElement element) throws IOException;
+
+    public JsonFile<R> save(final FileAttribute<?>... attributes) {
         try {
             final var root = getRoot();
             Files.createDirectories(file.toAbsolutePath().getParent(), attributes);
-            try (final var writer = new BufferedWriter(new OutputStreamWriter(
-                    Files.newOutputStream(file, WRITE, CREATE, TRUNCATE_EXISTING),
-                    StandardCharsets.UTF_8
-            ))) {
-                GSON.toJson(root, type, writer);
+            try (final var writer = Files.newBufferedWriter(file)) {
+                GSON.toJson(root, writer);
                 return this;
             }
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            CommanderCommons.ERROR_TRACKER.trackError(e).handled(false);
+            throw new UncheckedIOException("Failed to save file: " + file.getFileName(), e);
         } finally {
             this.digest = digest();
             this.lastModified = lastModified();
@@ -130,6 +117,38 @@ public final class GsonFile<R> {
             return Files.getLastModifiedTime(file).toMillis();
         } catch (final IOException e) {
             return System.currentTimeMillis();
+        }
+    }
+
+    public static final class ArraySet extends JsonFile<CopyOnWriteArraySet<String>> {
+        public ArraySet(final Path file) {
+            super(file, new CopyOnWriteArraySet<>());
+        }
+
+        @Override
+        protected CopyOnWriteArraySet<String> read(final JsonElement element) {
+            final var root = new CopyOnWriteArraySet<String>();
+            element.getAsJsonArray().forEach(value -> {
+                if (!value.isJsonPrimitive()) return;
+                root.add(value.getAsString());
+            });
+            return root;
+        }
+    }
+
+    public static final class HashMap extends JsonFile<ConcurrentHashMap<String, String>> {
+        public HashMap(final Path file) {
+            super(file, new ConcurrentHashMap<>());
+        }
+
+        @Override
+        protected ConcurrentHashMap<String, String> read(final JsonElement element) {
+            final var root = new ConcurrentHashMap<String, String>();
+            element.getAsJsonObject().entrySet().forEach(entry -> {
+                if (!entry.getValue().isJsonPrimitive()) return;
+                root.put(entry.getKey(), entry.getValue().getAsString());
+            });
+            return root;
         }
     }
 }

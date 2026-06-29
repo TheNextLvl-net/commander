@@ -8,5 +8,6 @@ dependencies {
 
     compileOnly("com.google.code.gson:gson:2.14.0")
     compileOnly("com.mojang:brigadier:1.3.10")
+    compileOnly("dev.faststats.metrics:core:0.27.1")
     compileOnly("net.kyori:adventure-api:4.27.0-SNAPSHOT")
 }

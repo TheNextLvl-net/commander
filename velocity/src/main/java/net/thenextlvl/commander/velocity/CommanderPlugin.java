@@ -8,8 +8,8 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
-import dev.faststats.ErrorTracker;
 import dev.faststats.velocity.VelocityContext;
+import net.thenextlvl.commander.CommanderCommons;
 import net.thenextlvl.commander.command.CommanderCommand;
 import net.thenextlvl.commander.velocity.listener.CommandListener;
 import net.thenextlvl.commander.velocity.version.CommanderVersionChecker;
@@ -26,8 +26,6 @@ import java.nio.file.Path;
         url = "https://thenextlvl.net/docs/commander",
         version = "5.1.1")
 public class CommanderPlugin {
-    public static final ErrorTracker ERROR_TRACKER = ErrorTracker.contextAware();
-
     private final VelocityContext context;
     private final Metrics.Factory bStats;
     private final ProxyServer server;
@@ -47,7 +45,7 @@ public class CommanderPlugin {
         this.bStats = bStats;
         this.context = context.token("417c37aa7e3b468fc09ee54af4336490")
                 .metrics(dev.faststats.Metrics.Factory::create)
-                .errorTrackerService(ERROR_TRACKER)
+                .errorTrackerService(CommanderCommons.ERROR_TRACKER)
                 .create();
         new CommanderVersionChecker(this).checkVersion();
     }
