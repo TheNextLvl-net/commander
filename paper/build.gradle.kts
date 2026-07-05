@@ -7,7 +7,7 @@ plugins {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:26.2.+")
 
-    implementation("dev.faststats.metrics:bukkit:0.27.1")
+    implementation("dev.faststats.metrics:bukkit:0.27.2")
     implementation("net.thenextlvl.version-checker:modrinth-paper:1.0.1")
     implementation("org.bstats:bstats-bukkit:3.2.1")
     implementation(project(":commons"))
