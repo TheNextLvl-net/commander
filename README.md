@@ -2,7 +2,7 @@
 
 <p align="center" style="text-align: center;">
   <a href="https://thenextlvl.net/discord"><img src="https://tr7zw.github.io/uikit/social_buttons_icon/Discord-Button-64.png"></img></a>
-  <a href="https://modrinth.com/project/R2dgUCYq"><img src="https://tr7zw.github.io/uikit/social_buttons_icon/Modrinth-Button-64.png"></img></a>
+  <a href="https://modrinth.com/project/USLuwMUi"><img src="https://tr7zw.github.io/uikit/social_buttons_icon/Modrinth-Button-64.png"></img></a>
   <a href="https://github.com/TheNextLvl-net/commander"><img src="https://tr7zw.github.io/uikit/social_buttons_icon/Github-Button-64.png"></img></a>
 </p>
 
