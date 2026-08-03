@@ -12,7 +12,7 @@ dependencies {
     api("net.thenextlvl:static-binder:0.1.3")
 
     compileOnlyApi("org.jetbrains:annotations:26.1.0")
-    compileOnlyApi("org.jspecify:jspecify:1.0.0")
+    compileOnlyApi("org.jspecify:jspecify:1.0.1")
 }
 
 publishing {
