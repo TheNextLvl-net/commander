@@ -24,7 +24,7 @@ import java.nio.file.Path;
         name = "Commander",
         authors = "NonSwag",
         url = "https://thenextlvl.net/docs/commander",
-        version = "5.1.3")
+        version = "5.1.4")
 public class CommanderPlugin {
     private final VelocityContext context;
     private final Metrics.Factory bStats;
